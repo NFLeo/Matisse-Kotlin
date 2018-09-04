@@ -23,9 +23,7 @@ object PhotoMetadataUtils {
 
                 return cursor.getString(cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA))
             } finally {
-                if (cursor != null) {
-                    cursor.close()
-                }
+                cursor?.close()
             }
         }
 

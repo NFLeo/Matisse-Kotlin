@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">matisse</string>
+    <string name="album_name_all">All Media</string>
+    <string name="button_ok">OK</string>
 </resources>

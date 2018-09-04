@@ -1,11 +1,12 @@
-package com.matisse
+package com.matisse.loader
 
 import android.content.Context
 import android.database.Cursor
 import android.database.MatrixCursor
-import android.net.Uri
+import android.database.MergeCursor
 import android.provider.MediaStore
 import android.support.v4.content.CursorLoader
+import com.matisse.internal.entity.Album
 import com.matisse.internal.entity.SelectionSpec
 
 /**
@@ -61,7 +62,7 @@ class AlbumLoader(context: Context, selection: String, selectionArgs: Array<out 
 
     override fun loadInBackground(): Cursor? {
         val albums = super.loadInBackground()
-        var allAlbum = MatrixCursor(COLUMNS)
+        val allAlbum = MatrixCursor(COLUMNS)
         var totalCount = 0
         var allAlbumCoverPath = ""
 
@@ -75,7 +76,8 @@ class AlbumLoader(context: Context, selection: String, selectionArgs: Array<out 
             }
         }
 
-        allAlbum.addRow(arrayOf())
-        return super.loadInBackground()
+        allAlbum.addRow(arrayOf(Album.ALBUM_ID_ALL, Album.ALBUM_ID_ALL, Album.ALBUM_NAME_ALL,
+                allAlbumCoverPath, totalCount.toString()))
+        return MergeCursor(arrayOf(allAlbum, albums))
     }
 }

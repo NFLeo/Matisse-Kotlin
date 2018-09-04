@@ -19,11 +19,11 @@ class MimeTypeManager(private var mMimeTypeName: String, private var mExtensions
             return EnumSet.allOf(MimeType::class.java)
         }
 
-        fun of(type: MimeType, vararg rest: MimeType) = EnumSet.of(type, *rest)
+        fun of(type: MimeType, vararg rest: MimeType) = EnumSet.of(type, *rest)!!
 
-        fun ofImage() = EnumSet.of(MimeType.JPEG, MimeType.PNG, MimeType.GIF, MimeType.BMP, MimeType.WEBP)
+        fun ofImage() = EnumSet.of(MimeType.JPEG, MimeType.PNG, MimeType.GIF, MimeType.BMP, MimeType.WEBP)!!
 
-        fun ofVideo() = EnumSet.of(MimeType.MPEG, MimeType.MP4, MimeType.QUICKTIME, MimeType.THREEGPP, MimeType.THREEGPP2, MimeType.MKV, MimeType.WEBM, MimeType.TS, MimeType.AVI)
+        fun ofVideo() = EnumSet.of(MimeType.MPEG, MimeType.MP4, MimeType.QUICKTIME, MimeType.THREEGPP, MimeType.THREEGPP2, MimeType.MKV, MimeType.WEBM, MimeType.TS, MimeType.AVI)!!
 
         fun arraySetOf(vararg suffixes: String) = ArraySet(Arrays.asList(*suffixes))
     }

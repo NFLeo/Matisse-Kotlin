@@ -5,7 +5,7 @@ import android.database.Cursor
 import android.os.Parcel
 import android.os.Parcelable
 import android.provider.MediaStore
-import com.matisse.AlbumLoader
+import com.matisse.loader.AlbumLoader
 import com.matisse.R
 
 /**
@@ -13,9 +13,6 @@ import com.matisse.R
  * Created by Leo on 2018/8/29 on 16:15.
  */
 class Album() : Parcelable {
-
-    val ALBUM_ID_ALL = (-1).toString()
-    val ALBUM_NAME_ALL = "All"
 
     private var mId: String = ""
     private var mCoverPath: String = ""
@@ -66,6 +63,10 @@ class Album() : Parcelable {
     }
 
     companion object CREATOR : Parcelable.Creator<Album> {
+
+        val ALBUM_ID_ALL = (-1).toString()
+        val ALBUM_NAME_ALL = "All"
+
         override fun createFromParcel(parcel: Parcel): Album {
             return Album(parcel)
         }

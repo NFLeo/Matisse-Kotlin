@@ -67,6 +67,5 @@ enum class MimeType {
         override fun initEnum() = MimeTypeManager("video/avi", arraySetOf("avi"))
     };
 
-
     abstract fun initEnum(): MimeTypeManager
 }
