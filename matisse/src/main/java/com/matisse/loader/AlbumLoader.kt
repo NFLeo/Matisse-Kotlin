@@ -80,4 +80,8 @@ class AlbumLoader(context: Context, selection: String, selectionArgs: Array<out 
                 allAlbumCoverPath, totalCount.toString()))
         return MergeCursor(arrayOf(allAlbum, albums))
     }
+
+    override fun onContentChanged() {
+        // FIXME a dirty way to fix loading multiple times
+    }
 }

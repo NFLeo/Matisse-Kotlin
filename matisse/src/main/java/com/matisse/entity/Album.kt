@@ -26,6 +26,18 @@ class Album() : Parcelable {
         this.mCount = mCount
     }
 
+    fun getId(): String {
+        return mId
+    }
+
+    fun getCoverPath(): String {
+        return mCoverPath
+    }
+
+    fun getCount(): Long {
+        return mCount
+    }
+
     fun addCaptureCount() {
         mCount++
     }
