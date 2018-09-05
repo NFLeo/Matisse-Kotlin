@@ -29,7 +29,9 @@ class AlbumCollection : LoaderManager.LoaderCallbacks<Cursor> {
     }
 
     override fun onLoadFinished(loader: Loader<Cursor>, data: Cursor?) {
-        val context = mContext?.get() ?: return
+        if (mContext?.get() == null) {
+            return
+        }
 
         if (!mLoadFinished) {
             mLoadFinished = true
@@ -38,7 +40,9 @@ class AlbumCollection : LoaderManager.LoaderCallbacks<Cursor> {
     }
 
     override fun onLoaderReset(loader: Loader<Cursor>) {
-        val context = mContext?.get() ?: return
+        if (mContext?.get() == null) {
+            return
+        }
 
         mCallbacks?.onAlbumReset()
     }
@@ -59,7 +63,9 @@ class AlbumCollection : LoaderManager.LoaderCallbacks<Cursor> {
 
     fun onDestory() {
         mLoaderManager?.destroyLoader(LOADER_ID)
-        mCallbacks = null
+        if (mCallbacks != null) {
+            mCallbacks = null
+        }
     }
 
     fun loadAlbums() {
@@ -70,11 +76,5 @@ class AlbumCollection : LoaderManager.LoaderCallbacks<Cursor> {
 
     fun setStateCurrentSelection(currentSelection: Int) {
         mCurrentSelection = currentSelection
-    }
-
-    interface AlbumCallbacks {
-        fun onAlbumStart()
-        fun onAlbumLoad(cursor: Cursor)
-        fun onAlbumReset()
     }
 }

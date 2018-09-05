@@ -1,7 +1,9 @@
 package com.matisse.filter
 
 import android.content.Context
+import com.matisse.MimeType
 import com.matisse.MimeTypeManager
+import com.matisse.entity.IncapableCause
 import com.matisse.entity.Item
 
 /**
@@ -23,19 +25,19 @@ abstract class Filter {
     }
 
     // Against what mime types this filter applies
-    open abstract fun constraintTypes(): Set<MimeTypeManager>
+    abstract fun constraintTypes(): Set<MimeType>
 
     /**
      * Invoked for filtering each item
      *
      * @return null if selectable, {@link IncapableCause} if not selectable.
      */
-    abstract fun filter(context: Context, item: Item)
+    abstract fun filter(context: Context, item: Item): IncapableCause
 
     // Whether an {@link Item} need filtering
     open fun needFiltering(context: Context, item: Item): Boolean {
         constraintTypes().forEach {
-            if (it.checkType(context.contentResolver, item.getContentUri())) {
+            if (MimeTypeManager.checkType(context.contentResolver, item.getContentUri(), it.getValue())) {
                 return true
             }
         }
