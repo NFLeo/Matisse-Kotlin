@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="white">#FFFFFF</color>
+    <color name="color_base">#1E8AE8</color>
+    <color name="color_base_press">#176EB9</color>
+
+    <color name="color_title_text">#DE000000</color>
+    <color name="color_title_press_text">#4D000000</color>
+    <color name="color_hint_text">#424242</color>
+
+</resources>
