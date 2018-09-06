@@ -9,6 +9,8 @@ import com.matisse.R
 import com.matisse.internal.entity.Album
 import com.matisse.model.AlbumCallbacks
 import com.matisse.model.AlbumCollection
+import com.matisse.utils.UIUtils
+import kotlinx.android.synthetic.main.activity_matisse.*
 
 class MatisseActivity : AppCompatActivity() {
     private val mAlbumCollection = AlbumCollection()
@@ -18,7 +20,10 @@ class MatisseActivity : AppCompatActivity() {
         setContentView(R.layout.activity_matisse)
 
         mAlbumCollection.onCreate(this, albumCallbacks)
-        mAlbumCollection.onRestoreInstanceState(savedInstanceState!!)
+        if (savedInstanceState != null) {
+            mAlbumCollection.onRestoreInstanceState(savedInstanceState)
+        }
+
         mAlbumCollection.loadAlbums()
     }
 
@@ -39,7 +44,11 @@ class MatisseActivity : AppCompatActivity() {
 
     private fun onAlbumSelected(album: Album) {
         if (!album.isEmpty()) {
-
+            UIUtils.setViewVisible(true, container)
+            val fragment = MediaSelectionFragment.newInstance(album)
+            supportFragmentManager.beginTransaction()
+                    .replace(container.id, fragment, MediaSelectionFragment::class.java.simpleName)
+                    .commitAllowingStateLoss()
         }
     }
 }

@@ -8,6 +8,7 @@ import com.matisse.R
 import com.matisse.entity.IncapableCause
 import com.matisse.entity.Item
 import com.matisse.internal.entity.SelectionSpec
+import com.matisse.widget.CheckView
 import com.matisse.utils.PathUtils
 import com.matisse.utils.PhotoMetadataUtils
 import java.util.LinkedHashSet
@@ -142,7 +143,7 @@ class SelectedItemCollection {
         return paths
     }
 
-    fun isAcceptable(item: Item): IncapableCause {
+    fun isAcceptable(item: Item): IncapableCause? {
         if (maxSelectableReached()) {
             val maxSelectable = currentMaxSelectable()
 
@@ -165,7 +166,7 @@ class SelectedItemCollection {
             return IncapableCause(mContext.getString(R.string.error_type_conflict))
         }
 
-        return PhotoMetadataUtils.isAcceptable(mContext, item)!!
+        return PhotoMetadataUtils.isAcceptable(mContext, item)
     }
 
     fun maxSelectableReached(): Boolean {
@@ -191,11 +192,10 @@ class SelectedItemCollection {
 
     fun count() = mItems.size
 
-    // todo
-//    fun checkedNumOf(item: Item): Int {
-//        val index = ArrayList(mItems).indexOf(item)
-//        return if (index == -1) CheckView.UNCHECKED else index + 1
-//    }
+    fun checkedNumOf(item: Item): Int {
+        val index = ArrayList(mItems).indexOf(item)
+        return if (index == -1) CheckView.UNCHECKED else index + 1
+    }
 
     private fun refineCollectionType() {
         var hasImage = false

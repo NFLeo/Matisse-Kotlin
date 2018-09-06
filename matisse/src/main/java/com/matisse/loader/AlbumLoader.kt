@@ -16,7 +16,7 @@ import com.matisse.internal.entity.SelectionSpec
 class AlbumLoader(context: Context, selection: String, selectionArgs: Array<out String>) : CursorLoader(context, QUERY_URI, PROJECTION, selection, selectionArgs, BUCKET_ORDER_BY) {
 
     companion object {
-        open val COLUMN_COUNT = "count"
+        val COLUMN_COUNT = "count"
         private val QUERY_URI = MediaStore.Files.getContentUri("external")
         private const val BUCKET_ID = "bucket_id"
         private const val BUCKET_DISPLAY_NAME = "bucket_display_name"

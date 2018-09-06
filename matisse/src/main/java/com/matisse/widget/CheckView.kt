@@ -1,12 +1,10 @@
-package com.matisse.internal.ui.widget
+package com.matisse.widget
 
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.*
 import android.graphics.drawable.Drawable
-import android.media.MediaDrmException
 import android.support.v4.content.res.ResourcesCompat
-import android.util.ArraySet
 import android.view.View
 import com.matisse.R
 
@@ -79,7 +77,7 @@ class CheckView(context: Context?) : View(context) {
         }
     }
 
-    fun setCheck(boolean: Boolean) {
+    fun setChecked(boolean: Boolean) {
         if (mCountable) {
             throw IllegalStateException("CheckView is countable, call setCheckedNum() instead.")
         }
@@ -88,7 +86,7 @@ class CheckView(context: Context?) : View(context) {
         invalidate()
     }
 
-    fun setNum(num: Int) {
+    fun setCheckedNum(num: Int) {
         if (!mCountable) {
             throw IllegalStateException("CheckView is not countable, call setChecked() instead.")
         }

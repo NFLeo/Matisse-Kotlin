@@ -2,6 +2,7 @@ package com.matisse.utils
 
 import android.content.Context
 import android.support.v4.app.FragmentActivity
+import android.view.View
 import android.widget.Toast
 import com.matisse.entity.IncapableCause
 import com.matisse.widget.IncapableDialog
@@ -36,5 +37,23 @@ object UIUtils {
         }
 
         return spanCount
+    }
+
+    /**
+     * 设置控件显示隐藏
+     * 避免控件重复设置，统一提前添加判断
+     *
+     * @param isVisible true visible
+     * @param view      targetview
+     */
+    fun setViewVisible(isVisible: Boolean, view: View?) {
+        if (view == null) {
+            return
+        }
+        val visibleFlag = if (isVisible) View.VISIBLE else View.GONE
+
+        if (view.visibility != visibleFlag) {
+            view.visibility = visibleFlag
+        }
     }
 }

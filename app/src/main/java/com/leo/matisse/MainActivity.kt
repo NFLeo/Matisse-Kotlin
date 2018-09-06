@@ -2,6 +2,7 @@ package com.leo.matisse
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import com.matisse.ui.view.MatisseActivity
 
 class MainActivity : AppCompatActivity() {
 

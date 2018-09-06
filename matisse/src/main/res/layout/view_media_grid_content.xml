@@ -6,11 +6,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <!--<com.zhihu.matisse.internal.ui.widget.CheckView-->
-    <!--android:id="@+id/check_view"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_gravity="top|right"/>-->
+    <com.matisse.widget.CheckView
+        android:id="@+id/check_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|right" />
 
     <ImageView
         android:id="@+id/gif"
