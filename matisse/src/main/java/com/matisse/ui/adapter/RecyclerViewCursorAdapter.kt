@@ -4,12 +4,12 @@ import android.database.Cursor
 import android.provider.MediaStore
 import android.support.v7.widget.RecyclerView
 
-abstract class RecyclerViewCursorAdapter<VH : RecyclerView.ViewHolder> : RecyclerView.Adapter<VH> {
+abstract class RecyclerViewCursorAdapter<VH : RecyclerView.ViewHolder>(c: Cursor?) : RecyclerView.Adapter<VH>() {
 
     private var mCursor: Cursor? = null
     private var mRowIDColumn: Int = 0
 
-    constructor(c: Cursor) {
+    init {
         setHasStableIds(true)
         swapCursor(c)
     }

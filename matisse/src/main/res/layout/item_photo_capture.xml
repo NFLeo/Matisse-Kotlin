@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.matisse.widget.SquareFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/hint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:drawablePadding="8dp"
+        android:drawableTop="@drawable/ic_photo_camera_white_24dp"
+        android:gravity="center"
+        android:text="@string/photo_grid_capture"
+        android:textColor="@color/selector_preview_text"
+        android:textSize="14sp" />
+
+</com.matisse.widget.SquareFrameLayout>
