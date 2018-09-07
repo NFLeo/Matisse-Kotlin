@@ -5,6 +5,8 @@ import com.matisse.MimeTypeManager
 import com.matisse.engine.GlideEngine
 import com.matisse.engine.ImageEngine
 import com.matisse.filter.Filter
+import com.matisse.widget.CropImageView
+import java.io.File
 
 /**
  * Describe : Builder to get config values
@@ -26,6 +28,15 @@ class SelectionSpec {
 
     var imageEngine: ImageEngine = GlideEngine()
 
+    var isCrop: Boolean = false                     // 裁剪
+    var isCropSaveRectangle: Boolean = false        // 裁剪后的图片是否是矩形，否则跟随裁剪框的形状，只适用于圆形裁剪
+    var cropOutPutX: Int = 0                        // 裁剪保存宽度
+    var cropOutPutY: Int = 0                        // 裁剪保存高度
+    var cropFocusWidth: Int = 0                     // 焦点框的宽度
+    var cropFocusHeight: Int = 0                    // 焦点框的高度
+    var cropStyle = CropImageView.Style.RECTANGLE   // 裁剪框的形状
+    var cropCacheFolder: File? = null               // 裁剪后文件保存路径
+
     class InstanceHolder {
         companion object {
             val INSTANCE: SelectionSpec = SelectionSpec()
@@ -44,6 +55,14 @@ class SelectionSpec {
 
     private fun reset() {
         imageEngine = GlideEngine()
+
+        isCrop = true
+        isCropSaveRectangle = false
+        cropOutPutX = 300
+        cropOutPutY = 300
+        cropFocusWidth = 0
+        cropFocusHeight = 0
+        cropStyle = CropImageView.Style.RECTANGLE
     }
 
     fun onlyShowImages(): Boolean {

@@ -10,4 +10,8 @@ object Platform {
     fun hasKitKat19(): Boolean {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
     }
+
+    fun hasKitO26(): Boolean {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+    }
 }
