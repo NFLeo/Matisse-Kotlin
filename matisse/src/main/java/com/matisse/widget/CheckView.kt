@@ -5,13 +5,15 @@ import android.content.res.TypedArray
 import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.support.v4.content.res.ResourcesCompat
+import android.util.AttributeSet
 import android.view.View
 import com.matisse.R
 
 /**
  * Created by liubo on 2018/9/4.
  */
-class CheckView(context: Context?) : View(context) {
+class CheckView : View {
+
     companion object {
         const val UNCHECKED: Int = Integer.MIN_VALUE
         private const val STROKE_WIDTH: Float = 3.0f
@@ -34,7 +36,9 @@ class CheckView(context: Context?) : View(context) {
     private var mCheckRect: Rect? = null
     private var mEnable = true
 
-    init {
+    constructor(context: Context?) : this(context, null, 0)
+    constructor(context: Context?, attrs: AttributeSet?) : this(context, attrs, 0)
+    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
         initParams(context)
     }
 
@@ -49,8 +53,8 @@ class CheckView(context: Context?) : View(context) {
         mStrokePaint?.strokeWidth = STROKE_WIDTH * mDensity!!
 
         val ta: TypedArray = context?.theme?.obtainStyledAttributes(intArrayOf(R.attr.item_checkCircle_borderColor))!!
-        var defaultColor = ResourcesCompat.getColor(context.resources, R.color.zhihu_item_checkCircle_borderColor, context.theme)
-        var color = ta.getColor(0, defaultColor)
+        val defaultColor = ResourcesCompat.getColor(context.resources, R.color.zhihu_item_checkCircle_borderColor, context.theme)
+        val color = ta.getColor(0, defaultColor)
         ta.recycle()
         mStrokePaint?.color = color
 
@@ -59,7 +63,7 @@ class CheckView(context: Context?) : View(context) {
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
 
-        var sizeSpec = MeasureSpec.makeMeasureSpec((mDensity?.times(SIZE))!!.toInt(), MeasureSpec.EXACTLY)
+        val sizeSpec = MeasureSpec.makeMeasureSpec((mDensity?.times(SIZE))!!.toInt(), MeasureSpec.EXACTLY)
         super.onMeasure(sizeSpec, sizeSpec)
     }
 
@@ -110,9 +114,9 @@ class CheckView(context: Context?) : View(context) {
                 canvas?.drawCircle(mDensity!!.times(SIZE) / 2, mDensity!!.times(SIZE) / 2,
                         mDensity!!.times(BG_RADIUS), mBackgroundPaint)
                 initTextPaint()
-                var text = mCheckedNum.toString()
-                var baseX = (canvas!!.width - mTextPaint!!.measureText(text)) / 2
-                var baseY = (canvas.height - mTextPaint!!.descent() - mTextPaint!!.ascent()) / 2
+                val text = mCheckedNum.toString()
+                val baseX = (canvas!!.width - mTextPaint!!.measureText(text)) / 2
+                val baseY = (canvas.height - mTextPaint!!.descent() - mTextPaint!!.ascent()) / 2
                 canvas.drawText(text, baseX, baseY, mTextPaint)
             }
         } else {
@@ -129,7 +133,7 @@ class CheckView(context: Context?) : View(context) {
 
     private fun getCheckRect(): Rect? {
         if (mCheckRect == null) {
-            var rectPadding = (mDensity!! * SIZE / 2 - CONTENT_SIZE * mDensity!! / 2).toInt()
+            val rectPadding = (mDensity!! * SIZE / 2 - CONTENT_SIZE * mDensity!! / 2).toInt()
             mCheckRect = Rect(rectPadding, rectPadding, (SIZE * mDensity!! - rectPadding).toInt(), (SIZE * mDensity!! - rectPadding).toInt())
         }
         return mCheckRect
@@ -139,9 +143,9 @@ class CheckView(context: Context?) : View(context) {
         if (mTextPaint == null) {
             mTextPaint = Paint()
             mTextPaint!!.isAntiAlias = true
-            var ta: TypedArray = context!!.theme!!.obtainStyledAttributes(intArrayOf(R.attr.item_checkCircle_numColor))
-            var defaultColor = ResourcesCompat.getColor(context!!.resources, R.color.zhihu_item_checkCircle_numColor, context!!.theme)
-            var color = ta.getColor(0, defaultColor)
+            val ta: TypedArray = context!!.theme!!.obtainStyledAttributes(intArrayOf(R.attr.item_checkCircle_numColor))
+            val defaultColor = ResourcesCompat.getColor(context!!.resources, R.color.zhihu_item_checkCircle_numColor, context!!.theme)
+            val color = ta.getColor(0, defaultColor)
             mTextPaint!!.color = color
 
         }
@@ -152,9 +156,9 @@ class CheckView(context: Context?) : View(context) {
             mBackgroundPaint = Paint()
             mBackgroundPaint!!.isAntiAlias = true
             mBackgroundPaint!!.style = Paint.Style.FILL
-            var ta: TypedArray = context!!.theme!!.obtainStyledAttributes(intArrayOf(R.attr.item_checkCircle_backgroundColor))
-            var defaultColor = ResourcesCompat.getColor(context!!.resources, R.color.zhihu_item_checkCircle_backgroundColor, context!!.theme)
-            var color = ta.getColor(0, defaultColor)
+            val ta: TypedArray = context!!.theme!!.obtainStyledAttributes(intArrayOf(R.attr.item_checkCircle_backgroundColor))
+            val defaultColor = ResourcesCompat.getColor(context!!.resources, R.color.zhihu_item_checkCircle_backgroundColor, context!!.theme)
+            val color = ta.getColor(0, defaultColor)
             ta.recycle()
             mBackgroundPaint!!.color = color
         }
@@ -164,13 +168,13 @@ class CheckView(context: Context?) : View(context) {
         if (mShadowPaint == null) {
             mShadowPaint = Paint()
             mShadowPaint!!.isAntiAlias = true
-            var outerRadius: Float = STROKE_RADIUS + STROKE_WIDTH / 2
-            var innerRadius = outerRadius - STROKE_WIDTH
-            var gradientRadius = outerRadius + SHADOW_WIDTH
-            var stop0 = (innerRadius - STROKE_WIDTH) / gradientRadius
-            var stop1 = innerRadius / gradientRadius
-            var stop2 = outerRadius / gradientRadius
-            var stop3 = 1f
+            val outerRadius: Float = STROKE_RADIUS + STROKE_WIDTH / 2
+            val innerRadius = outerRadius - STROKE_WIDTH
+            val gradientRadius = outerRadius + SHADOW_WIDTH
+            val stop0 = (innerRadius - STROKE_WIDTH) / gradientRadius
+            val stop1 = innerRadius / gradientRadius
+            val stop2 = outerRadius / gradientRadius
+            val stop3 = 1f
             mShadowPaint!!.shader = (RadialGradient(mDensity!!.times(SIZE) / 2, mDensity!!.times(SIZE) / 2, mDensity!!.times(gradientRadius),
                     intArrayOf(Color.parseColor("#00000000"), Color.parseColor("#0D000000"), Color.parseColor("#0D000000"), Color.parseColor("#00000000")),
                     floatArrayOf(stop0, stop1, stop2, stop3),

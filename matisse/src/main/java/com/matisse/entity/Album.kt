@@ -88,9 +88,9 @@ class Album() : Parcelable {
         }
 
         fun valueOf(cursor: Cursor) = Album(
-                cursor.getString(cursor.getColumnIndex("bucket_id")),
+                cursor.getString(cursor.getColumnIndex(AlbumLoader.BUCKET_ID)),
                 cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DATA)),
-                cursor.getString(cursor.getColumnIndex("bucket_display_name")),
+                cursor.getString(cursor.getColumnIndex(AlbumLoader.BUCKET_DISPLAY_NAME)),
                 cursor.getLong(cursor.getColumnIndex(AlbumLoader.COLUMN_COUNT)))
     }
 }

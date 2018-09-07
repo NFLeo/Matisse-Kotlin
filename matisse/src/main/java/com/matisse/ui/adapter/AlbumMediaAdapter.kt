@@ -3,6 +3,7 @@ package com.matisse.ui.adapter
 import android.content.Context
 import android.database.Cursor
 import android.graphics.drawable.Drawable
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -23,7 +24,7 @@ import com.matisse.widget.MediaGrid
 class AlbumMediaAdapter : RecyclerViewCursorAdapter<RecyclerView.ViewHolder>, MediaGrid.OnMediaGridClickListener {
 
     private var mSelectedCollection: SelectedItemCollection
-    private lateinit var mPlaceholder: Drawable
+    private var mPlaceholder: Drawable
     private var mSelectionSpec: SelectionSpec = SelectionSpec.getInstance()
     var mCheckStateListener: CheckStateListener? = null
     var mOnMediaClickListener: OnMediaClickListener? = null
@@ -37,6 +38,8 @@ class AlbumMediaAdapter : RecyclerViewCursorAdapter<RecyclerView.ViewHolder>, Me
 
     constructor(context: Context, selectedCollection: SelectedItemCollection, recyclerView: RecyclerView) : super(null) {
         mSelectedCollection = selectedCollection
+        mPlaceholder = ContextCompat.getDrawable(context, R.drawable.ic_empty_zhihu)!!
+
         mRecyclerView = recyclerView
     }
 

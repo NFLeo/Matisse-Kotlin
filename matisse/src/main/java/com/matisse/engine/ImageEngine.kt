@@ -61,5 +61,5 @@ interface ImageEngine {
      *
      * @return true support animated gif, false do not support animated gif.
      */
-    fun supportAnimatedGif()
+    fun supportAnimatedGif(): Boolean
 }

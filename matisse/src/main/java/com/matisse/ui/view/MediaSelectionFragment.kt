@@ -74,7 +74,7 @@ class MediaSelectionFragment : Fragment(), AlbumCallbacks, AlbumMediaAdapter.Che
         val spanCount = if (selectionSpec.gridExpectedSize > 0) {
             UIUtils.spanCount(context!!, selectionSpec.gridExpectedSize)
         } else {
-            selectionSpec.gridExpectedSize
+            selectionSpec.spanCount
         }
 
         recyclerview.layoutManager = GridLayoutManager(context!!, spanCount)

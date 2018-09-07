@@ -18,8 +18,8 @@ class AlbumLoader(context: Context, selection: String, selectionArgs: Array<out 
     companion object {
         val COLUMN_COUNT = "count"
         private val QUERY_URI = MediaStore.Files.getContentUri("external")
-        private const val BUCKET_ID = "bucket_id"
-        private const val BUCKET_DISPLAY_NAME = "bucket_display_name"
+        const val BUCKET_ID = "bucket_id"
+        const val BUCKET_DISPLAY_NAME = "bucket_display_name"
         private const val BUCKET_ORDER_BY = "datetaken DESC"
 
         val COLUMNS = arrayOf(MediaStore.Files.FileColumns._ID, BUCKET_ID,
@@ -29,9 +29,9 @@ class AlbumLoader(context: Context, selection: String, selectionArgs: Array<out 
                 BUCKET_DISPLAY_NAME, MediaStore.MediaColumns.DATA,
                 "COUNT(*) AS $COLUMN_COUNT")
 
-        private val SELECTION = "(" + MediaStore.Files.FileColumns.MEDIA_TYPE + "=? OR " +
-                MediaStore.Files.FileColumns.MEDIA_TYPE + "=?) AND " +
-                MediaStore.MediaColumns.SIZE + ">0) GROUP BY (" + BUCKET_ID
+        private val SELECTION = "(" + MediaStore.Files.FileColumns.MEDIA_TYPE + "=? " +
+                "OR " + MediaStore.Files.FileColumns.MEDIA_TYPE + "=?) " +
+                "AND " + MediaStore.MediaColumns.SIZE + ">0) GROUP BY (" + BUCKET_ID
 
         private val SELECTION_ARGS = arrayOf(MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE.toString(),
                 MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO.toString())
@@ -67,7 +67,7 @@ class AlbumLoader(context: Context, selection: String, selectionArgs: Array<out 
         var allAlbumCoverPath = ""
 
         if (albums != null) {
-            while (albums.moveToFirst()) {
+            while (albums.moveToNext()) {
                 totalCount += albums.getInt(albums.getColumnIndex(COLUMN_COUNT))
             }
 
