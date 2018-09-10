@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
+import android.widget.Toast
 import com.matisse.R
 import com.matisse.R.id.*
 import com.matisse.entity.ConstValue
@@ -109,6 +110,7 @@ class ImageCropActivity : AppCompatActivity(), View.OnClickListener, CropImageVi
     }
 
     override fun onBitmapSaveSuccess(file: File) {
+        Toast.makeText(this, "Crop Success! " + file.absolutePath, Toast.LENGTH_SHORT).show()
         val intent = Intent()
         intent.putExtra(ConstValue.EXTRA_RESULT_BUNDLE, file.absolutePath)
         setResult(Activity.RESULT_OK, intent)

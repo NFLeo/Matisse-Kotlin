@@ -30,8 +30,8 @@ class SelectionSpec {
 
     var isCrop: Boolean = false                     // 裁剪
     var isCropSaveRectangle: Boolean = false        // 裁剪后的图片是否是矩形，否则跟随裁剪框的形状，只适用于圆形裁剪
-    var cropOutPutX: Int = 0                        // 裁剪保存宽度
-    var cropOutPutY: Int = 0                        // 裁剪保存高度
+    var cropOutPutX: Int = 300                      // 裁剪保存宽度
+    var cropOutPutY: Int = 300                      // 裁剪保存高度
     var cropFocusWidth: Int = 0                     // 焦点框的宽度
     var cropFocusHeight: Int = 0                    // 焦点框的高度
     var cropStyle = CropImageView.Style.RECTANGLE   // 裁剪框的形状
