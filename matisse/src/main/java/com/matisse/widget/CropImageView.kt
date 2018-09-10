@@ -21,7 +21,7 @@ import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
-class CropImageView: AppCompatImageView {
+class CropImageView : AppCompatImageView {
 
     //---------------- focus frame attributes start ------------//
     enum class Style {
@@ -30,52 +30,52 @@ class CropImageView: AppCompatImageView {
 
     private val styles = arrayOf(Style.RECTANGLE, Style.CIRCLE)
 
-    private var mMaskColor          = 0XAF000000   // dark
-    private var mBorderColor        = 0XAA808080   // focusFrame border color
-    private var mBorderWidth        = 1            // focusFrame border width
-    private var mFocusWidth         = 250          // focusFrame width
-    private var mFocusHeight        = 250          // focusFrame height
-    private var mDefaultStyleIndex  = 0            // default style
-    private var mStyle              = styles[mDefaultStyleIndex]
-    private val mBorderPaint        = Paint()
-    private val mFocusPath          = Path()
-    private val mFocusRect          = RectF()
+    private var mMaskColor = 0XAF000000     // dark
+    private var mBorderColor = 0XAA808080   // focusFrame border color
+    private var mBorderWidth = 1            // focusFrame border width
+    private var mFocusWidth = 250           // focusFrame width
+    private var mFocusHeight = 250          // focusFrame height
+    private var mDefaultStyleIndex = 0      // default style
+    private var mStyle = styles[mDefaultStyleIndex]
+    private val mBorderPaint = Paint()
+    private val mFocusPath = Path()
+    private val mFocusRect = RectF()
     //---------------- focus frame attributes end ------------//
 
     companion object {
-        const val MAX_SCALE           = 4F
-        const val NONE                = 0
-        const val DRAG                = 1
-        const val ZOOM                = 2
-        const val ROTATE              = 3
-        const val ZOOM_OR_ROTATE      = 4
-        const val SAVE_SUCCESS        = 1001
-        const val SAVE_ERROR          = 1002
+        const val MAX_SCALE = 4F
+        const val NONE = 0
+        const val DRAG = 1
+        const val ZOOM = 2
+        const val ROTATE = 3
+        const val ZOOM_OR_ROTATE = 4
+        const val SAVE_SUCCESS = 1001
+        const val SAVE_ERROR = 1002
 
-        var mHandler            = InnerHandler()
-        var mListener:OnBitmapSaveCompleteListener? = null
+        var mHandler = InnerHandler()
+        var mListener: OnBitmapSaveCompleteListener? = null
     }
 
-    private var mImageWidth         = 0
-    private var mImageHeight        = 0
-    private var mRotatedImageWidth  = 0
-    private var mRotatedImageHeight = 0
-    private var mMatrix             = Matrix()      // matrix when image is changing
-    private var savedMatrix         = Matrix()      // matrix when image is stated
-    private var pA                  = PointF()      // pointF of first finger
-    private var pB                  = PointF()      // pointF of second finger
-    private var midPoint            = PointF()      // middle pointF of two fingers
-    private var doubleClickPos      = PointF()      // pointF of double click
-    private var mFocusMidPoint      = PointF()      // middle pointF of focus frame view
+    private var mImageWidth: Int = 0
+    private var mImageHeight: Int = 0
+    private var mRotatedImageWidth: Int = 0
+    private var mRotatedImageHeight: Int = 0
+    private var mMatrix = Matrix()           // matrix when image is changing
+    private var savedMatrix = Matrix()       // matrix when image is stated
+    private var pA = PointF()                // pointF of first finger
+    private var pB = PointF()                // pointF of second finger
+    private var midPoint = PointF()          // middle pointF of two fingers
+    private var doubleClickPos = PointF()    // pointF of double click
+    private var mFocusMidPoint = PointF()    // middle pointF of focus frame view
 
-    private var mode                = NONE          // init gesture mode
-    private var doubleClickTime     = 0L            // next double click time
-    private var mRotation:Double    = 0.0            // angle of finger rotation (is not integer multiple of 90)
-    private var oldDist             = 1F            // first distance of two fingers
-    private var sumRotationLevel    = 0             // angle of rotation (is integer multiple of 90)
-    private var mMaxScale           = MAX_SCALE     // get max scale from different images
-    private var isInitSize          = false         // is init by onSizeChanged
-    private var mSaving             = false         // is saving
+    private var mode = NONE                  // init gesture mode
+    private var doubleClickTime = 0L         // next double click time
+    private var mRotation: Double = 0.0      // angle of finger rotation (is not integer multiple of 90)
+    private var oldDist = 1F                 // first distance of two fingers
+    private var sumRotationLevel = 0         // angle of rotation (is integer multiple of 90)
+    private var mMaxScale = MAX_SCALE        // get max scale from different images
+    private var isInitSize = false           // is init by onSizeChanged
+    private var mSaving = false              // is saving
 
     constructor(context: Context?) : this(context, null, 0)
     constructor(context: Context?, attrs: AttributeSet?) : this(context, attrs, 0)
@@ -170,7 +170,7 @@ class CropImageView: AppCompatImageView {
         val fitViewScale = getScale(mImageWidth, mImageHeight, viewWidth, viewHeight, false)
 
         // make sure the final scale rate fit focus view priority
-        val scale = Math.max(fitViewScale, fitFocusScale).toFloat()
+        val scale = Math.max(fitViewScale, fitFocusScale)
         // scale with the center of image center Point
         mMatrix.setScale(scale, scale, mImageWidth / 2f, mImageHeight / 2f)
         val mImageMatrixValues = FloatArray(9)
@@ -185,25 +185,26 @@ class CropImageView: AppCompatImageView {
 
     // calculate boundary scale rate
     private fun getScale(bitmapWidth: Int, bitmapHeight: Int, minWidth: Int, minHeight: Int, isMinScale: Boolean): Float {
-        val scaleX = minWidth / bitmapWidth.toFloat()
-        val scaleY = minHeight / bitmapHeight.toFloat()
-        return if (isMinScale) Math.max(scaleX, scaleY)
-        else Math.min(scaleX, scaleY)
+
+        val scale: Float
+        val scaleX = minWidth.toFloat() / bitmapWidth
+        val scaleY = minHeight.toFloat() / bitmapHeight
+        scale = if (isMinScale) {
+            if (scaleX > scaleY) scaleX else scaleY
+        } else {
+            if (scaleX < scaleY) scaleX else scaleY
+        }
+        return scale
     }
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
         canvas?.apply {
-            when (mStyle) {
-                Style.CIRCLE -> {
-                    val radius = Math.min((mFocusRect.right - mFocusRect.left) / 2,
-                            (mFocusRect.bottom - mFocusRect.top) / 2)
-                    mFocusPath.addCircle(mFocusMidPoint.x, mFocusMidPoint.y, radius, Path.Direction.CCW)
-                }
-
-                Style.RECTANGLE -> {
-                    mFocusPath.addRect(mFocusRect, Path.Direction.CCW)
-                }
+            if (Style.RECTANGLE == mStyle) {
+                mFocusPath.addRect(mFocusRect, Path.Direction.CCW)
+            } else if (Style.CIRCLE == mStyle) {
+                val radius = Math.min((mFocusRect.right - mFocusRect.left) / 2, (mFocusRect.bottom - mFocusRect.top) / 2)
+                mFocusPath.addCircle(mFocusMidPoint.x, mFocusMidPoint.y, radius, Path.Direction.CCW)
             }
 
             save()
@@ -233,7 +234,7 @@ class CropImageView: AppCompatImageView {
         }
 
         when (event?.action!! and MotionEvent.ACTION_MASK) {
-            // one point press down
+        // one point press down
             MotionEvent.ACTION_DOWN -> {
                 savedMatrix.set(mMatrix)
                 pA.set(event.x, event.y)
@@ -241,9 +242,10 @@ class CropImageView: AppCompatImageView {
                 mode = DRAG
             }
 
-            // next point press down
+        // next point press down
             MotionEvent.ACTION_POINTER_DOWN -> {
                 if (event.actionIndex <= 1) {
+
                     pA.set(event.getX(0), event.getY(0))
                     pB.set(event.getX(1), event.getY(1))
                     midPoint.set((pA.x + pB.x) / 2, (pA.y + pB.y) / 2)
@@ -271,98 +273,86 @@ class CropImageView: AppCompatImageView {
             val a = spacing(pB.x, pB.y, pC.x, pC.y).toDouble()
             val b = spacing(pA.x, pA.y, pC.x, pC.y).toDouble()
             val c = spacing(pA.x, pA.y, pB.x, pB.y).toDouble()
-
             if (a >= 10) {
                 val cosB = (a * a + c * c - b * b) / (2.0 * a * c)
                 val angleB = Math.acos(cosB)
                 val pid4 = Math.PI / 4
                 //旋转时，默认角度在 45 - 135 度之间
-                mode = if (angleB > pid4 && angleB < 3 * pid4)
-                    ROTATE else ZOOM
+                if (angleB > pid4 && angleB < 3 * pid4)
+                    mode = ROTATE
+                else
+                    mode = ZOOM
             }
         }
-
-        when (mode) {
-
-            DRAG -> {
+        if (mode == DRAG) {
+            mMatrix.set(savedMatrix)
+            mMatrix.postTranslate(event.x - pA.x, event.y - pA.y)
+            fixTranslation()
+            imageMatrix = mMatrix
+        } else if (mode == ZOOM) {
+            val newDist = spacing(event.getX(0), event.getY(0),
+                    event.getX(1), event.getY(1))
+            if (newDist > 10f) {
                 mMatrix.set(savedMatrix)
-                mMatrix.postTranslate(event.x - pA.x, event.y - pA.y)
-                fixTranslation()
+                // 这里之所以用 maxPostScale 矫正一下，主要是防止缩放到最大时，继续缩放图片会产生位移
+                val tScale = Math.min(newDist / oldDist, maxPostScale())
+                if (tScale != 0f) {
+                    mMatrix.postScale(tScale, tScale, midPoint.x, midPoint.y)
+                    fixScale()
+                    fixTranslation()
+                    imageMatrix = mMatrix
+                }
+            }
+        } else if (mode == ROTATE) {
+            val pC = PointF(event.getX(1) - event.getX(0) + pA.x,
+                    event.getY(1) - event.getY(0) + pA.y)
+            val a = spacing(pB.x, pB.y, pC.x, pC.y).toDouble()
+            val b = spacing(pA.x, pA.y, pC.x, pC.y).toDouble()
+            val c = spacing(pA.x, pA.y, pB.x, pB.y).toDouble()
+            if (b > 10) {
+                val cosA = (b * b + c * c - a * a) / (2.0 * b * c)
+                var angleA = Math.acos(cosA)
+                val ta = (pB.y - pA.y).toDouble()
+                val tb = (pA.x - pB.x).toDouble()
+                val tc = (pB.x * pA.y - pA.x * pB.y).toDouble()
+                val td = ta * pC.x + tb * pC.y + tc
+                if (td > 0) {
+                    angleA = 2 * Math.PI - angleA
+                }
+                mRotation = angleA
+                mMatrix.set(savedMatrix)
+                mMatrix.postRotate((mRotation * 180 / Math.PI).toFloat(), midPoint.x, midPoint.y)
                 imageMatrix = mMatrix
-            }
-
-            ZOOM -> {
-                val newDist = spacing(event.getX(0), event.getY(0),
-                        event.getX(1), event.getY(1))
-
-                if (newDist > 10f) {
-                    mMatrix.set(savedMatrix)
-                    val fScale = Math.min(newDist / oldDist, maxPostScale())
-                    if (fScale != 0f) {
-                        mMatrix.postScale(fScale, fScale, midPoint.x, midPoint.y)
-                        fixScale()
-                        fixTranslation()
-                        imageMatrix = mMatrix
-                    }
-                }
-            }
-
-            ROTATE -> {
-                val pC = PointF(event.getX(1) - event.getX(0) + pA.x, event.getY(1) - event.getY(0) + pA.y)
-                val a = spacing(pB.x, pB.y, pC.x, pC.y).toDouble()
-                val b = spacing(pA.x, pA.y, pC.x, pC.y).toDouble()
-                val c = spacing(pA.x, pA.y, pB.x, pB.y).toDouble()
-                if (b > 10) {
-                    val cosA = (b * b + c * c - a * a) / (2.0 * b * c)
-                    var angleA = Math.acos(cosA)
-                    val ta = (pB.y - pA.y).toDouble()
-                    val tb = (pA.x - pB.x).toDouble()
-                    val tc = (pB.x * pA.y - pA.x * pB.y).toDouble()
-                    val td = ta * pC.x + tb * pC.y + tc
-                    if (td > 0) {
-                        angleA = 2 * Math.PI - angleA
-                    }
-                    mRotation = angleA
-                    matrix.set(savedMatrix)
-                    matrix.postRotate((mRotation * 180 / Math.PI).toFloat(), midPoint.x, midPoint.y)
-                    imageMatrix = matrix
-                }
             }
         }
     }
 
     private fun handleActionUp() {
-        when (mode) {
-            DRAG -> {
-                if (spacing(pA, pB) < 50) {
-                    var now = System.currentTimeMillis()
-                    if (now - doubleClickTime < 500 && spacing(pA, doubleClickPos) < 50) {
-                        doubleClick(pA.x, pA.y)
-                        now = 0
-                    }
-
-                    doubleClickPos.set(pA)
-                    doubleClickTime = now
+        if (mode == DRAG) {
+            if (spacing(pA, pB) < 50) {
+                var now = System.currentTimeMillis()
+                if (now - doubleClickTime < 500 && spacing(pA, doubleClickPos) < 50) {
+                    doubleClick(pA.x, pA.y)
+                    now = 0
                 }
+                doubleClickPos.set(pA)
+                doubleClickTime = now
             }
-
-            ROTATE -> {
-                var rotateLevel = Math.floor((rotation + Math.PI / 4) / (Math.PI / 2)).toInt()
-                if (rotateLevel == 4) rotateLevel = 0
-                matrix.set(savedMatrix)
-                matrix.postRotate((90 * rotateLevel).toFloat(), midPoint.x, midPoint.y)
-                if (rotateLevel == 1 || rotateLevel == 3) {
-                    val tmp = mRotatedImageWidth
-                    mRotatedImageWidth = mRotatedImageHeight
-                    mRotatedImageHeight = tmp
-                }
-                fixScale()
-                fixTranslation()
-                imageMatrix = matrix
-                sumRotationLevel += rotateLevel
+        } else if (mode == ROTATE) {
+            var rotateLevel = Math.floor((mRotation + Math.PI / 4) / (Math.PI / 2)).toInt()
+            if (rotateLevel == 4) rotateLevel = 0
+            mMatrix.set(savedMatrix)
+            mMatrix.postRotate((90 * rotateLevel).toFloat(), midPoint.x, midPoint.y)
+            if (rotateLevel == 1 || rotateLevel == 3) {
+                val tmp = mRotatedImageWidth
+                mRotatedImageWidth = mRotatedImageHeight
+                mRotatedImageHeight = tmp
             }
+            fixScale()
+            fixTranslation()
+            imageMatrix = mMatrix
+            sumRotationLevel += rotateLevel
         }
-
         mode = NONE
     }
 
@@ -381,18 +371,18 @@ class CropImageView: AppCompatImageView {
         // get the area of image scale after
         mMatrix.mapRect(imageRect)
 
-        val deltaX = when {
-            imageRect.left > mFocusRect.left -> -imageRect.left + mFocusRect.right
-            imageRect.right < mFocusRect.right -> -imageRect.right + mFocusRect.right
-            else -> 0f
+        var deltaX = 0f
+        var deltaY = 0f
+        if (imageRect.left > mFocusRect.left) {
+            deltaX = -imageRect.left + mFocusRect.left
+        } else if (imageRect.right < mFocusRect.right) {
+            deltaX = -imageRect.right + mFocusRect.right
         }
-
-        val deltaY = when {
-            imageRect.top > mFocusRect.top -> -imageRect.top + mFocusRect.top
-            imageRect.bottom < mFocusRect.bottom -> -imageRect.bottom + mFocusRect.bottom
-            else -> 0f
+        if (imageRect.top > mFocusRect.top) {
+            deltaY = -imageRect.top + mFocusRect.top
+        } else if (imageRect.bottom < mFocusRect.bottom) {
+            deltaY = -imageRect.bottom + mFocusRect.bottom
         }
-
         mMatrix.postTranslate(deltaX, deltaY)
     }
 
@@ -414,7 +404,7 @@ class CropImageView: AppCompatImageView {
     }
 
     // get the max scale rate
-    private fun maxPostScale():Float {
+    private fun maxPostScale(): Float {
         val imageMatrixValues = FloatArray(9)
         mMatrix.getValues(imageMatrixValues)
         val curScale = Math.abs(imageMatrixValues[0]) + Math.abs(imageMatrixValues[1])
@@ -447,7 +437,7 @@ class CropImageView: AppCompatImageView {
             val saveFile = msg?.obj as File
             when (msg.what) {
                 SAVE_SUCCESS -> mListener!!.onBitmapSaveSuccess(saveFile)
-                SAVE_ERROR   -> mListener!!.onBitmapSaveError(saveFile)
+                SAVE_ERROR -> mListener!!.onBitmapSaveError(saveFile)
             }
         }
     }
@@ -464,7 +454,7 @@ class CropImageView: AppCompatImageView {
      * @param isSaveRectangle is save image as rectangle
      * @return bitmap after crop
      */
-    fun getCropBitmap(expectWidth: Int, exceptHeight: Int, isSaveRectangle: Boolean):Bitmap? {
+    fun getCropBitmap(expectWidth: Int, exceptHeight: Int, isSaveRectangle: Boolean): Bitmap? {
         if (expectWidth <= 0 || exceptHeight < 0) return null
         var srcBitmap = (drawable as BitmapDrawable).bitmap
         srcBitmap = rotate(srcBitmap, sumRotationLevel * 90f)
@@ -476,7 +466,7 @@ class CropImageView: AppCompatImageView {
      * @param bitmap target bitmap
      * @param degree rotate angle
      */
-    fun rotate(bitmap: Bitmap, degree: Float):Bitmap {
+    fun rotate(bitmap: Bitmap, degree: Float): Bitmap {
         if (degree != 0f) {
             val matrix = Matrix()
             matrix.setRotate(degree, bitmap.width / 2f, bitmap.height / 2f)

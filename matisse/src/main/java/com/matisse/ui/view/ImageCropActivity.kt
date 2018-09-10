@@ -9,18 +9,22 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.WindowManager
+import android.widget.TextView
 import com.matisse.R
+import com.matisse.R.id.*
 import com.matisse.entity.ConstValue
 import com.matisse.internal.entity.SelectionSpec
 import com.matisse.utils.BitmapUtils
 import com.matisse.utils.Platform
 import com.matisse.utils.UIUtils
 import com.matisse.widget.CropImageView
-import kotlinx.android.synthetic.main.activity_crop.*
-import kotlinx.android.synthetic.main.include_view_bottom.*
 import java.io.File
 
 class ImageCropActivity : AppCompatActivity(), View.OnClickListener, CropImageView.OnBitmapSaveCompleteListener {
+
+    private lateinit var btnPreview:TextView
+    private lateinit var btnApply:TextView
+    private lateinit var cropImageView: CropImageView
 
     private var mBitmap: Bitmap? = null
     private var mIsSaveRectangle: Boolean = false
@@ -45,13 +49,18 @@ class ImageCropActivity : AppCompatActivity(), View.OnClickListener, CropImageVi
     }
 
     private fun initView() {
-        button_preview.setOnClickListener {
+
+        btnPreview = findViewById(button_preview)
+        btnApply = findViewById(button_apply)
+        cropImageView = findViewById(cv_crop_image)
+
+        btnPreview.setOnClickListener {
             setResult(Activity.RESULT_CANCELED)
             finish()
         }
 
-        button_apply.text = getString(R.string.button_ok)
-        button_apply.setOnClickListener(this)
+        btnApply.text = getString(R.string.button_ok)
+        btnApply.setOnClickListener(this)
     }
 
     private fun initCropFun() {
@@ -68,10 +77,10 @@ class ImageCropActivity : AppCompatActivity(), View.OnClickListener, CropImageVi
         val cropHeight = if (mSpec.cropFocusHeight in 1..(cropFocusNormalHeight - 1))
             mSpec.cropFocusHeight else cropFocusNormalHeight
 
-        cv_crop_image.setFocusStyle(mSpec.cropStyle)
-        cv_crop_image.setFocusWidth(cropWidth)
-        cv_crop_image.setFocusHeight(cropHeight)
-        cv_crop_image.setOnBitmapSaveCompleteListener(this)
+        cropImageView.setFocusStyle(mSpec.cropStyle)
+        cropImageView.setFocusWidth(cropWidth)
+        cropImageView.setFocusHeight(cropHeight)
+        cropImageView.setOnBitmapSaveCompleteListener(this)
 
         //缩放图片
         val options = BitmapFactory.Options()
@@ -82,7 +91,7 @@ class ImageCropActivity : AppCompatActivity(), View.OnClickListener, CropImageVi
         options.inJustDecodeBounds = false
         mBitmap = BitmapFactory.decodeFile(imagePath, options)
         //设置默认旋转角度
-        cv_crop_image.setImageBitmap(cv_crop_image.rotate(mBitmap!!, BitmapUtils.getBitmapDegree(imagePath).toFloat()))
+        cropImageView.setImageBitmap(cropImageView.rotate(mBitmap!!, BitmapUtils.getBitmapDegree(imagePath).toFloat()))
     }
 
     private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
@@ -110,7 +119,7 @@ class ImageCropActivity : AppCompatActivity(), View.OnClickListener, CropImageVi
 
     override fun onClick(v: View?) {
         when (v) {
-            button_apply -> cv_crop_image.saveBitmapToFile(getCropCacheFolder(this), mOutputX, mOutputY, mIsSaveRectangle)
+            btnApply -> cropImageView.saveBitmapToFile(getCropCacheFolder(this), mOutputX, mOutputY, mIsSaveRectangle)
         }
     }
 
@@ -120,7 +129,7 @@ class ImageCropActivity : AppCompatActivity(), View.OnClickListener, CropImageVi
 
     override fun onDestroy() {
         super.onDestroy()
-        cv_crop_image.setOnBitmapSaveCompleteListener(null)
+        cropImageView.setOnBitmapSaveCompleteListener(null)
         if (null != mBitmap && !mBitmap?.isRecycled!!) {
             mBitmap?.recycle()
             mBitmap = null

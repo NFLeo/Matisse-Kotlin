@@ -10,7 +10,6 @@ import android.view.View
 import com.matisse.R
 import com.matisse.R.id.container
 import com.matisse.entity.ConstValue
-import com.matisse.entity.ConstValue.EXTRA_RESULT_SELECTION_PATH
 import com.matisse.entity.Item
 import com.matisse.internal.entity.Album
 import com.matisse.model.AlbumCallbacks
