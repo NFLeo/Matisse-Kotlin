@@ -43,14 +43,14 @@ class CropImageView: AppCompatImageView {
     //---------------- focus frame attributes end ------------//
 
     companion object {
-        val MAX_SCALE           = 4F
-        val NONE                = 0
-        val DRAG                = 1
-        val ZOOM                = 2
-        val ROTATE              = 3
-        val ZOOM_OR_ROTATE      = 4
-        val SAVE_SUCCESS        = 1001
-        val SAVE_ERROR          = 1002
+        const val MAX_SCALE           = 4F
+        const val NONE                = 0
+        const val DRAG                = 1
+        const val ZOOM                = 2
+        const val ROTATE              = 3
+        const val ZOOM_OR_ROTATE      = 4
+        const val SAVE_SUCCESS        = 1001
+        const val SAVE_ERROR          = 1002
 
         var mHandler            = InnerHandler()
         var mListener:OnBitmapSaveCompleteListener? = null
@@ -70,7 +70,7 @@ class CropImageView: AppCompatImageView {
 
     private var mode                = NONE          // init gesture mode
     private var doubleClickTime     = 0L            // next double click time
-    private var mRatation            = 0F            // angle of finger rotation (is not integer multiple of 90)
+    private var mRotation:Double    = 0.0            // angle of finger rotation (is not integer multiple of 90)
     private var oldDist             = 1F            // first distance of two fingers
     private var sumRotationLevel    = 0             // angle of rotation (is integer multiple of 90)
     private var mMaxScale           = MAX_SCALE     // get max scale from different images
@@ -184,9 +184,9 @@ class CropImageView: AppCompatImageView {
     }
 
     // calculate boundary scale rate
-    private fun getScale(bitmapWidth: Int, bitmapHeight: Int, minWidth: Int, minHeight: Int, isMinScale: Boolean): Int {
-        val scaleX = minWidth / bitmapWidth
-        val scaleY = minHeight / bitmapHeight
+    private fun getScale(bitmapWidth: Int, bitmapHeight: Int, minWidth: Int, minHeight: Int, isMinScale: Boolean): Float {
+        val scaleX = minWidth / bitmapWidth.toFloat()
+        val scaleY = minHeight / bitmapHeight.toFloat()
         return if (isMinScale) Math.max(scaleX, scaleY)
         else Math.min(scaleX, scaleY)
     }
@@ -268,9 +268,9 @@ class CropImageView: AppCompatImageView {
         if (mode == ZOOM_OR_ROTATE) {
             val pC = PointF(event.getX(1) - event.getX(0) + pA.x,
                     event.getY(1) - event.getY(0) + pA.y)
-            val a = spacing(pB.x.toDouble(), pB.y, pC.x, pC.y).toDouble()
-            val b = spacing(pA.x.toDouble(), pA.y, pC.x, pC.y).toDouble()
-            val c = spacing(pA.x.toDouble(), pA.y, pB.x, pB.y).toDouble()
+            val a = spacing(pB.x, pB.y, pC.x, pC.y).toDouble()
+            val b = spacing(pA.x, pA.y, pC.x, pC.y).toDouble()
+            val c = spacing(pA.x, pA.y, pB.x, pB.y).toDouble()
 
             if (a >= 10) {
                 val cosB = (a * a + c * c - b * b) / (2.0 * a * c)
@@ -292,7 +292,7 @@ class CropImageView: AppCompatImageView {
             }
 
             ZOOM -> {
-                val newDist = spacing(event.getX(0).toDouble(), event.getY(0),
+                val newDist = spacing(event.getX(0), event.getY(0),
                         event.getX(1), event.getY(1))
 
                 if (newDist > 10f) {
@@ -309,9 +309,9 @@ class CropImageView: AppCompatImageView {
 
             ROTATE -> {
                 val pC = PointF(event.getX(1) - event.getX(0) + pA.x, event.getY(1) - event.getY(0) + pA.y)
-                val a = spacing(pB.x.toDouble(), pB.y, pC.x, pC.y).toDouble()
-                val b = spacing(pA.x.toDouble(), pA.y, pC.x, pC.y).toDouble()
-                val c = spacing(pA.x.toDouble(), pA.y, pB.x, pB.y).toDouble()
+                val a = spacing(pB.x, pB.y, pC.x, pC.y).toDouble()
+                val b = spacing(pA.x, pA.y, pC.x, pC.y).toDouble()
+                val c = spacing(pA.x, pA.y, pB.x, pB.y).toDouble()
                 if (b > 10) {
                     val cosA = (b * b + c * c - a * a) / (2.0 * b * c)
                     var angleA = Math.acos(cosA)
@@ -322,9 +322,9 @@ class CropImageView: AppCompatImageView {
                     if (td > 0) {
                         angleA = 2 * Math.PI - angleA
                     }
-                    mRatation = angleA.toFloat()
+                    mRotation = angleA
                     matrix.set(savedMatrix)
-                    matrix.postRotate((mRatation * 180 / Math.PI).toFloat(), midPoint.x, midPoint.y)
+                    matrix.postRotate((mRotation * 180 / Math.PI).toFloat(), midPoint.x, midPoint.y)
                     imageMatrix = matrix
                 }
             }
@@ -367,12 +367,12 @@ class CropImageView: AppCompatImageView {
     }
 
     // get distance between two points
-    private fun spacing(pA: PointF, pB: PointF) = spacing(pA.x.toDouble(), pA.y, pB.x, pB.y)
+    private fun spacing(pA: PointF, pB: PointF) = spacing(pA.x, pA.y, pB.x, pB.y)
 
-    private fun spacing(x1: Double, y1: Float, x2: Float, y2: Float): Float {
+    private fun spacing(x1: Float, y1: Float, x2: Float, y2: Float): Float {
         val x = x1 - x2
         val y = y1 - y2
-        return Math.sqrt(x * x + y * y).toFloat()
+        return Math.sqrt((x * x + y * y).toDouble()).toFloat()
     }
 
     // fix translation of image
@@ -400,7 +400,7 @@ class CropImageView: AppCompatImageView {
     private fun fixScale() {
         val imageMatrixValues = FloatArray(9)
         mMatrix.getValues(imageMatrixValues)
-        val currentScale = Math.abs(imageMatrixValues[0] + Math.abs(imageMatrixValues[1]))
+        val currentScale = Math.abs(imageMatrixValues[0]) + Math.abs(imageMatrixValues[1])
         val minScale = getScale(mRotatedImageWidth, mRotatedImageHeight, mFocusWidth, mFocusHeight, true)
         mMaxScale = minScale * MAX_SCALE
 
