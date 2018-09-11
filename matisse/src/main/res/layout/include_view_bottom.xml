@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/bottom_toolbar"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_alignParentBottom="true"
@@ -17,6 +18,36 @@
         android:text="@string/button_preview"
         android:textColor="@color/selector_preview_text"
         android:textSize="16sp" />
+
+    <LinearLayout
+        android:id="@+id/originalLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:visibility="visible"
+        tools:showIn="@layout/activity_matisse">
+
+
+        <com.zhihu.matisse.internal.ui.widget.CheckRadioView
+            android:id="@+id/original"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_preview_radio_off" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:enabled="true"
+            android:paddingLeft="4dp"
+            android:paddingStart="4dp"
+            android:text="@string/button_original"
+            android:textSize="14sp" />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/button_apply"

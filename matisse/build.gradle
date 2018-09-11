@@ -21,17 +21,21 @@ android {
 
 }
 
-ext.supportLibVersion = '27.1.1'
+androidExtensions {
+    experimental = true
+}
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "com.android.support:appcompat-v7:${supportLibVersion}"
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${versions.kotlin}"
+    implementation "com.android.support:appcompat-v7:${versions.support_library}"
+    implementation "com.github.bumptech.glide:glide:${versions.glide}"
     implementation 'com.github.bumptech.glide:glide:3.7.0'
-    implementation "com.android.support:recyclerview-v7:${supportLibVersion}"
+    implementation "com.android.support:recyclerview-v7:${versions.support_library}"
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
 }

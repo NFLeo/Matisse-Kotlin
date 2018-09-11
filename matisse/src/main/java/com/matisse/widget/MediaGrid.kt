@@ -1,25 +1,20 @@
 package com.matisse.widget
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.support.v7.widget.RecyclerView
 import android.text.format.DateUtils
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
-import android.widget.TextView
 import com.matisse.R
 import com.matisse.entity.Item
-import com.matisse.entity.PreBindInfo
 import com.matisse.internal.entity.SelectionSpec
 import com.matisse.utils.UIUtils
+import kotlinx.android.synthetic.main.view_media_grid_content.view.*
 
 class MediaGrid : SquareFrameLayout, View.OnClickListener {
-
-    private var mThumbnail: ImageView
-    private var mCheckView: CheckView
-    private var mGifTag: ImageView
-    private var mVideoDuration: TextView
 
     private lateinit var mMedia: Item
     private lateinit var mPreBindInfo: PreBindInfo
@@ -30,20 +25,15 @@ class MediaGrid : SquareFrameLayout, View.OnClickListener {
     constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
         LayoutInflater.from(context).inflate(R.layout.view_media_grid_content, this, true)
 
-        mThumbnail = findViewById(R.id.media_thumbnail)
-        mCheckView = findViewById(R.id.check_view)
-        mGifTag = findViewById(R.id.gif)
-        mVideoDuration = findViewById(R.id.video_duration)
-
-        mThumbnail.setOnClickListener(this)
-        mCheckView.setOnClickListener(this)
+        media_thumbnail.setOnClickListener(this)
+        check_view.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
 
         when (v) {
-            mThumbnail -> mListener.onThumbnailClicked(mThumbnail, mMedia, mPreBindInfo.mViewHolder)
-            mCheckView -> mListener.onCheckViewClicked(mCheckView, mMedia, mPreBindInfo.mViewHolder)
+            media_thumbnail -> mListener.onThumbnailClicked(media_thumbnail, mMedia, mPreBindInfo.mViewHolder)
+            check_view -> mListener.onCheckViewClicked(check_view, mMedia, mPreBindInfo.mViewHolder)
         }
     }
 
@@ -65,41 +55,43 @@ class MediaGrid : SquareFrameLayout, View.OnClickListener {
     }
 
     private fun setGifTag() {
-        UIUtils.setViewVisible(mMedia.isGif(), mGifTag)
+        UIUtils.setViewVisible(mMedia.isGif(), gif)
     }
 
     private fun initCheckView() {
-        mCheckView.setCountable(mPreBindInfo.mCheckViewCountable)
+        check_view.setCountable(mPreBindInfo.mCheckViewCountable)
     }
 
     fun setCheckEnabled(enabled: Boolean) {
-        mCheckView.isEnabled = enabled
+        check_view.isEnabled = enabled
     }
 
     fun setCheckedNum(checkedNum: Int) {
-        mCheckView.setCheckedNum(checkedNum)
+        check_view.setCheckedNum(checkedNum)
     }
 
     fun setChecked(checked: Boolean) {
-        mCheckView.setChecked(checked)
+        check_view.setChecked(checked)
     }
 
     private fun setImage() {
         if (mMedia.isGif()) {
             SelectionSpec.getInstance().imageEngine.loadGifThumbnail(context, mPreBindInfo.mResize,
-                    mPreBindInfo.mPlaceholder, mThumbnail, mMedia.getContentUri()!!)
+                    mPreBindInfo.mPlaceholder, media_thumbnail, mMedia.getContentUri())
         } else {
             SelectionSpec.getInstance().imageEngine.loadThumbnail(context, mPreBindInfo.mResize,
-                    mPreBindInfo.mPlaceholder, mThumbnail, mMedia.getContentUri()!!)
+                    mPreBindInfo.mPlaceholder, media_thumbnail, mMedia.getContentUri())
         }
     }
 
     private fun setVideoDuration() {
         if (mMedia.isVideo()) {
-            UIUtils.setViewVisible(true, mVideoDuration)
-            mVideoDuration.text = DateUtils.formatElapsedTime(mMedia.duration / 1000)
+            UIUtils.setViewVisible(true, video_duration)
+            video_duration.text = DateUtils.formatElapsedTime(mMedia.duration / 1000)
         } else {
-            UIUtils.setViewVisible(false, mVideoDuration)
+            UIUtils.setViewVisible(false, video_duration)
         }
     }
+
+    class PreBindInfo(var mResize: Int, var mPlaceholder: Drawable, var mCheckViewCountable: Boolean, var mViewHolder: RecyclerView.ViewHolder)
 }

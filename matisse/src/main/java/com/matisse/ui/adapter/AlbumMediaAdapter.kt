@@ -13,7 +13,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.matisse.R
 import com.matisse.entity.Item
-import com.matisse.entity.PreBindInfo
 import com.matisse.internal.entity.Album
 import com.matisse.internal.entity.SelectionSpec
 import com.matisse.model.SelectedItemCollection
@@ -53,7 +52,6 @@ class AlbumMediaAdapter : RecyclerViewCursorAdapter<RecyclerView.ViewHolder>, Me
                         (it.context as OnPhotoCapture).capture()
                     }
                 }
-
                 return holder
             }
             else -> {
@@ -69,7 +67,7 @@ class AlbumMediaAdapter : RecyclerViewCursorAdapter<RecyclerView.ViewHolder>, Me
 
         } else if (holder is MediaViewHolder) {
             val item = Item.valueOf(cursor)
-            holder.mMediaGrid.preBindMedia(PreBindInfo(getImageResize(holder.mMediaGrid.context),
+            holder.mMediaGrid.preBindMedia(MediaGrid.PreBindInfo(getImageResize(holder.mMediaGrid.context),
                     mPlaceholder, mSelectionSpec.countable, holder))
             holder.mMediaGrid.bindMedia(item)
             holder.mMediaGrid.mListener = this
@@ -117,13 +115,12 @@ class AlbumMediaAdapter : RecyclerViewCursorAdapter<RecyclerView.ViewHolder>, Me
                 mediaGrid.setCheckEnabled(true)
                 mediaGrid.setChecked(true)
             } else {
-                mediaGrid.setChecked(false)
-
                 if (mSelectedCollection.maxSelectableReached()) {
                     mediaGrid.setCheckEnabled(false)
                 } else {
                     mediaGrid.setCheckEnabled(true)
                 }
+                mediaGrid.setChecked(false)
             }
         }
     }

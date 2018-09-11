@@ -1,10 +1,14 @@
 package com.matisse.internal.entity
 
+import android.support.annotation.StyleRes
 import com.matisse.MimeType
 import com.matisse.MimeTypeManager
 import com.matisse.engine.GlideEngine
 import com.matisse.engine.ImageEngine
+import com.matisse.entity.CaptureStrategy
 import com.matisse.filter.Filter
+import com.matisse.listener.OnCheckedListener
+import com.matisse.listener.OnSelectedListener
 import com.matisse.widget.CropImageView
 import java.io.File
 
@@ -16,7 +20,7 @@ class SelectionSpec {
     lateinit var mimeTypeSet: Set<MimeType>
     var mediaTypeExclusive: Boolean = false
     var showSingleMediaType: Boolean = false
-    lateinit var filters: List<Filter>
+    var filters: List<Filter>? = null
     var maxSelectable: Int = 0
     var maxImageSelectable: Int = 0
     var maxVideoSelectable: Int = 0
@@ -25,8 +29,15 @@ class SelectionSpec {
     var capture: Boolean = false
     var gridExpectedSize: Int = 0
     var spanCount: Int = 3
-
+    var captureStrategy: CaptureStrategy? = null
+    @StyleRes
+    var themeId: Int = 0
+    var orientation: Int = 0
+    var originalable: Boolean = false
+    var originalMaxSize: Int = 0
     var imageEngine: ImageEngine = GlideEngine()
+    var onSelectedListener: OnSelectedListener? = null
+    var onCheckedListener: OnCheckedListener? = null
 
     var isCrop: Boolean = false                     // 裁剪
     var isCropSaveRectangle: Boolean = false        // 裁剪后的图片是否是矩形，否则跟随裁剪框的形状，只适用于圆形裁剪
@@ -46,11 +57,16 @@ class SelectionSpec {
     companion object {
         fun getInstance() = InstanceHolder.INSTANCE
 
-        fun getCleanInstance() = {
+        fun getCleanInstance(): SelectionSpec {
             val selectionSpec = getInstance()
             selectionSpec.reset()
-            selectionSpec
+            return selectionSpec
         }
+
+    }
+
+    fun singleSelectionModeEnabled(): Boolean {
+        return !countable && (maxSelectable == 1 || maxImageSelectable == 1 && maxVideoSelectable == 1)
     }
 
     private fun reset() {

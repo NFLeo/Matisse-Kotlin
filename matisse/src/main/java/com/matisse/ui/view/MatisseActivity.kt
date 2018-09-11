@@ -12,22 +12,39 @@ import com.matisse.R.id.container
 import com.matisse.entity.ConstValue
 import com.matisse.entity.Item
 import com.matisse.internal.entity.Album
+import com.matisse.internal.entity.SelectionSpec
 import com.matisse.model.AlbumCallbacks
 import com.matisse.model.AlbumCollection
 import com.matisse.model.SelectedItemCollection
 import com.matisse.ui.adapter.AlbumMediaAdapter
 import com.matisse.utils.PathUtils
+import com.matisse.utils.PhotoMetadataUtils
 import com.matisse.utils.UIUtils
+import com.matisse.widget.IncapableDialog
 import kotlinx.android.synthetic.main.include_view_bottom.*
 
-class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionProvider, AlbumMediaAdapter.OnMediaClickListener, View.OnClickListener {
+class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionProvider, AlbumMediaAdapter.CheckStateListener, AlbumMediaAdapter.OnMediaClickListener, View.OnClickListener {
+    companion object {
 
+        val EXTRA_RESULT_SELECTION = "extra_result_selection"
+        val EXTRA_RESULT_SELECTION_PATH = "extra_result_selection_path"
+        val EXTRA_RESULT_ORIGINAL_ENABLE = "extra_result_original_enable"
+        private val REQUEST_CODE_PREVIEW = 23
+        private val REQUEST_CODE_CAPTURE = 24
+        val CHECK_STATE = "checkState"
+
+    }
+
+    private var mSpec: SelectionSpec? = null
+    private var mOriginalEnable: Boolean = false
     private val mAlbumCollection = AlbumCollection()
     private val mSelectedCollection = SelectedItemCollection(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_matisse)
+
+        mSpec = SelectionSpec.getInstance()
 
         mSelectedCollection.onCreate(savedInstanceState)
 
@@ -68,12 +85,79 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
         }
     }
 
+    override fun onUpdate() {
+        updateBottomToolbar()
+//
+        if (mSpec!!.onSelectedListener != null) {
+            mSpec!!.onSelectedListener?.onSelected(
+                    mSelectedCollection.asListOfUri(), mSelectedCollection.asListOfString())
+        }
+    }
+
+    private fun updateBottomToolbar() {
+
+        val selectedCount = mSelectedCollection.count()
+        if (selectedCount == 0) {
+            button_preview.isEnabled = false
+            button_apply.isEnabled = false
+            button_apply.text = getString(R.string.button_sure_default)
+        } else if (selectedCount == 1 && mSpec!!.singleSelectionModeEnabled()) {
+            button_preview.isEnabled = true
+            button_apply.setText(R.string.button_sure_default)
+            button_apply.isEnabled = true
+        } else {
+            button_preview.isEnabled = true
+            button_apply.isEnabled = true
+            button_apply.text = getString(R.string.button_sure, selectedCount)
+        }
+
+
+        if (mSpec!!.originalable) {
+            originalLayout.visibility = View.VISIBLE
+            updateOriginalState()
+        } else {
+            originalLayout.visibility = View.INVISIBLE
+        }
+
+    }
+
+    private fun updateOriginalState() {
+        original!!.setChecked(mOriginalEnable)
+        if (countOverMaxSize() > 0) {
+
+            if (mOriginalEnable) {
+                val incapableDialog = IncapableDialog.newInstance("",
+                        getString(R.string.error_over_original_size, mSpec!!.originalMaxSize))
+                incapableDialog.show(supportFragmentManager,
+                        IncapableDialog::class.java!!.getName())
+                original!!.setChecked(false)
+                mOriginalEnable = false
+            }
+        }
+    }
+
+    private fun countOverMaxSize(): Int {
+        var count = 0
+        val selectedCount = mSelectedCollection.count()
+        for (i in 0 until selectedCount) {
+            val item = mSelectedCollection.asList()[i]
+
+            if (item.isImage()) {
+                val size = PhotoMetadataUtils.getSizeInMB(item.size)
+                if (size > mSpec!!.originalMaxSize) {
+                    count++
+                }
+            }
+        }
+        return count
+    }
+
     override fun provideSelectedItemCollection() = mSelectedCollection
 
     override fun onMediaClick(album: Album?, item: Item, adapterPosition: Int) {
 
         val intentCrop = Intent(this, ImageCropActivity::class.java)
-        intentCrop.putExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH, PathUtils.getPath(this, item.getContentUri()!!))
+        intentCrop.putExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH, PathUtils.getPath(this, item.getContentUri()))
         startActivityForResult(intentCrop, ConstValue.REQUEST_CODE_CROP)
     }
 

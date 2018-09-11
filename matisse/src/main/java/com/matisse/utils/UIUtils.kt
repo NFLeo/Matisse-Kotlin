@@ -19,17 +19,17 @@ object UIUtils {
             return
 
         when (cause.mForm) {
-            IncapableCause.FORM.NONE -> {
+            IncapableCause.NONE -> {
                 // do nothing.
             }
-            IncapableCause.FORM.DIALOG -> {
+            IncapableCause.DIALOG -> {
                 // Show description with dialog
                 val incapableDialog = IncapableDialog.newInstance(cause.mTitle, cause.mMessage)
                 incapableDialog.show((context as FragmentActivity).supportFragmentManager,
                         IncapableDialog::class.java.name)
             }
         // default is TOAST
-            IncapableCause.FORM.TOAST -> Toast.makeText(context, cause.mMessage, Toast.LENGTH_SHORT).show()
+            IncapableCause.TOAST -> Toast.makeText(context, cause.mMessage, Toast.LENGTH_SHORT).show()
         }
     }
 
