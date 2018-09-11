@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        textview.setOnClickListener {
+        btn_media_store.setOnClickListener {
             Matisse.from(this@MainActivity)
                     .choose(ofAll(), false)
                     .countable(true)

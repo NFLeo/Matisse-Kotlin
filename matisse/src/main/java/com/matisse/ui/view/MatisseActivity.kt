@@ -1,7 +1,10 @@
 package com.matisse.ui.view
 
+import android.app.Activity
 import android.content.Intent
 import android.database.Cursor
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -17,6 +20,7 @@ import com.matisse.model.AlbumCallbacks
 import com.matisse.model.AlbumCollection
 import com.matisse.model.SelectedItemCollection
 import com.matisse.ui.adapter.AlbumMediaAdapter
+import com.matisse.utils.MediaStoreCompat
 import com.matisse.utils.PathUtils
 import com.matisse.utils.PhotoMetadataUtils
 import com.matisse.utils.UIUtils
@@ -35,6 +39,7 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
 
     }
 
+    private var mMediaStoreCompat: MediaStoreCompat? = null
     private var mSpec: SelectionSpec? = null
     private var mOriginalEnable: Boolean = false
     private val mAlbumCollection = AlbumCollection()
@@ -121,10 +126,63 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
 
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode != Activity.RESULT_OK)
+            return
+
+        if (requestCode == REQUEST_CODE_PREVIEW) {
+            val resultBundle = data.getBundleExtra(BasePreviewActivity.EXTRA_RESULT_BUNDLE)
+            val selected = resultBundle.getParcelableArrayList<Item>(SelectedItemCollection.STATE_SELECTION)
+            mOriginalEnable = data.getBooleanExtra(BasePreviewActivity.EXTRA_RESULT_ORIGINAL_ENABLE, false)
+            val collectionType = resultBundle.getInt(SelectedItemCollection.STATE_COLLECTION_TYPE,
+                    SelectedItemCollection.COLLECTION_UNDEFINED)
+            if (data.getBooleanExtra(BasePreviewActivity.EXTRA_RESULT_APPLY, false)) {
+                val result = Intent()
+                val selectedUris = ArrayList<Uri>()
+                val selectedPaths = ArrayList<String>()
+                if (selected != null) {
+                    for (item in selected) {
+                        selectedUris.add(item.getContentUri())
+                        selectedPaths.add(PathUtils.getPath(this, item.getContentUri())!!)
+                    }
+                }
+                result.putParcelableArrayListExtra(EXTRA_RESULT_SELECTION, selectedUris)
+                result.putStringArrayListExtra(EXTRA_RESULT_SELECTION_PATH, selectedPaths)
+                result.putExtra(EXTRA_RESULT_ORIGINAL_ENABLE, mOriginalEnable)
+                setResult(Activity.RESULT_OK, result)
+                finish()
+            } else {
+                mSelectedCollection.overwrite(selected, collectionType)
+                val mediaSelectionFragment = supportFragmentManager.findFragmentByTag(
+                        MediaSelectionFragment::class.java!!.getSimpleName())
+                if (mediaSelectionFragment is MediaSelectionFragment) {
+                    mediaSelectionFragment.refreshMediaGrid()
+                }
+                updateBottomToolbar()
+            }
+        } else if (requestCode == REQUEST_CODE_CAPTURE) {
+            // Just pass the data back to previous calling Activity.
+            val contentUri = mMediaStoreCompat!!.getCurrentPhotoUri()
+            val path = mMediaStoreCompat!!.getCurrentPhotoPath()
+            val selected = ArrayList<Uri>()
+            selected.add(contentUri!!)
+            val selectedPath = ArrayList<String>()
+            selectedPath.add(path!!)
+            val result = Intent()
+            result.putParcelableArrayListExtra(EXTRA_RESULT_SELECTION, selected)
+            result.putStringArrayListExtra(EXTRA_RESULT_SELECTION_PATH, selectedPath)
+            setResult(Activity.RESULT_OK, result)
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
+                this@MatisseActivity.revokeUriPermission(contentUri,
+                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            finish()
+        }
+    }
+
     private fun updateOriginalState() {
         original!!.setChecked(mOriginalEnable)
         if (countOverMaxSize() > 0) {
-
             if (mOriginalEnable) {
                 val incapableDialog = IncapableDialog.newInstance("",
                         getString(R.string.error_over_original_size, mSpec!!.originalMaxSize))
