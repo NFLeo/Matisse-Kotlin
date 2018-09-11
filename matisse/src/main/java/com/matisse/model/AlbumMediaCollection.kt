@@ -69,4 +69,12 @@ class AlbumMediaCollection : LoaderManager.LoaderCallbacks<Cursor> {
 
         mCallbacks?.onAlbumReset()
     }
+
+
+    interface AlbumMediacallback {
+        fun onAlbumMediaLoad(cursor: Cursor)
+
+        fun onAlbumMediaReset()
+    }
+
 }

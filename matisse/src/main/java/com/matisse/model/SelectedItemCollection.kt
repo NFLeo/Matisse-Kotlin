@@ -58,7 +58,7 @@ class SelectedItemCollection {
         mItems.addAll(uris)
     }
 
-    fun onSaveInstanceState(outState: Bundle) {
+    fun onSaveInstanceState(outState: Bundle?) {
         outState.putParcelableArrayList(STATE_SELECTION, ArrayList(mItems))
         outState.putInt(STATE_COLLECTION_TYPE, mCollectionType)
     }
@@ -188,11 +188,11 @@ class SelectedItemCollection {
 
     fun isEmpty() = mItems.isEmpty()
 
-    fun isSelected(item: Item) = mItems.contains(item)
+    fun isSelected(item: Item?) = mItems.contains(item)
 
     fun count() = mItems.size
 
-    fun checkedNumOf(item: Item): Int {
+    fun checkedNumOf(item: Item?): Int {
         val index = ArrayList(mItems).indexOf(item)
         return if (index == -1) CheckView.UNCHECKED else index + 1
     }

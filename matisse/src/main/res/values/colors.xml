@@ -8,4 +8,8 @@
     <color name="color_title_press_text">#4D000000</color>
     <color name="color_hint_text">#424242</color>
 
+    <color name="preview_bottom_toolbar_bg">#CC000000</color>
+    <color name="preview_bottom_size">#61FFFFFF</color>
+
+
 </resources>
