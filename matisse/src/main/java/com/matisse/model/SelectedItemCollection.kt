@@ -58,7 +58,7 @@ class SelectedItemCollection {
         mItems.addAll(uris)
     }
 
-    fun onSaveInstanceState(outState: Bundle?) {
+    fun onSaveInstanceState(outState: Bundle) {
         outState.putParcelableArrayList(STATE_SELECTION, ArrayList(mItems))
         outState.putInt(STATE_COLLECTION_TYPE, mCollectionType)
     }

@@ -1,4 +1,4 @@
-package com.zhihu.matisse.internal.ui.widget
+package com.matisse.widget
 
 import android.content.Context
 import android.graphics.PorterDuff

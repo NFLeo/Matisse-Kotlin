@@ -43,7 +43,7 @@
             tools:visibility="visible">
 
 
-            <com.zhihu.matisse.internal.ui.widget.CheckRadioView
+            <com.matisse.widget.CheckRadioView
                 android:id="@+id/original"
                 android:layout_width="16dp"
                 android:layout_height="16dp"

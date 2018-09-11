@@ -1,5 +1,6 @@
 package com.matisse.internal.entity
 
+import android.content.pm.ActivityInfo
 import android.support.annotation.StyleRes
 import com.matisse.MimeType
 import com.matisse.MimeTypeManager
@@ -48,6 +49,8 @@ class SelectionSpec {
     var cropStyle = CropImageView.Style.RECTANGLE   // 裁剪框的形状
     var cropCacheFolder: File? = null               // 裁剪后文件保存路径
 
+    val hasInited: Boolean = false
+
     class InstanceHolder {
         companion object {
             val INSTANCE: SelectionSpec = SelectionSpec()
@@ -88,4 +91,7 @@ class SelectionSpec {
     fun onlyShowVideos(): Boolean {
         return showSingleMediaType && MimeTypeManager.ofVideo().containsAll(mimeTypeSet)
     }
+
+    fun needOrientationRestriction() = orientation != ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+
 }

@@ -1,12 +1,15 @@
 package com.matisse.utils
 
+import android.app.Activity
 import android.content.ContentResolver
 import android.content.Context
 import android.database.Cursor
 import android.graphics.BitmapFactory
 import android.graphics.Point
+import android.media.ExifInterface
 import android.net.Uri
 import android.provider.MediaStore
+import android.util.DisplayMetrics
 import android.util.Log
 import com.matisse.MimeTypeManager
 import com.matisse.R
@@ -24,9 +27,11 @@ import java.util.*
  * Created by Leo on 2018/8/29 on 15:24.
  */
 object PhotoMetadataUtils {
-    private val SCHEME_CONTENT = "content"
 
     private val TAG = PhotoMetadataUtils::class.java.simpleName
+    private val MAX_WIDTH = 1600
+    private val SCHEME_CONTENT = "content"
+
 
     fun getPath(resolver: ContentResolver, uri: Uri): String? {
         if (SCHEME_CONTENT == uri.scheme) {
@@ -105,5 +110,64 @@ object PhotoMetadataUtils {
         Log.e(TAG, "getSizeInMB: $result")
         result = result.replace(",".toRegex(), ".") // in some case , 0.0 will be 0,0
         return java.lang.Float.valueOf(result)
+    }
+
+    fun getBitmapSize(uri: Uri?, activity: Activity?): Point {
+        val resolver = activity!!.contentResolver
+        var imageSize = getBitmapBounds(resolver, uri!!)
+        var w = imageSize.x
+        var h = imageSize.y
+        if (PhotoMetadataUtils.shouldRotate(resolver, uri)) {
+            w = imageSize.y
+            h = imageSize.x
+        }
+        if (h == 0) return Point(MAX_WIDTH, MAX_WIDTH)
+        var metrics: DisplayMetrics = DisplayMetrics()
+        activity.windowManager.defaultDisplay.getMetrics(metrics)
+        var screenWidth = metrics.widthPixels
+        var screenHeight = metrics.heightPixels
+        var widthScale = screenWidth / w
+        var heightScale = screenHeight / h
+        if (widthScale > heightScale) {
+            return Point((w * widthScale), (h * heightScale))
+        }
+
+        return Point((w * widthScale), (h * heightScale))
+
+    }
+
+    fun shouldRotate(resolver: ContentResolver, uri: Uri): Boolean {
+        var exif: ExifInterface? = null
+        try {
+            exif = ExifInterfaceCompat.newInstance(getPath(resolver, uri)!!)
+        } catch (e: IOException) {
+            Log.e(TAG, "could not read exif info of the image: $uri")
+            return false
+        }
+        var orientation = exif!!.getAttributeInt(ExifInterface.TAG_ORIENTATION, -1)
+        return orientation == ExifInterface.ORIENTATION_ROTATE_90
+                || orientation == ExifInterface.ORIENTATION_ROTATE_270
+    }
+
+    fun getBitmapBounds(resolver: ContentResolver?, uri: Uri): Point {
+        var inStream: InputStream? = null
+        try {
+            var options = BitmapFactory.Options()
+            options.inJustDecodeBounds = true
+            inStream = resolver!!.openInputStream(uri)
+            BitmapFactory.decodeStream(inStream, null, options)
+            val width = options.outWidth
+            val height = options.outHeight
+            return Point(width, height)
+        } catch (e: FileNotFoundException) {
+            return Point(0, 0)
+        } finally {
+            inStream == null ?: try {
+                inStream!!.close()
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }
+
     }
 }

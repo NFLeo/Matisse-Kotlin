@@ -90,7 +90,7 @@ class Matisse private constructor(activity: Activity?, fragment: Fragment? = nul
          * @param activity Activity instance.
          * @return Matisse instance.
          */
-        fun from(activity: Activity): Matisse {
+        fun from(activity: Activity?): Matisse {
             return Matisse(activity)
         }
 

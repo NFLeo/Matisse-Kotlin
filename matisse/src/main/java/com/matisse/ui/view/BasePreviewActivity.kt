@@ -128,7 +128,7 @@ open class BasePreviewActivity : AppCompatActivity(),
                     mOriginal?.setColor(Color.WHITE)
                 }
 
-                mSpec?.onCheckListener?.onCheck(mOriginalEnable)
+                mSpec?.onCheckedListener?.onCheck(mOriginalEnable)
             }
 
             updateApplyButton()
@@ -153,7 +153,7 @@ open class BasePreviewActivity : AppCompatActivity(),
         return count
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         mSelectedCollection.onSaveInstanceState(outState)
         outState?.putBoolean("checkState", mOriginalEnable)
         super.onSaveInstanceState(outState)

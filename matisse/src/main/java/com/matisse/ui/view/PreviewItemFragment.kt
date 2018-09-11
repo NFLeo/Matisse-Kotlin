@@ -44,7 +44,7 @@ class PreviewItemFragment : Fragment() {
             videoPlayButton.visibility = View.VISIBLE
             videoPlayButton.setOnClickListener {
                 var intent = Intent(Intent.ACTION_VIEW)
-                intent.setDataAndType(item.uri, "video/*")
+                intent.setDataAndType(item.getContentUri(), "video/*")
                 if (intent.resolveActivity(activity!!.packageManager) != null) startActivity(intent) else Toast.makeText(context, R.string.error_no_video_activity, Toast.LENGTH_SHORT).show()
             }
         } else {

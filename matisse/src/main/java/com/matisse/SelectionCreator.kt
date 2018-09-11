@@ -305,9 +305,9 @@ internal constructor(private val mMatisse: Matisse, mimeTypes: Set<MimeType>, me
 
         val fragment = mMatisse.fragment
         if (fragment != null) {
-            fragment!!.startActivityForResult(intent, requestCode)
+            fragment.startActivityForResult(intent, requestCode)
         } else {
-            activity!!.startActivityForResult(intent, requestCode)
+            activity.startActivityForResult(intent, requestCode)
         }
     }
 
