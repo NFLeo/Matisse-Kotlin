@@ -27,6 +27,7 @@ class Item(var id: Long, var mimeType: String, var size: Long = 0, var duration:
         }
     }
 
+
     private var uri: Uri
 
     init {
@@ -78,17 +79,13 @@ class Item(var id: Long, var mimeType: String, var size: Long = 0, var duration:
         }
 
         val other = obj as Item?
-        return (id == other!!.id
-                && (mimeType != null && mimeType == other.mimeType || mimeType == null && other.mimeType == null)
-                && (uri != null && uri == other.uri || uri == null && other.uri == null)
-                && size == other.size
-                && duration == other.duration)
+        return ((id == other!!.id && (mimeType == other.mimeType)) && (uri == other.uri) && size == other.size && duration == other.duration)
     }
 
     override fun hashCode(): Int {
         var result = 1
         result = 31 * result + java.lang.Long.valueOf(id).hashCode()
-        if (mimeType != null) {
+        if (true) {
             result = 31 * result + mimeType.hashCode()
         }
         result = 31 * result + uri.hashCode()

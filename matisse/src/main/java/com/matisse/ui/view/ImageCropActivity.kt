@@ -91,8 +91,12 @@ class ImageCropActivity : AppCompatActivity(), View.OnClickListener, CropImageVi
         options.inSampleSize = calculateInSampleSize(options, displayMetrics.widthPixels, displayMetrics.heightPixels)
         options.inJustDecodeBounds = false
         mBitmap = BitmapFactory.decodeFile(imagePath, options)
-        //设置默认旋转角度
-        cropImageView.setImageBitmap(cropImageView.rotate(mBitmap!!, BitmapUtils.getBitmapDegree(imagePath).toFloat()))
+        mBitmap?.let {
+            val rotateBitmap = cropImageView.rotate(it, BitmapUtils.getBitmapDegree(imagePath).toFloat())
+            //设置默认旋转角度
+            cropImageView.setImageBitmap(rotateBitmap)
+        }
+
     }
 
     private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {

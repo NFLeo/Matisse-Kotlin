@@ -5,7 +5,7 @@ buildscript {
             'android_gradle' : '3.1.4',
             'kotlin'         : '1.2.61',
             'support_library': '27.1.1',
-            'glide': '3.7.0',
+            'glide': '4.7.1',
     ]
     repositories {
         google()

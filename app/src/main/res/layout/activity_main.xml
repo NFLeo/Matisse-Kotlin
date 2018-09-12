@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:text="媒体库"
         android:gravity="center"
+        android:foreground="?selectableItemBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

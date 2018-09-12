@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MatisseKotlin</string>
+    <string name="permission_request_denied">请求读写权限失败!</string>
 </resources>
