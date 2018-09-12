@@ -49,7 +49,7 @@ class SelectionSpec {
     var cropStyle = CropImageView.Style.RECTANGLE   // 裁剪框的形状
     var cropCacheFolder: File? = null               // 裁剪后文件保存路径
 
-    val hasInited: Boolean = false
+    var hasInited: Boolean = false
 
     class InstanceHolder {
         companion object {
@@ -74,6 +74,7 @@ class SelectionSpec {
 
     private fun reset() {
         imageEngine = GlideEngine()
+        hasInited = true
 
         isCrop = true
         isCropSaveRectangle = false

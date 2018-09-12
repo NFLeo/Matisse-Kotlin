@@ -13,4 +13,5 @@ object ConstValue {
     val REQUEST_CODE_PREVIEW = 23
     val REQUEST_CODE_CAPTURE = 24
     val REQUEST_CODE_CROP = 25
+    val REQUEST_CODE_CHOOSE = 23
 }

@@ -16,9 +16,11 @@
 package com.matisse
 
 import android.app.Activity
+import android.content.ContentValues
 import android.content.Intent
 import android.net.Uri
 import android.support.v4.app.Fragment
+import com.matisse.entity.ConstValue
 import com.matisse.ui.view.MatisseActivity
 import java.lang.ref.WeakReference
 
@@ -116,7 +118,7 @@ class Matisse private constructor(activity: Activity?, fragment: Fragment? = nul
          * @return User selected media' [Uri] list.
          */
         fun obtainResult(data: Intent): List<Uri> {
-            return data.getParcelableArrayListExtra(MatisseActivity.EXTRA_RESULT_SELECTION)
+            return data.getParcelableArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION)
         }
 
         /**
@@ -127,7 +129,7 @@ class Matisse private constructor(activity: Activity?, fragment: Fragment? = nul
          * @return User selected media path list.
          */
         fun obtainPathResult(data: Intent): List<String> {
-            return data.getStringArrayListExtra(MatisseActivity.EXTRA_RESULT_SELECTION_PATH)
+            return data.getStringArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH)
         }
 
         /**
@@ -138,7 +140,7 @@ class Matisse private constructor(activity: Activity?, fragment: Fragment? = nul
          * @return Whether use original photo
          */
         fun obtainOriginalState(data: Intent): Boolean {
-            return data.getBooleanExtra(MatisseActivity.EXTRA_RESULT_ORIGINAL_ENABLE, false)
+            return data.getBooleanExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, false)
         }
     }
 

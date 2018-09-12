@@ -8,10 +8,10 @@ import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.WindowManager
-import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.matisse.R
+import com.matisse.entity.ConstValue
 import com.matisse.entity.IncapableCause
 import com.matisse.entity.Item
 import com.matisse.internal.entity.SelectionSpec
@@ -28,13 +28,6 @@ import com.matisse.widget.IncapableDialog
  */
 open class BasePreviewActivity : AppCompatActivity(),
         View.OnClickListener, ViewPager.OnPageChangeListener {
-    companion object {
-        const val EXTRA_DEFAULT_BUNDLE = "extra_default_bundle"
-        const val EXTRA_RESULT_BUNDLE = "extra_result_bundle"
-        const val EXTRA_RESULT_APPLY = "extra_result_apply"
-        const val EXTRA_RESULT_ORIGINAL_ENABLE = "extra_result_original_enable"
-        const val CHECK_STATE = "checkState"
-    }
 
     val mSelectedCollection = SelectedItemCollection(this)
     var mSpec: SelectionSpec? = null
@@ -42,8 +35,8 @@ open class BasePreviewActivity : AppCompatActivity(),
 
     var mAdapter: PreviewPagerAdapter? = null
     var mCheckView: CheckView? = null
-    var mButtonBack: Button? = null
-    var mButtonApply: Button? = null
+    var mButtonBack: TextView? = null
+    var mButtonApply: TextView? = null
     var mSize: TextView? = null
 
     var mPreviousPos = -1
@@ -65,11 +58,11 @@ open class BasePreviewActivity : AppCompatActivity(),
             }
 
             mOriginalEnable = if (savedInstanceState == null) {
-                mSelectedCollection.onCreate(intent.getBundleExtra(EXTRA_DEFAULT_BUNDLE))
-                intent.getBooleanExtra(EXTRA_RESULT_ORIGINAL_ENABLE, false)
+                mSelectedCollection.onCreate(intent.getBundleExtra(ConstValue.EXTRA_DEFAULT_BUNDLE))
+                intent.getBooleanExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, false)
             } else {
                 mSelectedCollection.onCreate(savedInstanceState)
-                savedInstanceState.getBoolean(CHECK_STATE)
+                savedInstanceState.getBoolean(ConstValue.CHECK_STATE)
             }
 
             mButtonBack = findViewById(R.id.button_back)
@@ -113,9 +106,9 @@ open class BasePreviewActivity : AppCompatActivity(),
             mOriginalLayout = findViewById(R.id.originalLayout)
             mOriginal = findViewById(R.id.original)
             mOriginalLayout?.setOnClickListener {
-                var count = countOverMaxSize()
+                val count = countOverMaxSize()
                 if (count > 0) {
-                    var incapableDialog = IncapableDialog.newInstance("",
+                    val incapableDialog = IncapableDialog.newInstance("",
                             getString(R.string.error_over_original_count, count, mSpec!!.originalMaxSize))
                     incapableDialog.show(supportFragmentManager, IncapableDialog::class.java.simpleName)
                     return@setOnClickListener
@@ -140,11 +133,11 @@ open class BasePreviewActivity : AppCompatActivity(),
 
     private fun countOverMaxSize(): Int {
         var count = 0
-        var selectedCount = mSelectedCollection.count()
-        for (i in 0..selectedCount) {
-            var item: Item = mSelectedCollection.asList()[i]
+        val selectedCount = mSelectedCollection.count()
+        for (i in 0 until selectedCount) {
+            val item: Item = mSelectedCollection.asList()[i]
             if (item.isImage()) {
-                var size = PhotoMetadataUtils.getSizeInMB(item.size)
+                val size = PhotoMetadataUtils.getSizeInMB(item.size)
                 if (size > mSpec!!.originalMaxSize) {
                     count++
                 }
@@ -155,7 +148,7 @@ open class BasePreviewActivity : AppCompatActivity(),
 
     override fun onSaveInstanceState(outState: Bundle) {
         mSelectedCollection.onSaveInstanceState(outState)
-        outState?.putBoolean("checkState", mOriginalEnable)
+        outState.putBoolean(ConstValue.CHECK_STATE, mOriginalEnable)
         super.onSaveInstanceState(outState)
     }
 
@@ -165,15 +158,15 @@ open class BasePreviewActivity : AppCompatActivity(),
     }
 
     private fun sendBackResult(apply: Boolean) {
-        var intent = Intent()
-        intent.putExtra(EXTRA_RESULT_BUNDLE, mSelectedCollection.getDataWithBundle())
-        intent.putExtra(EXTRA_RESULT_APPLY, apply)
-        intent.putExtra(EXTRA_RESULT_ORIGINAL_ENABLE, mOriginalEnable)
+        val intent = Intent()
+        intent.putExtra(ConstValue.EXTRA_RESULT_BUNDLE, mSelectedCollection.getDataWithBundle())
+        intent.putExtra(ConstValue.EXTRA_RESULT_APPLY, apply)
+        intent.putExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, mOriginalEnable)
         setResult(Activity.RESULT_OK, intent)
     }
 
     private fun updateApplyButton() {
-        var selectedCount = mSelectedCollection.count()
+        val selectedCount = mSelectedCollection.count()
 
         mButtonApply?.apply {
             when (selectedCount) {
@@ -207,7 +200,7 @@ open class BasePreviewActivity : AppCompatActivity(),
         if (!mOriginalEnable) mOriginal?.setColor(Color.WHITE)
         if (countOverMaxSize() > 0) {
             if (mOriginalEnable) {
-                var incapableDialog = IncapableDialog.newInstance("",
+                val incapableDialog = IncapableDialog.newInstance("",
                         getString(R.string.error_over_original_size, mSpec!!.originalMaxSize))
                 incapableDialog.show(supportFragmentManager, IncapableDialog::class.java.name)
                 mOriginal?.setChecked(false)
@@ -225,14 +218,14 @@ open class BasePreviewActivity : AppCompatActivity(),
     }
 
     override fun onPageSelected(position: Int) {
-        var adapter = mPager?.adapter as PreviewPagerAdapter
+        val adapter = mPager?.adapter as PreviewPagerAdapter
 
         mCheckView?.apply {
             if (mPreviousPos != -1 && mPreviousPos != position) {
                 (adapter.instantiateItem(mPager!!, mPreviousPos) as PreviewItemFragment).resetView()
-                var item = adapter.getMediaItem(position)
+                val item = adapter.getMediaItem(position)
                 if (mSpec!!.countable) {
-                    var checkedNum = mSelectedCollection.checkedNumOf(item)
+                    val checkedNum = mSelectedCollection.checkedNumOf(item)
                     setCheckedNum(checkedNum)
                     if (checkedNum > 0) {
                         setEnable(true)
@@ -240,7 +233,7 @@ open class BasePreviewActivity : AppCompatActivity(),
                         setEnable(!mSelectedCollection.maxSelectableReached())
                     }
                 } else {
-                    var checked = mSelectedCollection.isSelected(item)
+                    val checked = mSelectedCollection.isSelected(item)
                     setChecked(checked)
                     if (checked) setEnable(true) else setEnable(!mSelectedCollection.maxSelectableReached())
                 }
@@ -271,7 +264,6 @@ open class BasePreviewActivity : AppCompatActivity(),
                 }
             }
         }
-
     }
 
     override fun onClick(v: View?) {
@@ -284,9 +276,8 @@ open class BasePreviewActivity : AppCompatActivity(),
         }
     }
 
-
     private fun assertAddSelection(item: Item): Boolean {
-        var cause = mSelectedCollection.isAcceptable(item)
+        val cause = mSelectedCollection.isAcceptable(item)
         IncapableCause.handleCause(this, cause)
         return cause == null
     }
