@@ -5,6 +5,7 @@ import android.content.res.TypedArray
 import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.support.v4.content.res.ResourcesCompat
+import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
 import com.matisse.R
@@ -63,7 +64,7 @@ class CheckView : View {
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
 
-        val sizeSpec = MeasureSpec.makeMeasureSpec((mDensity?.times(SIZE))!!.toInt(), MeasureSpec.EXACTLY)
+        val sizeSpec = MeasureSpec.makeMeasureSpec((mDensity!! * SIZE).toInt(), MeasureSpec.EXACTLY)
         super.onMeasure(sizeSpec, sizeSpec)
     }
 
@@ -102,16 +103,20 @@ class CheckView : View {
     }
 
     override fun onDraw(canvas: Canvas?) {
+        super.onDraw(canvas)
+
+        // draw outer and inner shadow
         initShadowPaint()
-        canvas?.drawCircle(mDensity!!.times(SIZE) / 2, mDensity!!.times(SIZE) / 2, mDensity!!.times(STROKE_RADIUS + STROKE_WIDTH / 2 + SHADOW_WIDTH), mShadowPaint)
+        canvas?.drawCircle(mDensity!! * SIZE / 2, mDensity!! * SIZE / 2, mDensity!!.times(STROKE_RADIUS + STROKE_WIDTH / 2 + SHADOW_WIDTH), mShadowPaint)
 
+        // draw white stroke
+        canvas?.drawCircle(mDensity!! * SIZE / 2, mDensity!! * SIZE / 2, mDensity!!.times(STROKE_RADIUS), mStrokePaint)
 
-        canvas?.drawCircle(mDensity!!.times(SIZE) / 2, mDensity!!.times(SIZE) / 2, mDensity!!.times(STROKE_RADIUS), mStrokePaint)
-
+        // draw content
         if (mCountable) {
             if (mCheckedNum != UNCHECKED) {
                 initBackgroundPaint()
-                canvas?.drawCircle(mDensity!!.times(SIZE) / 2, mDensity!!.times(SIZE) / 2,
+                canvas?.drawCircle(mDensity!! * SIZE / 2, mDensity!! * SIZE / 2,
                         mDensity!!.times(BG_RADIUS), mBackgroundPaint)
                 initTextPaint()
                 val text = mCheckedNum.toString()
@@ -141,13 +146,11 @@ class CheckView : View {
 
     private fun initTextPaint() {
         if (mTextPaint == null) {
-            mTextPaint = Paint()
+            mTextPaint = TextPaint()
             mTextPaint!!.isAntiAlias = true
-            val ta: TypedArray = context!!.theme!!.obtainStyledAttributes(intArrayOf(R.attr.item_checkCircle_numColor))
-            val defaultColor = ResourcesCompat.getColor(context!!.resources, R.color.zhihu_item_checkCircle_numColor, context!!.theme)
-            val color = ta.getColor(0, defaultColor)
-            mTextPaint!!.color = color
-
+            mTextPaint!!.color = Color.WHITE
+            mTextPaint!!.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+            mTextPaint!!.textSize = 12.0f * mDensity!!
         }
     }
 
@@ -175,7 +178,7 @@ class CheckView : View {
             val stop1 = innerRadius / gradientRadius
             val stop2 = outerRadius / gradientRadius
             val stop3 = 1f
-            mShadowPaint!!.shader = (RadialGradient(mDensity!!.times(SIZE) / 2, mDensity!!.times(SIZE) / 2, mDensity!!.times(gradientRadius),
+            mShadowPaint!!.shader = (RadialGradient(mDensity!! * SIZE / 2, mDensity!! * SIZE / 2, mDensity!!.times(gradientRadius),
                     intArrayOf(Color.parseColor("#00000000"), Color.parseColor("#0D000000"), Color.parseColor("#0D000000"), Color.parseColor("#00000000")),
                     floatArrayOf(stop0, stop1, stop2, stop3),
                     Shader.TileMode.CLAMP))

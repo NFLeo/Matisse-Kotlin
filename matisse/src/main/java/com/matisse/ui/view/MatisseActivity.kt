@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.database.Cursor
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -19,13 +18,14 @@ import com.matisse.internal.entity.SelectionSpec
 import com.matisse.model.AlbumCallbacks
 import com.matisse.model.AlbumCollection
 import com.matisse.model.SelectedItemCollection
+import com.matisse.ui.SelectedPreviewActivity
 import com.matisse.ui.adapter.AlbumMediaAdapter
-import com.matisse.utils.MediaStoreCompat
 import com.matisse.utils.PathUtils
 import com.matisse.utils.PhotoMetadataUtils
 import com.matisse.utils.UIUtils
 import com.matisse.widget.IncapableDialog
 import kotlinx.android.synthetic.main.include_view_bottom.*
+import java.util.*
 
 class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionProvider, AlbumMediaAdapter.CheckStateListener, AlbumMediaAdapter.OnMediaClickListener, View.OnClickListener {
     companion object {
@@ -39,7 +39,6 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
 
     }
 
-    private var mMediaStoreCompat: MediaStoreCompat? = null
     private var mSpec: SelectionSpec? = null
     private var mOriginalEnable: Boolean = false
     private val mAlbumCollection = AlbumCollection()
@@ -61,6 +60,8 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
         mAlbumCollection.loadAlbums()
 
         button_apply.setOnClickListener(this)
+        button_preview.setOnClickListener(this)
+        originalLayout.setOnClickListener(this)
     }
 
     private var albumCallbacks = object : AlbumCallbacks {
@@ -183,11 +184,12 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
     private fun updateOriginalState() {
         original!!.setChecked(mOriginalEnable)
         if (countOverMaxSize() > 0) {
+
             if (mOriginalEnable) {
                 val incapableDialog = IncapableDialog.newInstance("",
                         getString(R.string.error_over_original_size, mSpec!!.originalMaxSize))
                 incapableDialog.show(supportFragmentManager,
-                        IncapableDialog::class.java!!.getName())
+                        IncapableDialog::class.java.name)
                 original!!.setChecked(false)
                 mOriginalEnable = false
             }
@@ -220,13 +222,39 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
     }
 
     override fun onClick(v: View?) {
-        val selectedUris = mSelectedCollection.asListOfUri()
-        val selectedPaths = mSelectedCollection.asListOfString()
+        when (v) {
+            button_preview -> {
+                SelectedPreviewActivity.instance(this@MatisseActivity, mSelectedCollection.getDataWithBundle(), mOriginalEnable)
+            }
 
-        if (mSelectedCollection.asList()[0].isImage()) {
-            val intentCrop = Intent(this, ImageCropActivity::class.java)
-            intentCrop.putExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH, selectedPaths[0])
-            startActivityForResult(intentCrop, ConstValue.REQUEST_CODE_CROP)
+            button_apply -> {
+                val result = Intent()
+                val selectedUris = mSelectedCollection.asListOfUri() as ArrayList<Uri>
+                result.putParcelableArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION, selectedUris)
+                val selectedPaths = mSelectedCollection.asListOfString() as ArrayList<String>
+                result.putStringArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH, selectedPaths)
+                result.putExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, mOriginalEnable)
+                setResult(Activity.RESULT_OK, result)
+                finish()
+            }
+
+            originalLayout -> {
+                val count = countOverMaxSize()
+                if (count > 0) {
+                    val incapableDialog = IncapableDialog.newInstance("",
+                            getString(R.string.error_over_original_count, count, mSpec?.originalMaxSize))
+                    incapableDialog.show(supportFragmentManager,
+                            IncapableDialog::class.java.name)
+                    return
+                }
+
+                mOriginalEnable = !mOriginalEnable
+                original.setChecked(mOriginalEnable)
+
+                if (mSpec?.onCheckedListener != null) {
+                    mSpec?.onCheckedListener!!.onCheck(mOriginalEnable)
+                }
+            }
         }
     }
 }

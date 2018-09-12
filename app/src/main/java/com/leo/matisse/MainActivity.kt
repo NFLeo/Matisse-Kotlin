@@ -8,6 +8,7 @@ import android.util.Log
 import com.matisse.Matisse
 import com.matisse.MimeTypeManager.Companion.ofAll
 import com.matisse.entity.CaptureStrategy
+import com.matisse.entity.ConstValue
 import com.matisse.filter.Filter
 import com.matisse.listener.OnCheckedListener
 import com.matisse.listener.OnSelectedListener
@@ -16,7 +17,6 @@ import com.zhihu.matisse.sample.Glide4Engine
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
-    private val REQUEST_CODE_CHOOSE = 23
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,13 +27,11 @@ class MainActivity : AppCompatActivity() {
                     .choose(ofAll(), false)
                     .countable(true)
                     .capture(true)
-                    .theme(R.style.AppTheme)
-                    .captureStrategy(
-                            CaptureStrategy(true, "com.zhihu.matisse.sample.fileprovider"))
+                    .theme(R.style.Matisse_Zhihu)
+                    .captureStrategy(CaptureStrategy(true, "com.zhihu.matisse.sample.fileprovider"))
                     .maxSelectable(9)
                     .addFilter(GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
-                    .gridExpectedSize(
-                            resources.getDimensionPixelSize(R.dimen.grid_expected_size))
+                    .gridExpectedSize(resources.getDimensionPixelSize(R.dimen.grid_expected_size))
                     .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
                     .thumbnailScale(0.85f)
                     //                                            .imageEngine(new GlideEngine())  // for glide-V3
@@ -54,7 +52,7 @@ class MainActivity : AppCompatActivity() {
                             Log.e("isChecked", "onCheck: isChecked=$isChecked")
                         }
                     })
-                    .forResult(REQUEST_CODE_CHOOSE)
+                    .forResult(ConstValue.REQUEST_CODE_CHOOSE)
         }
     }
 }
