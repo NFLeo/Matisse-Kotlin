@@ -9,6 +9,7 @@ import com.matisse.internal.entity.SelectionSpec
 import com.matisse.model.AlbumCallbacks
 import com.matisse.model.AlbumMediaCollection
 import com.matisse.ui.adapter.PreviewPagerAdapter
+import kotlinx.android.synthetic.main.activity_media_preview.*
 
 /**
  * Created by liubo on 2018/9/11.
@@ -25,11 +26,12 @@ class AlbumPreviewActivity : BasePreviewActivity(), AlbumCallbacks {
             finish()
             return
         }
+
         mCollection.onCreate(this, this)
-        var album = intent.getParcelableExtra<Album>(ConstValue.EXTRA_ALBUM)
+        val album = intent.getParcelableExtra<Album>(ConstValue.EXTRA_ALBUM)
         mCollection.load(album)
-        var item = intent.getParcelableExtra<Item>(ConstValue.EXTRA_ITEM)
-        mCheckView?.apply {
+        val item = intent.getParcelableExtra<Item>(ConstValue.EXTRA_ITEM)
+        check_view?.apply {
             if (mSpec?.countable!!) {
                 setCheckedNum(mSelectedCollection.checkedNumOf(item))
             } else {
@@ -45,7 +47,7 @@ class AlbumPreviewActivity : BasePreviewActivity(), AlbumCallbacks {
     }
 
     override fun onAlbumLoad(cursor: Cursor) {
-        var items = ArrayList<Item>()
+        val items = ArrayList<Item>()
         while (cursor.moveToNext()) {
             items.add(Item.valueOf(cursor))
         }
@@ -53,23 +55,21 @@ class AlbumPreviewActivity : BasePreviewActivity(), AlbumCallbacks {
         if (items.isEmpty()) {
             return
         }
-        var adapter = mPager?.adapter as PreviewPagerAdapter
+        val adapter = pager?.adapter as PreviewPagerAdapter
         adapter.addAll(items)
         adapter.notifyDataSetChanged()
         if (!mIsAlreadySetPosition) {
             mIsAlreadySetPosition = true
-            var selected = intent.getParcelableExtra<Item>(ConstValue.EXTRA_ITEM)
-            var selectedIndex = items.indexOf(selected)
-            mPager?.setCurrentItem(selectedIndex, false)
+            val selected = intent.getParcelableExtra<Item>(ConstValue.EXTRA_ITEM)
+            val selectedIndex = items.indexOf(selected)
+            pager?.setCurrentItem(selectedIndex, false)
             mPreviousPos = selectedIndex
         }
     }
 
     override fun onAlbumReset() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun onAlbumStart() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

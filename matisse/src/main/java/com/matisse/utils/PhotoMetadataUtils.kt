@@ -139,7 +139,7 @@ object PhotoMetadataUtils {
     fun shouldRotate(resolver: ContentResolver, uri: Uri): Boolean {
         var exif: ExifInterface? = null
         try {
-            exif = ExifInterfaceCompat.newInstance(getPath(resolver, uri)!!)
+            exif = ExifInterfaceCompat.newInstance(getPath(resolver, uri))
         } catch (e: IOException) {
             Log.e(TAG, "could not read exif info of the image: $uri")
             return false
@@ -152,7 +152,7 @@ object PhotoMetadataUtils {
     fun getBitmapBounds(resolver: ContentResolver?, uri: Uri): Point {
         var inStream: InputStream? = null
         try {
-            var options = BitmapFactory.Options()
+            val options = BitmapFactory.Options()
             options.inJustDecodeBounds = true
             inStream = resolver!!.openInputStream(uri)
             BitmapFactory.decodeStream(inStream, null, options)
@@ -168,6 +168,5 @@ object PhotoMetadataUtils {
                 e.printStackTrace()
             }
         }
-
     }
 }

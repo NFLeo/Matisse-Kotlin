@@ -8,8 +8,6 @@ import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.WindowManager
-import android.widget.LinearLayout
-import android.widget.TextView
 import com.matisse.R
 import com.matisse.entity.ConstValue
 import com.matisse.entity.IncapableCause
@@ -19,9 +17,10 @@ import com.matisse.model.SelectedItemCollection
 import com.matisse.ui.adapter.PreviewPagerAdapter
 import com.matisse.utils.PhotoMetadataUtils
 import com.matisse.utils.Platform
-import com.matisse.widget.CheckRadioView
 import com.matisse.widget.CheckView
 import com.matisse.widget.IncapableDialog
+import kotlinx.android.synthetic.main.activity_media_preview.*
+import kotlinx.android.synthetic.main.include_view_bottom.*
 
 /**
  * Created by liubo on 2018/9/6.
@@ -31,104 +30,52 @@ open class BasePreviewActivity : AppCompatActivity(),
 
     val mSelectedCollection = SelectedItemCollection(this)
     var mSpec: SelectionSpec? = null
-    var mPager: ViewPager? = null
-
     var mAdapter: PreviewPagerAdapter? = null
-    var mCheckView: CheckView? = null
-    var mButtonBack: TextView? = null
-    var mButtonApply: TextView? = null
-    var mSize: TextView? = null
 
     var mPreviousPos = -1
-    var mOriginalLayout: LinearLayout? = null
-    var mOriginal: CheckRadioView? = null
-    var mOriginalEnable = false
+    var originalEnable = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(SelectionSpec.getInstance().themeId)
+        mSpec = SelectionSpec.getInstance()
+        setTheme(mSpec!!.themeId)
         super.onCreate(savedInstanceState)
-        if (SelectionSpec.getInstance().hasInited) {
-            setContentView(R.layout.activity_media_preview)
-            if (Platform.hasKitKat19()) {
-                window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-            }
-            mSpec = SelectionSpec.getInstance()
-            if (mSpec!!.needOrientationRestriction()) {
-                requestedOrientation = mSpec!!.orientation
-            }
 
-            mOriginalEnable = if (savedInstanceState == null) {
-                mSelectedCollection.onCreate(intent.getBundleExtra(ConstValue.EXTRA_DEFAULT_BUNDLE))
-                intent.getBooleanExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, false)
-            } else {
-                mSelectedCollection.onCreate(savedInstanceState)
-                savedInstanceState.getBoolean(ConstValue.CHECK_STATE)
-            }
-
-            mButtonBack = findViewById(R.id.button_back)
-            mButtonApply = findViewById(R.id.button_apply)
-            mSize = findViewById(R.id.size)
-            mButtonBack?.setOnClickListener(this)
-            mButtonApply?.setOnClickListener(this)
-
-            mPager = findViewById(R.id.pager)
-            mPager?.addOnPageChangeListener(this)
-            mAdapter = PreviewPagerAdapter(supportFragmentManager, null)
-            mPager?.adapter = mAdapter
-            mCheckView = findViewById(R.id.check_view)
-            mCheckView?.setCountable(mSpec!!.countable)
-
-            mCheckView?.setOnClickListener {
-                val item = mAdapter?.getMediaItem(mPager!!.currentItem)
-                if (mSelectedCollection.isSelected(item!!)) {
-                    mSelectedCollection.remove(item)
-                    if (mSpec!!.countable) {
-                        mCheckView?.setCheckedNum(CheckView.UNCHECKED)
-                    } else {
-                        mCheckView?.setChecked(false)
-                    }
-                } else {
-                    if (assertAddSelection(item)) {
-                        mSelectedCollection.add(item)
-                        if (mSpec!!.countable) {
-                            mCheckView?.setCheckedNum(mSelectedCollection.checkedNumOf(item))
-                        } else {
-                            mCheckView?.setChecked(true)
-                        }
-                    }
-                }
-
-                updateApplyButton()
-
-                mSpec?.onSelectedListener?.onSelected(mSelectedCollection.asListOfUri(), mSelectedCollection.asListOfString())
-            }
-
-            mOriginalLayout = findViewById(R.id.originalLayout)
-            mOriginal = findViewById(R.id.original)
-            mOriginalLayout?.setOnClickListener {
-                val count = countOverMaxSize()
-                if (count > 0) {
-                    val incapableDialog = IncapableDialog.newInstance("",
-                            getString(R.string.error_over_original_count, count, mSpec!!.originalMaxSize))
-                    incapableDialog.show(supportFragmentManager, IncapableDialog::class.java.simpleName)
-                    return@setOnClickListener
-                }
-
-                mOriginalEnable = !mOriginalEnable
-                mOriginal?.setChecked(mOriginalEnable)
-
-                if (!mOriginalEnable) {
-                    mOriginal?.setColor(Color.WHITE)
-                }
-
-                mSpec?.onCheckedListener?.onCheck(mOriginalEnable)
-            }
-
-            updateApplyButton()
+        if (!mSpec!!.hasInited) {
+            setResult(Activity.RESULT_CANCELED)
+            finish()
             return
         }
-        setResult(Activity.RESULT_CANCELED)
-        finish()
+
+        setContentView(R.layout.activity_media_preview)
+        if (Platform.hasKitKat19()) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        }
+        if (mSpec!!.needOrientationRestriction()) {
+            requestedOrientation = mSpec!!.orientation
+        }
+
+        originalEnable = if (savedInstanceState == null) {
+            mSelectedCollection.onCreate(intent.getBundleExtra(ConstValue.EXTRA_DEFAULT_BUNDLE))
+            intent.getBooleanExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, false)
+        } else {
+            mSelectedCollection.onCreate(savedInstanceState)
+            savedInstanceState.getBoolean(ConstValue.CHECK_STATE)
+        }
+
+        button_preview.text = getString(R.string.button_back)
+        button_preview.setOnClickListener(this)
+        button_apply.setOnClickListener(this)
+
+        pager?.addOnPageChangeListener(this)
+        mAdapter = PreviewPagerAdapter(supportFragmentManager, null)
+        pager?.adapter = mAdapter
+
+        check_view.setCountable(mSpec!!.countable)
+        check_view.setOnClickListener(this)
+
+        original_layout.setOnClickListener(this)
+
+        updateApplyButton()
     }
 
     private fun countOverMaxSize(): Int {
@@ -148,7 +95,7 @@ open class BasePreviewActivity : AppCompatActivity(),
 
     override fun onSaveInstanceState(outState: Bundle) {
         mSelectedCollection.onSaveInstanceState(outState)
-        outState.putBoolean(ConstValue.CHECK_STATE, mOriginalEnable)
+        outState.putBoolean(ConstValue.CHECK_STATE, originalEnable)
         super.onSaveInstanceState(outState)
     }
 
@@ -161,23 +108,26 @@ open class BasePreviewActivity : AppCompatActivity(),
         val intent = Intent()
         intent.putExtra(ConstValue.EXTRA_RESULT_BUNDLE, mSelectedCollection.getDataWithBundle())
         intent.putExtra(ConstValue.EXTRA_RESULT_APPLY, apply)
-        intent.putExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, mOriginalEnable)
+        intent.putExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, originalEnable)
         setResult(Activity.RESULT_OK, intent)
     }
 
     private fun updateApplyButton() {
         val selectedCount = mSelectedCollection.count()
 
-        mButtonApply?.apply {
+        button_apply.apply {
             when (selectedCount) {
                 0 -> {
                     text = getString(R.string.button_sure_default)
                     isEnabled = false
                 }
                 1 -> {
-                    if (mSpec!!.singleSelectionModeEnabled()) {
-                        text = getString(R.string.button_sure_default)
-                        isEnabled = true
+                    isEnabled = true
+
+                    text = if (mSpec!!.singleSelectionModeEnabled()) {
+                        getString(R.string.button_sure_default)
+                    } else {
+                        getString(R.string.button_sure, selectedCount)
                     }
                 }
                 else -> {
@@ -188,26 +138,23 @@ open class BasePreviewActivity : AppCompatActivity(),
         }
 
         if (mSpec!!.originalable) {
-            mOriginalLayout?.visibility = View.VISIBLE
+            original_layout?.visibility = View.VISIBLE
             updateOriginalState()
         } else {
-            mOriginalLayout?.visibility = View.GONE
+            original_layout?.visibility = View.GONE
         }
     }
 
     private fun updateOriginalState() {
-        mOriginal?.setChecked(mOriginalEnable)
-        if (!mOriginalEnable) mOriginal?.setColor(Color.WHITE)
+        original?.setChecked(originalEnable)
         if (countOverMaxSize() > 0) {
-            if (mOriginalEnable) {
+            if (originalEnable) {
                 val incapableDialog = IncapableDialog.newInstance("",
                         getString(R.string.error_over_original_size, mSpec!!.originalMaxSize))
                 incapableDialog.show(supportFragmentManager, IncapableDialog::class.java.name)
-                mOriginal?.setChecked(false)
-                mOriginal?.setColor(Color.WHITE)
-                mOriginalEnable = false
+                original?.setChecked(false)
+                originalEnable = false
             }
-
         }
     }
 
@@ -218,11 +165,11 @@ open class BasePreviewActivity : AppCompatActivity(),
     }
 
     override fun onPageSelected(position: Int) {
-        val adapter = mPager?.adapter as PreviewPagerAdapter
+        val adapter = pager?.adapter as PreviewPagerAdapter
 
-        mCheckView?.apply {
+        check_view.apply {
             if (mPreviousPos != -1 && mPreviousPos != position) {
-                (adapter.instantiateItem(mPager!!, mPreviousPos) as PreviewItemFragment).resetView()
+                (adapter.instantiateItem(pager!!, mPreviousPos) as PreviewItemFragment).resetView()
                 val item = adapter.getMediaItem(position)
                 if (mSpec!!.countable) {
                     val checkedNum = mSelectedCollection.checkedNumOf(item)
@@ -241,13 +188,12 @@ open class BasePreviewActivity : AppCompatActivity(),
             }
         }
 
-
         mPreviousPos = position
     }
 
     fun updateSize(item: Item?) {
         item?.apply {
-            mSize?.apply {
+            tv_size.apply {
                 if (isGif()) {
                     visibility = View.VISIBLE
                     text = "${PhotoMetadataUtils.getSizeInMB(size)} M"
@@ -256,7 +202,7 @@ open class BasePreviewActivity : AppCompatActivity(),
                 }
             }
 
-            mOriginalLayout?.apply {
+            original_layout?.apply {
                 if (isVideo()) {
                     visibility = View.GONE
                 } else if (mSpec!!.originalable) {
@@ -268,10 +214,52 @@ open class BasePreviewActivity : AppCompatActivity(),
 
     override fun onClick(v: View?) {
         when (v) {
-            mButtonBack -> onBackPressed()
-            mButtonApply -> {
+            button_preview -> onBackPressed()
+            button_apply -> {
                 sendBackResult(true)
                 finish()
+            }
+
+            original_layout -> {
+                val count = countOverMaxSize()
+                if (count > 0) {
+                    val incapableDialog = IncapableDialog.newInstance("",
+                            getString(R.string.error_over_original_count, count, mSpec?.originalMaxSize))
+                    incapableDialog.show(supportFragmentManager, IncapableDialog::class.java.name)
+                    return
+                }
+
+                originalEnable = !originalEnable
+                original?.setChecked(originalEnable)
+
+                if (mSpec?.onCheckedListener != null) {
+                    mSpec?.onCheckedListener!!.onCheck(originalEnable)
+                }
+            }
+
+            check_view -> {
+                val item = mAdapter?.getMediaItem(pager!!.currentItem)
+                if (mSelectedCollection.isSelected(item!!)) {
+                    mSelectedCollection.remove(item)
+                    if (mSpec!!.countable) {
+                        check_view.setCheckedNum(CheckView.UNCHECKED)
+                    } else {
+                        check_view.setChecked(false)
+                    }
+                } else {
+                    if (assertAddSelection(item)) {
+                        mSelectedCollection.add(item)
+                        if (mSpec!!.countable) {
+                            check_view.setCheckedNum(mSelectedCollection.checkedNumOf(item))
+                        } else {
+                            check_view.setChecked(true)
+                        }
+                    }
+                }
+
+                updateApplyButton()
+
+                mSpec?.onSelectedListener?.onSelected(mSelectedCollection.asListOfUri(), mSelectedCollection.asListOfString())
             }
         }
     }

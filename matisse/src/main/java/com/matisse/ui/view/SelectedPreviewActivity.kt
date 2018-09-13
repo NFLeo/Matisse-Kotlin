@@ -8,6 +8,7 @@ import com.matisse.entity.ConstValue
 import com.matisse.entity.Item
 import com.matisse.internal.entity.SelectionSpec
 import com.matisse.model.SelectedItemCollection
+import kotlinx.android.synthetic.main.activity_media_preview.*
 
 /**
  * Created by liubo on 2018/9/11.
@@ -34,7 +35,7 @@ class SelectedPreviewActivity : BasePreviewActivity() {
         val selected = bundle.getParcelableArrayList<Item>(SelectedItemCollection.STATE_SELECTION)
         mAdapter?.addAll(selected)
         mAdapter?.notifyDataSetChanged()
-        mCheckView?.apply {
+        check_view?.apply {
             if (mSpec!!.countable) {
                 setCheckedNum(1)
             } else {
