@@ -1,4 +1,4 @@
-package com.matisse.internal.entity
+package com.matisse.entity
 
 import android.content.Context
 import android.database.Cursor
@@ -8,35 +8,38 @@ import android.provider.MediaStore
 import com.matisse.loader.AlbumLoader
 import com.matisse.R
 
-/**
- * Describe :
- * Created by Leo on 2018/8/29 on 16:15.
- */
 class Album() : Parcelable {
 
     private var mId: String = ""
     private var mCoverPath: String = ""
     private var mDisplayName: String = ""
     private var mCount: Long = 0
+    private var mIsCheck: Boolean = false
 
-    constructor(mId: String, mCoverPath: String, mDisplayName: String, mCount: Long) : this() {
+    constructor(parcel: Parcel) : this() {
+        mId = parcel.readString()
+        mCoverPath = parcel.readString()
+        mDisplayName = parcel.readString()
+        mCount = parcel.readLong()
+        mIsCheck = parcel.readByte() != 0.toByte()
+    }
+
+    constructor(mId: String, mCoverPath: String, mDisplayName: String, mCount: Long) :
+            this(mId, mCoverPath, mDisplayName, mCount, false)
+
+    constructor(mId: String, mCoverPath: String, mDisplayName: String, mCount: Long, mIsCheck: Boolean) : this() {
         this.mId = mId
         this.mCoverPath = mCoverPath
         this.mDisplayName = mDisplayName
         this.mCount = mCount
+        this.mIsCheck = mIsCheck
     }
 
-    fun getId(): String {
-        return mId
-    }
+    fun getId() = mId
 
-    fun getCoverPath(): String {
-        return mCoverPath
-    }
+    fun getCoverPath() = mCoverPath
 
-    fun getCount(): Long {
-        return mCount
-    }
+    fun getCount() = mCount
 
     fun addCaptureCount() {
         mCount++
@@ -48,26 +51,18 @@ class Album() : Parcelable {
         } else mDisplayName
     }
 
-    fun isAll(): Boolean {
-        return ALBUM_ID_ALL == mId
-    }
+    fun isAll() = ALBUM_ID_ALL == mId
 
-    fun isEmpty(): Boolean {
-        return mCount == 0L
-    }
+    fun isEmpty() = mCount == 0L
 
-    constructor(parcel: Parcel) : this() {
-        mId = parcel.readString()
-        mCoverPath = parcel.readString()
-        mDisplayName = parcel.readString()
-        mCount = parcel.readLong()
-    }
+    fun isChecked() = mIsCheck
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(mId)
         parcel.writeString(mCoverPath)
         parcel.writeString(mDisplayName)
         parcel.writeLong(mCount)
+        parcel.writeByte(if (mIsCheck) 1 else 0)
     }
 
     override fun describeContents(): Int {
@@ -76,8 +71,8 @@ class Album() : Parcelable {
 
     companion object CREATOR : Parcelable.Creator<Album> {
 
-        val ALBUM_ID_ALL = (-1).toString()
-        val ALBUM_NAME_ALL = "All"
+        const val ALBUM_ID_ALL = (-1).toString()
+        const val ALBUM_NAME_ALL = "All"
 
         override fun createFromParcel(parcel: Parcel): Album {
             return Album(parcel)

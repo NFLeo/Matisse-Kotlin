@@ -5,19 +5,20 @@ import android.database.Cursor
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.matisse.R
 import com.matisse.entity.Item
-import com.matisse.internal.entity.Album
+import com.matisse.entity.Album
+import com.matisse.entity.ConstValue
 import com.matisse.internal.entity.SelectionSpec
 import com.matisse.model.AlbumCallbacks
 import com.matisse.model.AlbumMediaCollection
 import com.matisse.model.SelectedItemCollection
 import com.matisse.ui.adapter.AlbumMediaAdapter
 import com.matisse.utils.UIUtils
+import com.matisse.widget.MediaGridInset
 import kotlinx.android.synthetic.main.fragment_media_selection.*
 
 class MediaSelectionFragment : Fragment(), AlbumCallbacks, AlbumMediaAdapter.CheckStateListener, AlbumMediaAdapter.OnMediaClickListener {
@@ -30,12 +31,11 @@ class MediaSelectionFragment : Fragment(), AlbumCallbacks, AlbumMediaAdapter.Che
     private lateinit var mOnMediaClickListener: AlbumMediaAdapter.OnMediaClickListener
 
     companion object {
-        val EXTRA_ALBUM = "extra_album"
 
         fun newInstance(album: Album): MediaSelectionFragment {
             val fragment = MediaSelectionFragment()
             val args = Bundle()
-            args.putParcelable(EXTRA_ALBUM, album)
+            args.putParcelable(ConstValue.EXTRA_ALBUM, album)
             fragment.arguments = args
             return fragment
         }
@@ -58,13 +58,11 @@ class MediaSelectionFragment : Fragment(), AlbumCallbacks, AlbumMediaAdapter.Che
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_media_selection, container, false)
-    }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) = inflater.inflate(R.layout.fragment_media_selection, container, false)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        mAlbum = arguments?.getParcelable(EXTRA_ALBUM)!!
+        mAlbum = arguments?.getParcelable(ConstValue.EXTRA_ALBUM)!!
         mAdapter = AlbumMediaAdapter(context!!, mSelectionProvider.provideSelectedItemCollection(), recyclerview)
         mAdapter.mCheckStateListener = this
         mAdapter.mOnMediaClickListener = this
@@ -79,7 +77,7 @@ class MediaSelectionFragment : Fragment(), AlbumCallbacks, AlbumMediaAdapter.Che
 
         recyclerview.layoutManager = GridLayoutManager(context!!, spanCount)
         val spacing = resources.getDimensionPixelSize(R.dimen.media_grid_spacing)
-//        recyclerview.addItemDecoration()
+        recyclerview.addItemDecoration(MediaGridInset(spanCount, spacing, false))
         recyclerview.adapter = mAdapter
         mAlbumMediaCollection.onCreate(activity!!, this)
         mAlbumMediaCollection.load(mAlbum, selectionSpec.capture)

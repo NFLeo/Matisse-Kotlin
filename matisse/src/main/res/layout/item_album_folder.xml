@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    android:gravity="center">
+
+    <ImageView
+        android:id="@+id/iv_bucket_cover"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:background="@drawable/gallery_bg_bucket"
+        android:scaleType="centerCrop"
+        android:padding="1dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_bucket_name"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="15dp"
+        android:ellipsize="middle"
+        android:lineSpacingExtra="4dp"
+        android:singleLine="true"
+        android:textColor="#2A2A2A"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/rb_selected"
+        app:layout_constraintStart_toEndOf="@+id/iv_bucket_cover"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.matisse.widget.CheckRadioView
+        android:id="@+id/rb_selected"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</android.support.constraint.ConstraintLayout>

@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.support.v4.app.FragmentActivity
 import android.support.v4.app.LoaderManager
 import android.support.v4.content.Loader
-import com.matisse.internal.entity.Album
+import com.matisse.entity.Album
 import com.matisse.loader.AlbumMediaLoader
 import java.lang.ref.WeakReference
 

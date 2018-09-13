@@ -1,29 +1,23 @@
-package com.matisse.ui
+package com.matisse.ui.view
 
 import android.database.Cursor
 import android.os.Bundle
 import com.matisse.entity.Item
-import com.matisse.internal.entity.Album
+import com.matisse.entity.Album
+import com.matisse.entity.ConstValue
+import com.matisse.entity.ConstValue.EXTRA_ALBUM
 import com.matisse.internal.entity.SelectionSpec
 import com.matisse.model.AlbumCallbacks
 import com.matisse.model.AlbumMediaCollection
 import com.matisse.ui.adapter.PreviewPagerAdapter
-import com.matisse.ui.view.BasePreviewActivity
 
 /**
  * Created by liubo on 2018/9/11.
  */
 class AlbumPreviewActivity : BasePreviewActivity(), AlbumCallbacks {
 
-
-    companion object {
-        const val EXTRA_ALBUM = "extra_album"
-        const val EXTRA_ITEM = "extra_item"
-    }
-
     var mCollection: AlbumMediaCollection = AlbumMediaCollection()
     var mIsAlreadySetPosition = false
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +29,7 @@ class AlbumPreviewActivity : BasePreviewActivity(), AlbumCallbacks {
         mCollection.onCreate(this, this)
         var album = intent.getParcelableExtra<Album>(EXTRA_ALBUM)
         mCollection.load(album)
-        var item = intent.getParcelableExtra<Item>(EXTRA_ITEM)
+        var item = intent.getParcelableExtra<Item>(ConstValue.EXTRA_ITEM)
         mCheckView?.apply {
             if (mSpec?.countable!!) {
                 setCheckedNum(mSelectedCollection.checkedNumOf(item))
@@ -65,7 +59,7 @@ class AlbumPreviewActivity : BasePreviewActivity(), AlbumCallbacks {
         adapter.notifyDataSetChanged()
         if (!mIsAlreadySetPosition) {
             mIsAlreadySetPosition = true
-            var selected = intent.getParcelableExtra<Item>(EXTRA_ITEM)
+            var selected = intent.getParcelableExtra<Item>(ConstValue.EXTRA_ITEM)
             var selectedIndex = items.indexOf(selected)
             mPager?.setCurrentItem(selectedIndex, false)
             mPreviousPos = selectedIndex

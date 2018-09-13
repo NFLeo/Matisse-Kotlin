@@ -2,6 +2,7 @@ package com.matisse.ui.adapter
 
 import android.content.Context
 import android.database.Cursor
+import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.GridLayoutManager
@@ -12,34 +13,28 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.matisse.R
+import com.matisse.entity.Album
 import com.matisse.entity.Item
-import com.matisse.internal.entity.Album
 import com.matisse.internal.entity.SelectionSpec
 import com.matisse.model.SelectedItemCollection
 import com.matisse.utils.UIUtils
 import com.matisse.widget.CheckView
 import com.matisse.widget.MediaGrid
 
-class AlbumMediaAdapter : RecyclerViewCursorAdapter<RecyclerView.ViewHolder>, MediaGrid.OnMediaGridClickListener {
+class AlbumMediaAdapter(context: Context, selectedCollection: SelectedItemCollection, recyclerView: RecyclerView) :
+        RecyclerViewCursorAdapter<RecyclerView.ViewHolder>(null), MediaGrid.OnMediaGridClickListener {
 
-    private var mSelectedCollection: SelectedItemCollection
-    private var mPlaceholder: Drawable
+    private var mSelectedCollection: SelectedItemCollection = selectedCollection
+    private var mPlaceholder: Drawable = ContextCompat.getDrawable(context, R.drawable.ic_empty_zhihu)!!
     private var mSelectionSpec: SelectionSpec = SelectionSpec.getInstance()
     var mCheckStateListener: CheckStateListener? = null
     var mOnMediaClickListener: OnMediaClickListener? = null
-    private var mRecyclerView: RecyclerView
+    private var mRecyclerView: RecyclerView = recyclerView
     private var mImageResize: Int = 0
 
     companion object {
-        val VIEW_TYPE_CAPTURE = 0X01
-        val VIEW_TYPE_MEDIA = 0X02
-    }
-
-    constructor(context: Context, selectedCollection: SelectedItemCollection, recyclerView: RecyclerView) : super(null) {
-        mSelectedCollection = selectedCollection
-        mPlaceholder = ContextCompat.getDrawable(context, R.drawable.ic_empty_zhihu)!!
-
-        mRecyclerView = recyclerView
+        const val VIEW_TYPE_CAPTURE = 0X01
+        const val VIEW_TYPE_MEDIA = 0X02
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -63,7 +58,25 @@ class AlbumMediaAdapter : RecyclerViewCursorAdapter<RecyclerView.ViewHolder>, Me
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, cursor: Cursor) {
         if (holder is CaptureViewHolder) {
-            val captureViewHolder = holder
+            val drawables = holder.mHint.compoundDrawables
+            val ta = holder.itemView.context.theme
+                    .obtainStyledAttributes(intArrayOf(R.attr.capture_textColor))
+            val color = ta.getColor(0, 0)
+            ta.recycle()
+
+            for (i in drawables.indices) {
+                val drawable = drawables[i]
+                if (drawable != null) {
+                    val state = drawable.constantState ?: continue
+
+                    val newDrawable = state.newDrawable().mutate()
+                    newDrawable.setColorFilter(color, PorterDuff.Mode.SRC_IN)
+                    newDrawable.bounds = drawable.bounds
+                    drawables[i] = newDrawable
+                }
+            }
+
+            holder.mHint.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3])
 
         } else if (holder is MediaViewHolder) {
             val item = Item.valueOf(cursor)

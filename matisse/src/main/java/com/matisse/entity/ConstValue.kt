@@ -4,7 +4,12 @@ object ConstValue {
     val EXTRA_RESULT_SELECTION = "extra_result_selection"
     val EXTRA_RESULT_SELECTION_PATH = "extra_result_selection_path"
     val EXTRA_RESULT_ORIGINAL_ENABLE = "extra_result_original_enable"
+    val EXTRA_ALBUM = "extra_album"
+    val EXTRA_ITEM = "extra_item"
+
     val CHECK_STATE = "checkState"
+
+    val FOLDER_CHECK_POSITION = "folder_check_position"
 
     val EXTRA_DEFAULT_BUNDLE = "extra_default_bundle"
     val EXTRA_RESULT_BUNDLE = "extra_result_bundle"

@@ -1,17 +1,15 @@
-package com.matisse.ui
+package com.matisse.ui.view
 
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat.startActivityForResult
 import com.matisse.entity.ConstValue
 import com.matisse.entity.ConstValue.EXTRA_DEFAULT_BUNDLE
 import com.matisse.entity.ConstValue.REQUEST_CODE_PREVIEW
 import com.matisse.entity.Item
 import com.matisse.internal.entity.SelectionSpec
 import com.matisse.model.SelectedItemCollection
-import com.matisse.ui.view.BasePreviewActivity
 
 /**
  * Created by liubo on 2018/9/11.

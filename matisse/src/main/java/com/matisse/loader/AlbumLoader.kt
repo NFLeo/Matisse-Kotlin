@@ -6,7 +6,7 @@ import android.database.MatrixCursor
 import android.database.MergeCursor
 import android.provider.MediaStore
 import android.support.v4.content.CursorLoader
-import com.matisse.internal.entity.Album
+import com.matisse.entity.Album
 import com.matisse.internal.entity.SelectionSpec
 
 /**

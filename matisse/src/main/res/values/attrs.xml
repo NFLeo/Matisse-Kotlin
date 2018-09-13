@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <attr name="toolbar" format="reference"/>
+    <attr name="toolbar.height" format="dimension"/>
     <attr name="album.dropdown.title.color" format="reference|color"/>
     <attr name="album.dropdown.count.color" format="reference|color"/>
     <attr name="album.element.color" format="reference|color"/>

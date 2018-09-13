@@ -7,10 +7,8 @@ import android.database.MergeCursor
 import android.provider.MediaStore
 import android.support.v4.content.CursorLoader
 import com.matisse.entity.Item
-import com.matisse.internal.entity.Album
+import com.matisse.entity.Album
 import com.matisse.internal.entity.SelectionSpec
-import com.matisse.loader.AlbumLoader.Companion.COLUMNS
-import com.matisse.loader.AlbumLoader.Companion.COLUMN_COUNT
 import com.matisse.utils.MediaStoreCompat
 
 /**
