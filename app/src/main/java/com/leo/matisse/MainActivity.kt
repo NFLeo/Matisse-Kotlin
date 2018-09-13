@@ -1,13 +1,14 @@
 package com.leo.matisse
 
 import android.Manifest
+import android.app.Activity
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
-import com.leo.matisse.R.id.btn_media_store
 import com.matisse.Matisse
 import com.matisse.MimeTypeManager.Companion.ofAll
 import com.matisse.entity.CaptureStrategy
@@ -73,6 +74,31 @@ class MainActivity : AppCompatActivity() {
                         override fun onError(e: Throwable) {
                         }
                     })
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (data == null) {
+            return
+        }
+
+        if (requestCode == ConstValue.REQUEST_CODE_CHOOSE && resultCode == Activity.RESULT_OK) {
+            var string = ""
+            val uriList = Matisse.obtainResult(data)
+            val strList = Matisse.obtainPathResult(data)
+
+            uriList.forEach {
+                string += it.toString() + "\n"
+            }
+
+            string += "\n"
+
+            strList.forEach {
+                string += it + "\n"
+            }
+
+            text.text = string
         }
     }
 }

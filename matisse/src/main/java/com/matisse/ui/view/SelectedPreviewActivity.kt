@@ -5,8 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import com.matisse.entity.ConstValue
-import com.matisse.entity.ConstValue.EXTRA_DEFAULT_BUNDLE
-import com.matisse.entity.ConstValue.REQUEST_CODE_PREVIEW
 import com.matisse.entity.Item
 import com.matisse.internal.entity.SelectionSpec
 import com.matisse.model.SelectedItemCollection
@@ -21,7 +19,7 @@ class SelectedPreviewActivity : BasePreviewActivity() {
             val intent = Intent(context, SelectedPreviewActivity::class.java)
             intent.putExtra(ConstValue.EXTRA_DEFAULT_BUNDLE, bundle)
             intent.putExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, mOriginalEnable)
-            (context as Activity).startActivityForResult(intent, REQUEST_CODE_PREVIEW)
+            (context as Activity).startActivityForResult(intent, ConstValue.REQUEST_CODE_PREVIEW)
         }
     }
 
@@ -32,7 +30,7 @@ class SelectedPreviewActivity : BasePreviewActivity() {
             finish()
             return
         }
-        val bundle = intent.getBundleExtra(EXTRA_DEFAULT_BUNDLE)
+        val bundle = intent.getBundleExtra(ConstValue.EXTRA_DEFAULT_BUNDLE)
         val selected = bundle.getParcelableArrayList<Item>(SelectedItemCollection.STATE_SELECTION)
         mAdapter?.addAll(selected)
         mAdapter?.notifyDataSetChanged()

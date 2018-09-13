@@ -2,10 +2,9 @@ package com.matisse.ui.view
 
 import android.database.Cursor
 import android.os.Bundle
-import com.matisse.entity.Item
 import com.matisse.entity.Album
 import com.matisse.entity.ConstValue
-import com.matisse.entity.ConstValue.EXTRA_ALBUM
+import com.matisse.entity.Item
 import com.matisse.internal.entity.SelectionSpec
 import com.matisse.model.AlbumCallbacks
 import com.matisse.model.AlbumMediaCollection
@@ -27,7 +26,7 @@ class AlbumPreviewActivity : BasePreviewActivity(), AlbumCallbacks {
             return
         }
         mCollection.onCreate(this, this)
-        var album = intent.getParcelableExtra<Album>(EXTRA_ALBUM)
+        var album = intent.getParcelableExtra<Album>(ConstValue.EXTRA_ALBUM)
         mCollection.load(album)
         var item = intent.getParcelableExtra<Item>(ConstValue.EXTRA_ITEM)
         mCheckView?.apply {
