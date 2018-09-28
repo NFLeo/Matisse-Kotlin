@@ -176,9 +176,9 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
                 }
 
                 val resultBundle = data?.getBundleExtra(ConstValue.EXTRA_RESULT_BUNDLE)
-                val selected = resultBundle?.getParcelableArrayList<Item>(SelectedItemCollection.STATE_SELECTION)
+                val selected = resultBundle?.getParcelableArrayList<Item>(ConstValue.STATE_SELECTION)
                 mOriginalEnable = data?.getBooleanExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, false) ?: false
-                val collectionType = resultBundle?.getInt(SelectedItemCollection.STATE_COLLECTION_TYPE,
+                val collectionType = resultBundle?.getInt(ConstValue.STATE_COLLECTION_TYPE,
                         SelectedItemCollection.COLLECTION_UNDEFINED)
                 if (data?.getBooleanExtra(ConstValue.EXTRA_RESULT_APPLY, false) == true) {
                     val result = Intent()

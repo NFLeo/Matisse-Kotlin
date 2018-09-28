@@ -115,7 +115,7 @@ class AlbumMediaAdapter(context: Context, selectedCollection: SelectedItemCollec
                 mediaGrid.setCheckEnabled(true)
                 mediaGrid.setChecked(true)
             } else {
-                if (mSelectedCollection.maxSelectableReached()) {
+                if (mSelectedCollection.maxSelectableReached() && mSelectionSpec.maxSelectable != 1) {
                     mediaGrid.setCheckEnabled(false)
                 } else {
                     mediaGrid.setCheckEnabled(true)
@@ -148,7 +148,11 @@ class AlbumMediaAdapter(context: Context, selectedCollection: SelectedItemCollec
                 mSelectedCollection.remove(item)
                 notifyCheckStateChanged()
             } else {
-                if (assertAddSelection(holder.itemView.context, item)) {
+                if (mSelectionSpec.maxSelectable <= 1) {
+                    mSelectedCollection.removeAll()
+                    mSelectedCollection.add(item)
+                    notifyCheckStateChanged()
+                } else if (assertAddSelection(holder.itemView.context, item)) {
                     mSelectedCollection.add(item)
                     notifyCheckStateChanged()
                 }

@@ -5,6 +5,8 @@ import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
 import com.matisse.R
+import com.matisse.entity.ConstValue.STATE_COLLECTION_TYPE
+import com.matisse.entity.ConstValue.STATE_SELECTION
 import com.matisse.entity.IncapableCause
 import com.matisse.entity.Item
 import com.matisse.internal.entity.SelectionSpec
@@ -13,35 +15,30 @@ import com.matisse.utils.PathUtils
 import com.matisse.utils.PhotoMetadataUtils
 import java.util.LinkedHashSet
 
-class SelectedItemCollection {
+class SelectedItemCollection(context: Context) {
 
-    private var mContext: Context
+    private var mContext: Context = context
     private lateinit var mItems: LinkedHashSet<Item>
     private var mCollectionType = COLLECTION_UNDEFINED
 
     companion object {
-        val STATE_SELECTION = "state_selection"
-        val STATE_COLLECTION_TYPE = "state_collection_type"
+
         /**
          * Empty collection
          */
-        val COLLECTION_UNDEFINED = 0x00
+        const val COLLECTION_UNDEFINED = 0x00
         /**
          * Collection only with images
          */
-        val COLLECTION_IMAGE = 0x01
+        const val COLLECTION_IMAGE = 0x01
         /**
          * Collection only with videos
          */
-        val COLLECTION_VIDEO = 0x01 shl 1
+        const val COLLECTION_VIDEO = 0x01 shl 1
         /**
          * Collection with images and videos.
          */
-        val COLLECTION_MIXED = COLLECTION_IMAGE or COLLECTION_VIDEO
-    }
-
-    constructor(context: Context) {
-        mContext = context
+        const val COLLECTION_MIXED = COLLECTION_IMAGE or COLLECTION_VIDEO
     }
 
     fun onCreate(bundle: Bundle?) {
@@ -98,15 +95,24 @@ class SelectedItemCollection {
     fun remove(item: Item): Boolean {
         val removed = mItems.remove(item)
         if (removed) {
-            if (mItems.size == 0) {
-                mCollectionType = COLLECTION_UNDEFINED
-            } else {
-                if (mCollectionType == COLLECTION_MIXED) {
-                    refineCollectionType()
-                }
-            }
+            resetType()
         }
         return removed
+    }
+
+    fun removeAll() {
+        mItems.clear()
+        resetType()
+    }
+
+    private fun resetType() {
+        if (mItems.size == 0) {
+            mCollectionType = COLLECTION_UNDEFINED
+        } else {
+            if (mCollectionType == COLLECTION_MIXED) {
+                refineCollectionType()
+            }
+        }
     }
 
     fun overwrite(items: java.util.ArrayList<Item>, collectionType: Int) {
@@ -126,7 +132,7 @@ class SelectedItemCollection {
     fun asListOfUri(): List<Uri> {
         val uris = ArrayList<Uri>()
         for (item in mItems) {
-            uris.add(item.getContentUri()!!)
+            uris.add(item.getContentUri())
         }
         return uris
     }
@@ -219,7 +225,7 @@ class SelectedItemCollection {
      * Determine whether there will be conflict media types. A user can only select images and videos at the same time
      * while [SelectionSpec.mediaTypeExclusive] is set to false.
      */
-    fun typeConflict(item: Item): Boolean {
+    private fun typeConflict(item: Item): Boolean {
         return SelectionSpec.getInstance().mediaTypeExclusive && (item.isImage()
                 && (mCollectionType == COLLECTION_VIDEO || mCollectionType == COLLECTION_MIXED) || item.isVideo()
                 && (mCollectionType == COLLECTION_IMAGE || mCollectionType == COLLECTION_MIXED))

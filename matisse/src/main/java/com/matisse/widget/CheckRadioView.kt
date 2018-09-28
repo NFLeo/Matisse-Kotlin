@@ -16,11 +16,9 @@ class CheckRadioView : AppCompatImageView {
     private var mSelectedColor: Int = 0
     private var mUnSelectUdColor: Int = 0
 
-    constructor(context: Context) : super(context) {
-        init()
-    }
+    constructor(context: Context) : this(context, null)
 
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
         init()
     }
 

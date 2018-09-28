@@ -33,6 +33,7 @@
     <attr name="empty.resource" format="reference" />
 
     <attr name="item.placeholder" format="reference|color" />
+    <attr name="page.bg" format="reference|color" />
 
     <declare-styleable name="CropImageView">
         <attr name="cropMaskColor" format="color" />

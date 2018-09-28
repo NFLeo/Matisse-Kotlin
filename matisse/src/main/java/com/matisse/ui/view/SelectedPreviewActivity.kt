@@ -33,7 +33,7 @@ class SelectedPreviewActivity : BasePreviewActivity() {
             return
         }
         val bundle = intent.getBundleExtra(ConstValue.EXTRA_DEFAULT_BUNDLE)
-        val selected = bundle.getParcelableArrayList<Item>(SelectedItemCollection.STATE_SELECTION)
+        val selected = bundle.getParcelableArrayList<Item>(ConstValue.STATE_SELECTION)
         mAdapter?.addAll(selected)
         mAdapter?.notifyDataSetChanged()
         check_view?.apply {
