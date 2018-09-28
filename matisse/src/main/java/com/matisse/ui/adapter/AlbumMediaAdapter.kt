@@ -25,12 +25,18 @@ class AlbumMediaAdapter(context: Context, selectedCollection: SelectedItemCollec
         RecyclerViewCursorAdapter<RecyclerView.ViewHolder>(null), MediaGrid.OnMediaGridClickListener {
 
     private var mSelectedCollection: SelectedItemCollection = selectedCollection
-    private var mPlaceholder: Drawable = ContextCompat.getDrawable(context, R.drawable.ic_empty_zhihu)!!
+    private var mPlaceholder: Drawable
     private var mSelectionSpec: SelectionSpec = SelectionSpec.getInstance()
     var mCheckStateListener: CheckStateListener? = null
     var mOnMediaClickListener: OnMediaClickListener? = null
     private var mRecyclerView: RecyclerView = recyclerView
     private var mImageResize: Int = 0
+
+    init {
+        val ta = context.theme.obtainStyledAttributes(intArrayOf(R.attr.item_placeholder))
+        mPlaceholder = ta.getDrawable(0)
+        ta.recycle()
+    }
 
     companion object {
         const val VIEW_TYPE_CAPTURE = 0X01
@@ -58,26 +64,7 @@ class AlbumMediaAdapter(context: Context, selectedCollection: SelectedItemCollec
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, cursor: Cursor) {
         if (holder is CaptureViewHolder) {
-            val drawables = holder.mHint.compoundDrawables
-            val ta = holder.itemView.context.theme
-                    .obtainStyledAttributes(intArrayOf(R.attr.capture_textColor))
-            val color = ta.getColor(0, 0)
-            ta.recycle()
-
-            for (i in drawables.indices) {
-                val drawable = drawables[i]
-                if (drawable != null) {
-                    val state = drawable.constantState ?: continue
-
-                    val newDrawable = state.newDrawable().mutate()
-                    newDrawable.setColorFilter(color, PorterDuff.Mode.SRC_IN)
-                    newDrawable.bounds = drawable.bounds
-                    drawables[i] = newDrawable
-                }
-            }
-
-            holder.mHint.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3])
-
+            UIUtils.setTextDrawable(holder.itemView.context, holder.mHint, R.attr.textColor_Camera)
         } else if (holder is MediaViewHolder) {
             val item = Item.valueOf(cursor)
             holder.mMediaGrid.preBindMedia(MediaGrid.PreBindInfo(getImageResize(holder.mMediaGrid.context),

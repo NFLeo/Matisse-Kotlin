@@ -4,4 +4,17 @@
     <dimen name="media_grid_spacing">4dp</dimen>
     <dimen name="grid_expected_size">120dp</dimen>
     <dimen name="album_item_height">72dp</dimen>
+
+    <dimen name="navigation_height">48dp</dimen>
+    <dimen name="bottom_tool_height">48dp</dimen>
+
+    <dimen name="text_back">15sp</dimen>
+    <dimen name="text_sure">15sp</dimen>
+    <dimen name="text_preview">15sp</dimen>
+    <dimen name="text_album">15sp</dimen>
+    <dimen name="text_original">15sp</dimen>
+    <dimen name="text_camera">14sp</dimen>
+    <dimen name="text_item_album">16sp</dimen>
+    <dimen name="text_empty">17sp</dimen>
+
 </resources>

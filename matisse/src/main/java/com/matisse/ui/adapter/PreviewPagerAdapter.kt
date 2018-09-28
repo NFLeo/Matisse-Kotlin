@@ -39,7 +39,6 @@ class PreviewPagerAdapter(manager: FragmentManager, listener: OnPrimaryItemSetLi
         mItems.addAll(items)
     }
 
-
     interface OnPrimaryItemSetListener {
         fun onPrimaryItemSet(position: Int)
     }

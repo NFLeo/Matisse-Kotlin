@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
+import com.leo.matisse.R.id.btn_media_store
 import com.matisse.Matisse
 import com.matisse.MimeTypeManager.Companion.ofAll
 import com.matisse.entity.CaptureStrategy
@@ -47,9 +48,10 @@ class MainActivity : AppCompatActivity() {
                                     .choose(ofAll(), false)
                                     .countable(true)
                                     .capture(true)
-                                    .theme(R.style.Matisse_Zhihu)
+                                    .isCrop(true)
+                                    .countable(false)
                                     .captureStrategy(CaptureStrategy(true, "${Platform.getPackageName(this@MainActivity)}.fileprovider"))
-                                    .maxSelectable(9)
+                                    .maxSelectable(1)
                                     .gridExpectedSize(resources.getDimensionPixelSize(R.dimen.grid_expected_size))
                                     .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
                                     //.imageEngine(new GlideEngine())  // for glide-V3

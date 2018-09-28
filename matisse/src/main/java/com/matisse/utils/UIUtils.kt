@@ -2,13 +2,16 @@ package com.matisse.utils
 
 import android.content.Context
 import android.content.res.Resources
+import android.graphics.PorterDuff
 import android.support.v4.app.FragmentActivity
 import android.util.DisplayMetrics
 import android.util.TypedValue
 import android.util.TypedValue.applyDimension
 import android.view.View
 import android.view.WindowManager
+import android.widget.TextView
 import android.widget.Toast
+import com.matisse.R
 import com.matisse.entity.IncapableCause
 import com.matisse.widget.IncapableDialog
 
@@ -44,6 +47,31 @@ object UIUtils {
         return spanCount
     }
 
+    fun setTextDrawable(context: Context, textView: TextView?, attr: Int) {
+        if (textView == null) {
+            return
+        }
+
+        val drawables = textView.compoundDrawables
+        val ta = context.theme.obtainStyledAttributes(intArrayOf(attr))
+        val color = ta.getColor(0, 0)
+        ta.recycle()
+
+        for (i in drawables.indices) {
+            val drawable = drawables[i]
+            if (drawable != null) {
+                val state = drawable.constantState ?: continue
+
+                val newDrawable = state.newDrawable().mutate()
+                newDrawable.setColorFilter(color, PorterDuff.Mode.SRC_IN)
+                newDrawable.bounds = drawable.bounds
+                drawables[i] = newDrawable
+            }
+        }
+
+        textView.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3])
+    }
+
     /**
      * 设置控件显示隐藏
      * 避免控件重复设置，统一提前添加判断
@@ -62,7 +90,7 @@ object UIUtils {
         }
     }
 
-    fun dp2px(context: Context, dipValue: Float):Float {
+    fun dp2px(context: Context, dipValue: Float): Float {
         val mDisplayMetrics = getDisplayMetrics(context)
         return applyDimension(TypedValue.COMPLEX_UNIT_DIP, dipValue, mDisplayMetrics)
     }

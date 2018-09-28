@@ -1,35 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <attr name="toolbar" format="reference"/>
-    <attr name="toolbar.height" format="dimension"/>
-    <attr name="album.dropdown.title.color" format="reference|color"/>
-    <attr name="album.dropdown.count.color" format="reference|color"/>
-    <attr name="album.element.color" format="reference|color"/>
-    <attr name="album.thumbnail.placeholder" format="reference|color"/>
-    <attr name="album.emptyView" format="reference"/>
-    <attr name="album.emptyView.textColor" format="reference|color"/>
-    <attr name="listPopupWindowStyle" format="reference"/>
-    <attr name="page.bg" format="reference|color"/>
-    <attr name="bottomToolbar.bg" format="reference|color"/>
-    <attr name="bottomToolbar.preview.textColor" format="reference|color"/>
-    <attr name="bottomToolbar.apply.textColor" format="reference|color"/>
-    <attr name="preview.bottomToolbar.back.textColor" format="reference|color"/>
-    <attr name="preview.bottomToolbar.apply.textColor" format="reference|color"/>
-    <attr name="item.placeholder" format="reference|color"/>
-    <attr name="item.checkCircle.backgroundColor" format="reference|color"/>
-    <attr name="item.checkCircle.borderColor" format="reference|color"/>
-    <attr name="item.checkCircle.numColor" format="reference|color"/>
-    <attr name="capture.textColor" format="reference|color"/>
+    <attr name="navigation.height" format="dimension" />
+    <attr name="navigation.background" format="reference|color" />
+    <attr name="navigation.backRes" format="reference" />
+
+    <attr name="bottomToolbar.bg" format="reference|color" />
+    <attr name="bottomToolbar.height" format="dimension" />
+
+    <attr name="textColor.Back" format="reference|color" />
+    <attr name="textColor.Sure" format="reference|color" />
+    <attr name="textColor.Preview" format="reference|color" />
+    <attr name="textColor.Album" format="reference|color" />
+    <attr name="textColor.Original" format="reference|color" />
+    <attr name="textColor.Camera" format="reference|color" />
+    <attr name="textColor.Item.Album" format="reference|color" />
+
+    <attr name="textSize.Back" format="dimension" />
+    <attr name="textSize.Sure" format="dimension" />
+    <attr name="textSize.Preview" format="dimension" />
+    <attr name="textSize.Album" format="dimension" />
+    <attr name="textSize.Original" format="dimension" />
+    <attr name="textSize.Camera" format="dimension" />
+    <attr name="textSize.Item.Album" format="dimension" />
+
+    <attr name="item.checkCircle.backgroundColor" format="reference|color" />
+    <attr name="item.checkCircle.borderColor" format="reference|color" />
+    <attr name="item.checkCircle.numColor" format="reference|color" />
+    <attr name="item.checkRadio" format="reference|color" />
+
+    <attr name="empty.textColor" format="reference|color" />
+    <attr name="empty.textSize" format="dimension" />
+    <attr name="empty.resource" format="reference" />
+
+    <attr name="item.placeholder" format="reference|color" />
 
     <declare-styleable name="CropImageView">
-        <attr name="cropMaskColor" format="color"/>
-        <attr name="cropBorderColor" format="color"/>
-        <attr name="cropBorderWidth" format="dimension"/>
-        <attr name="cropFocusWidth" format="dimension"/>
-        <attr name="cropFocusHeight" format="dimension"/>
+        <attr name="cropMaskColor" format="color" />
+        <attr name="cropBorderColor" format="color" />
+        <attr name="cropBorderWidth" format="dimension" />
+        <attr name="cropFocusWidth" format="dimension" />
+        <attr name="cropFocusHeight" format="dimension" />
         <attr name="cropStyle" format="enum">
-            <enum name="rectangle" value="0"/>
-            <enum name="circle" value="1"/>
+            <enum name="rectangle" value="0" />
+            <enum name="circle" value="1" />
         </attr>
     </declare-styleable>
 </resources>

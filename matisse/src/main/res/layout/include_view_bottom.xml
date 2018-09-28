@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/bottom_toolbar"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/white"
+    android:layout_height="?attr/bottomToolbar.height"
+    android:background="?attr/bottomToolbar.bg"
     android:elevation="4dp">
 
     <TextView
@@ -16,8 +16,8 @@
         android:foreground="?selectableItemBackground"
         android:padding="16dp"
         android:text="@string/button_preview"
-        android:textColor="@color/selector_preview_text"
-        android:textSize="16sp"
+        android:textColor="?attr/textColor.Preview"
+        android:textSize="?attr/textSize.Preview"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -51,7 +51,8 @@
             android:paddingLeft="4dp"
             android:paddingStart="4dp"
             android:text="@string/button_original"
-            android:textSize="14sp" />
+            android:textColor="?attr/textColor.Original"
+            android:textSize="?attr/textSize.Original" />
 
     </LinearLayout>
 
@@ -77,8 +78,8 @@
         android:foreground="?selectableItemBackground"
         android:padding="16dp"
         android:text="@string/button_apply"
-        android:textColor="@color/selector_base_text"
-        android:textSize="16sp"
+        android:textColor="?attr/textColor.Album"
+        android:textSize="?attr/textSize.Album"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

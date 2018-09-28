@@ -30,6 +30,8 @@ import com.matisse.internal.entity.SelectionSpec
 import com.matisse.listener.OnCheckedListener
 import com.matisse.listener.OnSelectedListener
 import com.matisse.ui.view.MatisseActivity
+import com.matisse.widget.CropImageView
+import java.io.File
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
 import java.util.*
@@ -45,7 +47,7 @@ class SelectionCreator
  * @param mimeTypes MIME type set to select.
  */
 internal constructor(private val mMatisse: Matisse, mimeTypes: Set<MimeType>, mediaTypeExclusive: Boolean) {
-    private val mSelectionSpec: SelectionSpec
+    private val mSelectionSpec: SelectionSpec = SelectionSpec.getCleanInstance()
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     @IntDef(SCREEN_ORIENTATION_UNSPECIFIED, SCREEN_ORIENTATION_LANDSCAPE,
@@ -59,7 +61,6 @@ internal constructor(private val mMatisse: Matisse, mimeTypes: Set<MimeType>, me
     internal annotation class ScreenOrientation
 
     init {
-        mSelectionSpec = SelectionSpec.getCleanInstance()
         mSelectionSpec.mimeTypeSet = mimeTypes
         mSelectionSpec.mediaTypeExclusive = mediaTypeExclusive
         mSelectionSpec.orientation = SCREEN_ORIENTATION_UNSPECIFIED
@@ -274,8 +275,79 @@ internal constructor(private val mMatisse: Matisse, mimeTypes: Set<MimeType>, me
     }
 
     /**
+     * Whether to support crop
+     * If this value is set true, it will support function crop.
+     * @param crop Whether to support crop or not. Default value is false;
+     * @return [SelectionCreator] for fluent API.
+     */
+    fun isCrop(crop: Boolean): SelectionCreator {
+        mSelectionSpec.isCrop = crop
+        return this
+    }
+
+    /**
+     * Whether to stay circle or rectangle when Circle style
+     * 圆形裁剪模式下，保存圆形图片或方形， 默认圆形
+     * If this value is set true, it will stay rectangle to save image.
+     * @param cropSaveRectangle Whether to stay rectangle or not. Default value is false;
+     * @return [SelectionCreator] for fluent API.
+     */
+    fun isCropSaveRectangle(cropSaveRectangle: Boolean): SelectionCreator {
+        mSelectionSpec.isCropSaveRectangle = cropSaveRectangle
+        return this
+    }
+
+    /**
+     * width of crop image  px is required
+     */
+    fun cropOutPutX(cropOutPutX: Int): SelectionCreator {
+        mSelectionSpec.cropOutPutX = cropOutPutX
+        return this
+    }
+
+    /**
+     * height of crop image  px is required
+     */
+    fun cropOutPutY(cropOutPutY: Int): SelectionCreator {
+        mSelectionSpec.cropOutPutY = cropOutPutY
+        return this
+    }
+
+    /**
+     * width of cropFrame  px is required
+     */
+    fun cropFocusWidth(cropFocusWidth: Int): SelectionCreator {
+        mSelectionSpec.cropFocusWidth = cropFocusWidth
+        return this
+    }
+
+    /**
+     * height of cropFrame  px is required
+     */
+    fun cropFocusHeight(cropFocusHeight: Int): SelectionCreator {
+        mSelectionSpec.cropFocusHeight = cropFocusHeight
+        return this
+    }
+
+    /**
+     * cropStyle [CropImageView.Style]
+     * default is CropImageView.Style.RECTANGLE
+     */
+    fun cropStyle(cropStyle: CropImageView.Style): SelectionCreator {
+        mSelectionSpec.cropStyle = cropStyle
+        return this
+    }
+
+    /**
+     * provide file to save image after crop
+     */
+    fun cropCacheFolder(cropCacheFolder: File): SelectionCreator {
+        mSelectionSpec.cropCacheFolder = cropCacheFolder
+        return this
+    }
+
+    /**
      * Set listener for callback immediately when user select or unselect something.
-     *
      *
      * It's a redundant API with [Matisse.obtainResult],
      * we only suggest you to use this API when you need to do something immediately.

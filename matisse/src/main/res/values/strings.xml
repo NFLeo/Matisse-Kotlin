@@ -2,15 +2,17 @@
     <string name="app_name">matisse</string>
     <string name="album_name_all">All Media</string>
     <string name="button_ok">OK</string>
-
+    <string name="button_original">Original</string>
+    <string name="button_sure_default">Sure</string>
+    <string name="button_sure">Sure(%1$d)</string>
     <string name="button_preview">Preview</string>
     <string name="button_apply_default">Apply</string>
     <string name="button_apply">Apply(%1$d)</string>
     <string name="button_back">Back</string>
     <string name="button_complete">Complete</string>
+
     <string name="photo_grid_capture">Camera</string>
     <string name="empty_text">No media yet</string>
-
     <string name="error_over_count_default">You have reached max selectable</string>
     <string name="error_over_count">You can only select up to %1$d media files</string>
     <string name="error_under_quality">Under quality</string>
@@ -20,8 +22,6 @@
     <string name="error_no_video_activity">No App found supporting video preview</string>
     <string name="error_over_original_size">Can\'t select the images larger than %1$d MB</string>
     <string name="error_over_original_count">%1$d images over %2$d MB. Original will be unchecked</string>
-    <string name="button_original">Original</string>
-    <string name="button_sure_default">Sure</string>
-    <string name="button_sure">Sure(%1$d)</string>
-    <string name="error_gif">长宽不小于 %1$dpx，且大小不超过 %2$sM。</string>
+    <string name="error_gif">not larger than %1$dpx and %2$sM。</string>
+    <string name="error_crop">Crop Failed</string>
 </resources>

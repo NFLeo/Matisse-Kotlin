@@ -1,6 +1,8 @@
 package com.matisse.ui.adapter
 
+import android.content.Context
 import android.database.Cursor
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
@@ -15,9 +17,16 @@ import com.matisse.internal.entity.SelectionSpec
 import com.matisse.widget.CheckRadioView
 import java.io.File
 
-class FolderMediaAdapter(var mCurrentPosition: Int) : RecyclerViewCursorAdapter<FolderMediaAdapter.FolderViewHolder>(null) {
+class FolderMediaAdapter(var context: Context, var mCurrentPosition: Int) : RecyclerViewCursorAdapter<FolderMediaAdapter.FolderViewHolder>(null) {
 
     var mItemClickListener: OnItemClickListener? = null
+    private var mPlaceholder: Drawable
+
+    init {
+        val ta = context.theme.obtainStyledAttributes(intArrayOf(R.attr.item_placeholder))
+        mPlaceholder = ta.getDrawable(0)
+        ta.recycle()
+    }
 
     override fun onBindViewHolder(holder: FolderViewHolder, cursor: Cursor) {
 
@@ -37,7 +46,7 @@ class FolderMediaAdapter(var mCurrentPosition: Int) : RecyclerViewCursorAdapter<
         // do not need to load animated Gif
         val mContext = holder.mIvBucketCover.context
         SelectionSpec.getInstance().imageEngine.loadThumbnail(mContext, mContext.resources.getDimensionPixelSize(R
-                .dimen.media_grid_size), ContextCompat.getDrawable(mContext, R.drawable.ic_empty_zhihu)!!,
+                .dimen.media_grid_size), mPlaceholder,
                 holder.mIvBucketCover, Uri.fromFile(File(album.getCoverPath())))
     }
 

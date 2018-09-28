@@ -9,12 +9,14 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.WindowManager
 import com.matisse.R
+import com.matisse.R.id.*
 import com.matisse.entity.ConstValue
 import com.matisse.entity.IncapableCause
 import com.matisse.entity.Item
 import com.matisse.internal.entity.SelectionSpec
 import com.matisse.model.SelectedItemCollection
 import com.matisse.ui.adapter.PreviewPagerAdapter
+import com.matisse.utils.PathUtils
 import com.matisse.utils.PhotoMetadataUtils
 import com.matisse.utils.Platform
 import com.matisse.widget.CheckView
@@ -216,8 +218,21 @@ open class BasePreviewActivity : AppCompatActivity(),
         when (v) {
             button_preview -> onBackPressed()
             button_apply -> {
-                sendBackResult(true)
-                finish()
+                if (mSpec?.openCrop() == true) {
+                    val item = mAdapter?.getMediaItem(pager.currentItem)
+
+                    if (item != null && item.isImage() && !item.isGif()) {
+                        val intentCrop = Intent(this, ImageCropActivity::class.java)
+                        intentCrop.putExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH, PathUtils.getPath(this, item.getContentUri()))
+                        startActivityForResult(intentCrop, ConstValue.REQUEST_CODE_CROP)
+                    } else {
+                        sendBackResult(true)
+                        finish()
+                    }
+                } else {
+                    sendBackResult(true)
+                    finish()
+                }
             }
 
             original_layout -> {
@@ -261,6 +276,21 @@ open class BasePreviewActivity : AppCompatActivity(),
 
                 mSpec?.onSelectedListener?.onSelected(mSelectedCollection.asListOfUri(), mSelectedCollection.asListOfString())
             }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode != Activity.RESULT_OK)
+            return
+
+        if (requestCode == ConstValue.REQUEST_CODE_CROP) {
+
+            val resultPath = data?.getStringExtra(ConstValue.EXTRA_RESULT_BUNDLE)
+            val result = Intent()
+            result.putExtra(ConstValue.EXTRA_RESULT_BUNDLE, resultPath)
+            setResult(Activity.RESULT_OK, result)
+            finish()
         }
     }
 

@@ -31,38 +31,37 @@ class Item(var id: Long, var mimeType: String, var size: Long = 0, var duration:
     private var uri: Uri
 
     init {
-        val contentUri: Uri
-        when {
-            isImage() -> contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-            isVideo() -> contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+        val contentUri: Uri = when {
+            isImage() -> MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+            isVideo() -> MediaStore.Video.Media.EXTERNAL_CONTENT_URI
             else -> // ?
-                contentUri = MediaStore.Files.getContentUri("external")
+                MediaStore.Files.getContentUri("external")
         }
         uri = ContentUris.withAppendedId(contentUri, id)
     }
 
     fun isImage(): Boolean {
-        return mimeType == MimeType.JPEG.toString()
-                || mimeType == MimeType.PNG.toString()
-                || mimeType == MimeType.GIF.toString()
-                || mimeType == MimeType.BMP.toString()
-                || mimeType == MimeType.WEBP.toString()
+        return mimeType == MimeType.JPEG.getKey()
+                || mimeType == MimeType.PNG.getKey()
+                || mimeType == MimeType.GIF.getKey()
+                || mimeType == MimeType.BMP.getKey()
+                || mimeType == MimeType.WEBP.getKey()
     }
 
     fun isGif(): Boolean {
-        return mimeType == MimeType.GIF.toString()
+        return mimeType == MimeType.GIF.getKey()
     }
 
     fun isVideo(): Boolean {
-        return mimeType == MimeType.MPEG.toString()
-                || mimeType == MimeType.MP4.toString()
-                || mimeType == MimeType.QUICKTIME.toString()
-                || mimeType == MimeType.THREEGPP.toString()
-                || mimeType == MimeType.THREEGPP2.toString()
-                || mimeType == MimeType.MKV.toString()
-                || mimeType == MimeType.WEBM.toString()
-                || mimeType == MimeType.TS.toString()
-                || mimeType == MimeType.AVI.toString()
+        return mimeType == MimeType.MPEG.getKey()
+                || mimeType == MimeType.MP4.getKey()
+                || mimeType == MimeType.QUICKTIME.getKey()
+                || mimeType == MimeType.THREEGPP.getKey()
+                || mimeType == MimeType.THREEGPP2.getKey()
+                || mimeType == MimeType.MKV.getKey()
+                || mimeType == MimeType.WEBM.getKey()
+                || mimeType == MimeType.TS.getKey()
+                || mimeType == MimeType.AVI.getKey()
     }
 
     fun getContentUri() = uri
@@ -84,15 +83,10 @@ class Item(var id: Long, var mimeType: String, var size: Long = 0, var duration:
 
     override fun hashCode(): Int {
         var result = 1
-        result = 31 * result + java.lang.Long.valueOf(id).hashCode()
-        if (true) {
-            result = 31 * result + mimeType.hashCode()
-        }
+        result = 31 * result + mimeType.hashCode()
         result = 31 * result + uri.hashCode()
         result = 31 * result + java.lang.Long.valueOf(size).hashCode()
         result = 31 * result + java.lang.Long.valueOf(duration).hashCode()
         return result
     }
-
-
 }

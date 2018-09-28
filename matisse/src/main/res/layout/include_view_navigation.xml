@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/bottom_toolbar"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/white"
+    android:layout_height="?attr/navigation.height"
+    android:background="?attr/navigation.background"
     android:elevation="4dp">
 
     <TextView
@@ -12,11 +12,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
+        android:drawableLeft="?attr/navigation.backRes"
+        android:drawablePadding="5dp"
         android:foreground="?selectableItemBackground"
         android:padding="16dp"
         android:text="@string/button_back"
-        android:textColor="@color/selector_preview_text"
-        android:textSize="16sp"
+        android:textColor="?attr/textColor.Back"
+        android:textSize="?attr/textSize.Back"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -29,8 +31,8 @@
         android:foreground="?selectableItemBackground"
         android:padding="16dp"
         android:text="@string/button_complete"
-        android:textColor="@color/selector_base_text"
-        android:textSize="16sp"
+        android:textColor="?attr/textColor.Sure"
+        android:textSize="?attr/textSize.Sure"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

@@ -19,13 +19,13 @@ import com.matisse.utils.BitmapUtils
 import com.matisse.utils.Platform
 import com.matisse.utils.UIUtils
 import com.matisse.widget.CropImageView
+import com.matisse.widget.IncapableDialog
+import kotlinx.android.synthetic.main.include_view_bottom.*
 import java.io.File
 
 class ImageCropActivity : AppCompatActivity(), View.OnClickListener, CropImageView.OnBitmapSaveCompleteListener {
 
-    private lateinit var btnPreview:TextView
-    private lateinit var btnApply:TextView
-    private lateinit var cropImageView: CropImageView
+    private lateinit var cv_crop_image: CropImageView
 
     private var mBitmap: Bitmap? = null
     private var mIsSaveRectangle: Boolean = false
@@ -36,11 +36,16 @@ class ImageCropActivity : AppCompatActivity(), View.OnClickListener, CropImageVi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         mSpec = SelectionSpec.getInstance()
+        setTheme(mSpec.themeId)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_crop)
 
         if (Platform.hasKitKat19()) {
             window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        }
+
+        if (mSpec.needOrientationRestriction()) {
+            requestedOrientation = mSpec.orientation
         }
 
         imagePath = intent.getStringExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH)
@@ -51,17 +56,12 @@ class ImageCropActivity : AppCompatActivity(), View.OnClickListener, CropImageVi
 
     private fun initView() {
 
-        btnPreview = findViewById(button_preview)
-        btnApply = findViewById(button_apply)
-        cropImageView = findViewById(cv_crop_image)
-
-        btnPreview.setOnClickListener {
-            setResult(Activity.RESULT_CANCELED)
-            finish()
-        }
-
-        btnApply.text = getString(R.string.button_ok)
-        btnApply.setOnClickListener(this)
+        cv_crop_image = findViewById(R.id.cv_crop_image)
+        button_preview.text = getString(R.string.button_back)
+        button_apply.text = getString(R.string.button_complete)
+        button_preview.setOnClickListener(this)
+        button_apply.setOnClickListener(this)
+        original_layout.visibility = View.GONE
     }
 
     private fun initCropFun() {
@@ -78,10 +78,10 @@ class ImageCropActivity : AppCompatActivity(), View.OnClickListener, CropImageVi
         val cropHeight = if (mSpec.cropFocusHeight in 1..(cropFocusNormalHeight - 1))
             mSpec.cropFocusHeight else cropFocusNormalHeight
 
-        cropImageView.setFocusStyle(mSpec.cropStyle)
-        cropImageView.setFocusWidth(cropWidth)
-        cropImageView.setFocusHeight(cropHeight)
-        cropImageView.setOnBitmapSaveCompleteListener(this)
+        cv_crop_image.setFocusStyle(mSpec.cropStyle)
+        cv_crop_image.setFocusWidth(cropWidth)
+        cv_crop_image.setFocusHeight(cropHeight)
+        cv_crop_image.setOnBitmapSaveCompleteListener(this)
 
         //缩放图片
         val options = BitmapFactory.Options()
@@ -92,11 +92,10 @@ class ImageCropActivity : AppCompatActivity(), View.OnClickListener, CropImageVi
         options.inJustDecodeBounds = false
         mBitmap = BitmapFactory.decodeFile(imagePath, options)
         mBitmap?.let {
-            val rotateBitmap = cropImageView.rotate(it, BitmapUtils.getBitmapDegree(imagePath).toFloat())
-            //设置默认旋转角度
-            cropImageView.setImageBitmap(rotateBitmap)
+            val rotateBitmap = cv_crop_image.rotate(it, BitmapUtils.getBitmapDegree(imagePath).toFloat())
+            // 设置默认旋转角度
+            cv_crop_image.setImageBitmap(rotateBitmap)
         }
-
     }
 
     private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
@@ -114,28 +113,39 @@ class ImageCropActivity : AppCompatActivity(), View.OnClickListener, CropImageVi
     }
 
     override fun onBitmapSaveSuccess(file: File) {
-        Toast.makeText(this, "Crop Success! " + file.absolutePath, Toast.LENGTH_SHORT).show()
         val intent = Intent()
         intent.putExtra(ConstValue.EXTRA_RESULT_BUNDLE, file.absolutePath)
         setResult(Activity.RESULT_OK, intent)
         finish()
     }
 
-    override fun onBitmapSaveError(file: File) {}
+    override fun onBitmapSaveError(file: File) {
+        val incapableDialog = IncapableDialog.newInstance("",
+                getString(R.string.error_crop))
+        incapableDialog.show(supportFragmentManager, IncapableDialog::class.java.name)
+    }
 
     override fun onClick(v: View?) {
         when (v) {
-            btnApply -> cropImageView.saveBitmapToFile(getCropCacheFolder(this), mOutputX, mOutputY, mIsSaveRectangle)
+            button_apply -> cv_crop_image.saveBitmapToFile(getCropCacheFolder(this), mOutputX, mOutputY, mIsSaveRectangle)
+            button_preview -> {
+                setResult(Activity.RESULT_CANCELED)
+                finish()
+            }
         }
     }
 
     private fun getCropCacheFolder(context: Context): File {
-        return File(context.cacheDir.toString() + "/Matisse/cropTemp/")
+        return if (mSpec.cropCacheFolder != null && mSpec.cropCacheFolder?.exists() == true && mSpec.cropCacheFolder?.isDirectory == true) {
+            mSpec.cropCacheFolder!!
+        } else {
+            File(context.cacheDir.toString() + "/Matisse/cropTemp/")
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        cropImageView.setOnBitmapSaveCompleteListener(null)
+        cv_crop_image.setOnBitmapSaveCompleteListener(null)
         if (null != mBitmap && !mBitmap?.isRecycled!!) {
             mBitmap?.recycle()
             mBitmap = null

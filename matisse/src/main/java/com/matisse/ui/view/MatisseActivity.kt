@@ -11,12 +11,15 @@ import android.os.Looper
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import com.matisse.R
+import com.matisse.R.id.*
 import com.matisse.entity.Album
 import com.matisse.entity.ConstValue
+import com.matisse.entity.ConstValue.EXTRA_RESULT_BUNDLE
 import com.matisse.entity.ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE
 import com.matisse.entity.ConstValue.EXTRA_RESULT_SELECTION
 import com.matisse.entity.ConstValue.EXTRA_RESULT_SELECTION_PATH
 import com.matisse.entity.ConstValue.REQUEST_CODE_CAPTURE
+import com.matisse.entity.ConstValue.REQUEST_CODE_CROP
 import com.matisse.entity.ConstValue.REQUEST_CODE_PREVIEW
 import com.matisse.entity.Item
 import com.matisse.internal.entity.SelectionSpec
@@ -85,7 +88,6 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
 
         setContentView(R.layout.activity_matisse)
         initConfigs(savedInstanceState)
-
         initListener()
     }
 
@@ -108,6 +110,8 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
         }
         mAlbumCollection.loadAlbums()
         updateBottomToolbar()
+        // reset back resource color
+        UIUtils.setTextDrawable(this, button_back, R.attr.textColor_Back)
     }
 
     private fun initListener() {
@@ -157,53 +161,92 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
         if (resultCode != Activity.RESULT_OK)
             return
 
-        if (requestCode == ConstValue.REQUEST_CODE_PREVIEW) {
-            val resultBundle = data?.getBundleExtra(ConstValue.EXTRA_RESULT_BUNDLE)
-            val selected = resultBundle?.getParcelableArrayList<Item>(SelectedItemCollection.STATE_SELECTION)
-            mOriginalEnable = data?.getBooleanExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, false) ?: false
-            val collectionType = resultBundle?.getInt(SelectedItemCollection.STATE_COLLECTION_TYPE,
-                    SelectedItemCollection.COLLECTION_UNDEFINED)
-            if (data?.getBooleanExtra(ConstValue.EXTRA_RESULT_APPLY, false) == true) {
-                val result = Intent()
-                val selectedUris = ArrayList<Uri>()
-                val selectedPaths = ArrayList<String>()
-                if (selected != null) {
-                    for (item in selected) {
-                        selectedUris.add(item.getContentUri())
-                        selectedPaths.add(PathUtils.getPath(this, item.getContentUri())!!)
+        var cropPath: String? = null
+        if (data != null) {
+            cropPath = data.getStringExtra(ConstValue.EXTRA_RESULT_BUNDLE)
+        }
+
+        when (requestCode) {
+            ConstValue.REQUEST_CODE_PREVIEW -> {
+
+                if (!cropPath.isNullOrEmpty()) {
+                    // 裁剪带回数据，则认为图片经过裁剪流程
+                    returnCropData(cropPath!!)
+                    return
+                }
+
+                val resultBundle = data?.getBundleExtra(ConstValue.EXTRA_RESULT_BUNDLE)
+                val selected = resultBundle?.getParcelableArrayList<Item>(SelectedItemCollection.STATE_SELECTION)
+                mOriginalEnable = data?.getBooleanExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, false) ?: false
+                val collectionType = resultBundle?.getInt(SelectedItemCollection.STATE_COLLECTION_TYPE,
+                        SelectedItemCollection.COLLECTION_UNDEFINED)
+                if (data?.getBooleanExtra(ConstValue.EXTRA_RESULT_APPLY, false) == true) {
+                    val result = Intent()
+                    val selectedUris = ArrayList<Uri>()
+                    val selectedPaths = ArrayList<String>()
+                    if (selected != null) {
+                        for (item in selected) {
+                            selectedUris.add(item.getContentUri())
+                            selectedPaths.add(PathUtils.getPath(this, item.getContentUri())!!)
+                        }
                     }
+                    result.putParcelableArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION, selectedUris)
+                    result.putStringArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH, selectedPaths)
+                    result.putExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, mOriginalEnable)
+                    setResult(Activity.RESULT_OK, result)
+                    finish()
+                } else {
+                    mSelectedCollection.overwrite(selected!!, collectionType!!)
+                    val mediaSelectionFragment = supportFragmentManager.findFragmentByTag(
+                            MediaSelectionFragment::class.java.simpleName)
+                    if (mediaSelectionFragment is MediaSelectionFragment) {
+                        mediaSelectionFragment.refreshMediaGrid()
+                    }
+                    updateBottomToolbar()
                 }
-                result.putParcelableArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION, selectedUris)
-                result.putStringArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH, selectedPaths)
-                result.putExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, mOriginalEnable)
-                setResult(Activity.RESULT_OK, result)
-                finish()
-            } else {
-                mSelectedCollection.overwrite(selected!!, collectionType!!)
-                val mediaSelectionFragment = supportFragmentManager.findFragmentByTag(
-                        MediaSelectionFragment::class.java.simpleName)
-                if (mediaSelectionFragment is MediaSelectionFragment) {
-                    mediaSelectionFragment.refreshMediaGrid()
-                }
-                updateBottomToolbar()
             }
-        } else if (requestCode == ConstValue.REQUEST_CODE_CAPTURE) {
-            // Just pass the data back to previous calling Activity.
-            val contentUri = mMediaStoreCompat!!.getCurrentPhotoUri()
-            val path = mMediaStoreCompat!!.getCurrentPhotoPath()
-            val selected = ArrayList<Uri>()
-            selected.add(contentUri!!)
-            val selectedPath = ArrayList<String>()
-            selectedPath.add(path!!)
-            val result = Intent()
-            result.putParcelableArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION, selected)
-            result.putStringArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH, selectedPath)
-            setResult(Activity.RESULT_OK, result)
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
+
+            ConstValue.REQUEST_CODE_CAPTURE -> {
+                val contentUri = mMediaStoreCompat!!.getCurrentPhotoUri()
+                val path = mMediaStoreCompat!!.getCurrentPhotoPath()
+                val selected = ArrayList<Uri>()
+                selected.add(contentUri!!)
+                val selectedPath = ArrayList<String>()
+                selectedPath.add(path!!)
+
+                // Check is Crop first
+                if (mSpec?.openCrop() == true) {
+                    val intentCrop = Intent(this, ImageCropActivity::class.java)
+                    intentCrop.putExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH, selectedPath[0])
+                    startActivityForResult(intentCrop, ConstValue.REQUEST_CODE_CROP)
+                    return
+                }
+
+                val result = Intent()
+                result.putParcelableArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION, selected)
+                result.putStringArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH, selectedPath)
+                setResult(Activity.RESULT_OK, result)
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                }
                 this@MatisseActivity.revokeUriPermission(contentUri,
                         Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            finish()
+                finish()
+            }
+            ConstValue.REQUEST_CODE_CROP -> {
+                returnCropData(cropPath!!)
+            }
         }
+    }
+
+    private fun returnCropData(cropPath: String) {
+        val result = Intent()
+        val selectedUris = ArrayList<Uri>()
+        val selectedPaths = ArrayList<String>()
+        selectedPaths.add(cropPath)
+        result.putParcelableArrayListExtra(EXTRA_RESULT_SELECTION, selectedUris)
+        result.putStringArrayListExtra(EXTRA_RESULT_SELECTION_PATH, selectedPaths)
+        setResult(Activity.RESULT_OK, result)
+        finish()
     }
 
     override fun provideSelectedItemCollection() = mSelectedCollection
@@ -216,10 +259,6 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
         intent.putExtra(ConstValue.EXTRA_DEFAULT_BUNDLE, mSelectedCollection.getDataWithBundle())
         intent.putExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, mOriginalEnable)
         startActivityForResult(intent, ConstValue.REQUEST_CODE_PREVIEW)
-
-//        val intentCrop = Intent(this, ImageCropActivity::class.java)
-//        intentCrop.putExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH, PathUtils.getPath(this, item.getContentUri()))
-//        startActivityForResult(intentCrop, ConstValue.REQUEST_CODE_CROP)
     }
 
     override fun onClick(v: View?) {
@@ -233,10 +272,18 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
             }
 
             button_complete -> {
-                val result = Intent()
                 val selectedUris = mSelectedCollection.asListOfUri() as ArrayList<Uri>
-                result.putParcelableArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION, selectedUris)
                 val selectedPaths = mSelectedCollection.asListOfString() as ArrayList<String>
+
+                if (mSpec?.openCrop() == true) {
+                    val intentCrop = Intent(this, ImageCropActivity::class.java)
+                    intentCrop.putExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH, selectedPaths[0])
+                    startActivityForResult(intentCrop, ConstValue.REQUEST_CODE_CROP)
+                    return
+                }
+
+                val result = Intent()
+                result.putParcelableArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION, selectedUris)
                 result.putStringArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH, selectedPaths)
                 result.putExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, mOriginalEnable)
                 setResult(Activity.RESULT_OK, result)
@@ -292,10 +339,10 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
         if (selectedCount == 0) {
             button_preview.isEnabled = false
             button_complete.isEnabled = false
-            button_complete.text = getString(R.string.button_sure_default)
+            button_complete.text = getString(R.string.button_complete)
         } else if (selectedCount == 1 && mSpec!!.singleSelectionModeEnabled()) {
             button_preview.isEnabled = true
-            button_complete.setText(R.string.button_sure_default)
+            button_complete.setText(R.string.button_complete)
             button_complete.isEnabled = true
         } else {
             button_preview.isEnabled = true

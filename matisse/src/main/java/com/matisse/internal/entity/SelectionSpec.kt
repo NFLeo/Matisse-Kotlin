@@ -4,6 +4,7 @@ import android.content.pm.ActivityInfo
 import android.support.annotation.StyleRes
 import com.matisse.MimeType
 import com.matisse.MimeTypeManager
+import com.matisse.R
 import com.matisse.engine.GlideEngine
 import com.matisse.engine.ImageEngine
 import com.matisse.entity.CaptureStrategy
@@ -18,7 +19,7 @@ import java.io.File
  * Created by Leo on 2018/8/29 on 14:54.
  */
 class SelectionSpec {
-    lateinit var mimeTypeSet: Set<MimeType>
+    var mimeTypeSet: Set<MimeType>? = null
     var mediaTypeExclusive: Boolean = false
     var showSingleMediaType: Boolean = false
     var filters: List<Filter>? = null
@@ -65,17 +66,29 @@ class SelectionSpec {
             selectionSpec.reset()
             return selectionSpec
         }
-
-    }
-
-    fun singleSelectionModeEnabled(): Boolean {
-        return !countable && (maxSelectable == 1 || maxImageSelectable == 1 && maxVideoSelectable == 1)
     }
 
     private fun reset() {
+        mimeTypeSet = null
+        mediaTypeExclusive = true
+        showSingleMediaType = false
+        themeId = R.style.Matisse_Default
+        orientation = 0
+        countable = false
+        maxSelectable = 1
+        maxImageSelectable = 0
+        maxVideoSelectable = 0
+        filters = null
+        capture = false
+        captureStrategy = null
+        spanCount = 3
+        gridExpectedSize = 0
+        thumbnailScale = 0.5f
+
         imageEngine = GlideEngine()
         hasInited = true
 
+        // crop
         isCrop = true
         isCropSaveRectangle = false
         cropOutPutX = 300
@@ -83,16 +96,34 @@ class SelectionSpec {
         cropFocusWidth = 0
         cropFocusHeight = 0
         cropStyle = CropImageView.Style.RECTANGLE
+
+        // return original setting
+        originalable = false
+        originalMaxSize = Integer.MAX_VALUE
+    }
+
+    fun openCrop(): Boolean {
+        return isCrop && maxSelectable == 1
     }
 
     fun onlyShowImages(): Boolean {
-        return showSingleMediaType && MimeTypeManager.ofImage().containsAll(mimeTypeSet)
+        if (mimeTypeSet == null) {
+            return false
+        }
+        return showSingleMediaType && MimeTypeManager.ofImage().containsAll(mimeTypeSet!!)
     }
 
     fun onlyShowVideos(): Boolean {
-        return showSingleMediaType && MimeTypeManager.ofVideo().containsAll(mimeTypeSet)
+        if (mimeTypeSet == null) {
+            return false
+        }
+
+        return showSingleMediaType && MimeTypeManager.ofVideo().containsAll(mimeTypeSet!!)
+    }
+
+    fun singleSelectionModeEnabled(): Boolean {
+        return !countable && (maxSelectable == 1 || maxImageSelectable == 1 && maxVideoSelectable == 1)
     }
 
     fun needOrientationRestriction() = orientation != ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-
 }

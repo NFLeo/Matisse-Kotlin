@@ -55,7 +55,7 @@ class FolderBottomSheet : BottomSheetDialogFragment() {
         recyclerView = mParentView?.findViewById(R.id.recyclerview)!!
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.setHasFixedSize(true)
-        mAdapter = FolderMediaAdapter(mCurrentPosition)
+        mAdapter = FolderMediaAdapter(context, mCurrentPosition)
         recyclerView.adapter = mAdapter
 
         callback?.initData(mAdapter!!)

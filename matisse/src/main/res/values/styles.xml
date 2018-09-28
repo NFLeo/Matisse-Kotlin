@@ -6,4 +6,46 @@
         <item name="android:windowExitAnimation">@anim/bottom_down_out</item>
     </style>
 
+    //====================================== Theme Zhihu ===========================================
+
+    <style name="Matisse.Default" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+
+        <item name="navigation.height">@dimen/navigation_height</item>
+        <item name="navigation.background">@color/navigation_bg</item>
+        <item name="navigation.backRes">@drawable/icon_arrow_right_white</item>
+
+        <item name="bottomToolbar.bg">@color/bottomTool_bg</item>
+        <item name="bottomToolbar.height">@dimen/bottom_tool_height</item>
+
+        <item name="textColor.Back">@color/text_back</item>
+        <item name="textColor.Sure">@color/text_sure</item>
+        <item name="textColor.Preview">@color/text_preview</item>
+        <item name="textColor.Album">@color/text_album</item>
+        <item name="textColor.Original">@color/text_original</item>
+        <item name="textColor.Camera">@color/text_camera</item>
+        <item name="textColor.Item.Album">@color/text_item_album</item>
+
+        <item name="textSize.Back">@dimen/text_back</item>
+        <item name="textSize.Sure">@dimen/text_sure</item>
+        <item name="textSize.Preview">@dimen/text_preview</item>
+        <item name="textSize.Album">@dimen/text_album</item>
+        <item name="textSize.Original">@dimen/text_original</item>
+        <item name="textSize.Camera">@dimen/text_camera</item>
+        <item name="textSize.Item.Album">@dimen/text_item_album</item>
+
+        <item name="item.checkCircle.backgroundColor">@color/item_checkCircle_backgroundColor</item>
+        <item name="item.checkCircle.borderColor">@color/item_checkCircle_borderColor</item>
+        <item name="item.checkRadio">@color/item_checkRadio</item>
+
+        <!--<item name="album.thumbnail.placeholder">@color/album_dropdown_thumbnail_placeholder</item>-->
+        <item name="empty.textColor">@color/text_empty</item>
+        <item name="empty.textSize">@dimen/text_empty</item>
+        <item name="empty.resource">@drawable/ic_empty_zhihu</item>
+
+        <item name="item.placeholder">@color/zhihu_item_placeholder</item>
+        <item name="page.bg">@color/zhihu_page_bg</item>
+    </style>
+
 </resources>

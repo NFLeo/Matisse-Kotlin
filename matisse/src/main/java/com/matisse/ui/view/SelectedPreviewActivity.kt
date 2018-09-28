@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import com.matisse.R.id.check_view
 import com.matisse.entity.ConstValue
 import com.matisse.entity.Item
 import com.matisse.internal.entity.SelectionSpec

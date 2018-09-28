@@ -1,6 +1,7 @@
 package com.matisse.widget
 
 import android.content.Context
+import android.content.res.TypedArray
 import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.support.v4.content.res.ResourcesCompat
@@ -24,12 +25,12 @@ class CheckRadioView : AppCompatImageView {
     }
 
     private fun init() {
-        mSelectedColor = ResourcesCompat.getColor(
-                resources, R.color.zhihu_item_checkCircle_backgroundColor,
-                context.theme)
-        mUnSelectUdColor = ResourcesCompat.getColor(
-                resources, R.color.zhihu_check_original_radio_disable,
-                context.theme)
+        val ta: TypedArray = context!!.theme!!.obtainStyledAttributes(intArrayOf(R.attr.item_checkRadio))
+        mSelectedColor = ResourcesCompat.getColor(resources, R.color.item_checkRadio, context.theme)
+        mSelectedColor = ta.getColor(0, mSelectedColor)
+        ta.recycle()
+
+        mUnSelectUdColor = ResourcesCompat.getColor(resources, R.color.check_original_radio_disable, context.theme)
         setChecked(false)
     }
 
@@ -44,7 +45,6 @@ class CheckRadioView : AppCompatImageView {
             mDrawable!!.setColorFilter(mUnSelectUdColor, PorterDuff.Mode.SRC_IN)
         }
     }
-
 
     fun setColor(color: Int) {
         if (mDrawable == null) {

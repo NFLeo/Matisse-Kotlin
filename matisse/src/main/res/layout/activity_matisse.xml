@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
     android:orientation="vertical">
 
     <include
@@ -24,7 +25,6 @@
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_above="@id/bottom_toolbar"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/bottom_view"
         app:layout_constraintTop_toBottomOf="@+id/toolbar"
@@ -44,10 +44,11 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:drawablePadding="8dp"
+            android:drawableTop="?attr/empty.resource"
             android:gravity="center"
             android:text="@string/empty_text"
-            android:textColor="@color/color_hint_text"
-            android:textSize="16sp" />
+            android:textColor="?attr/empty.textColor"
+            android:textSize="?attr/empty.textSize" />
 
     </FrameLayout>
 

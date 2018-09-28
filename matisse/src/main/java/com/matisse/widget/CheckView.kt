@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.*
 import android.graphics.drawable.Drawable
+import android.support.v4.content.ContextCompat
 import android.support.v4.content.res.ResourcesCompat
 import android.text.TextPaint
 import android.util.AttributeSet
@@ -54,7 +55,7 @@ class CheckView : View {
         mStrokePaint?.strokeWidth = STROKE_WIDTH * mDensity!!
 
         val ta: TypedArray = context?.theme?.obtainStyledAttributes(intArrayOf(R.attr.item_checkCircle_borderColor))!!
-        val defaultColor = ResourcesCompat.getColor(context.resources, R.color.zhihu_item_checkCircle_borderColor, context.theme)
+        val defaultColor = ResourcesCompat.getColor(context.resources, R.color.item_checkCircle_borderColor, context.theme)
         val color = ta.getColor(0, defaultColor)
         ta.recycle()
         mStrokePaint?.color = color
@@ -160,7 +161,7 @@ class CheckView : View {
             mBackgroundPaint!!.isAntiAlias = true
             mBackgroundPaint!!.style = Paint.Style.FILL
             val ta: TypedArray = context!!.theme!!.obtainStyledAttributes(intArrayOf(R.attr.item_checkCircle_backgroundColor))
-            val defaultColor = ResourcesCompat.getColor(context!!.resources, R.color.zhihu_item_checkCircle_backgroundColor, context!!.theme)
+            val defaultColor = ResourcesCompat.getColor(context!!.resources, R.color.item_checkCircle_backgroundColor, context!!.theme)
             val color = ta.getColor(0, defaultColor)
             ta.recycle()
             mBackgroundPaint!!.color = color
@@ -178,8 +179,11 @@ class CheckView : View {
             val stop1 = innerRadius / gradientRadius
             val stop2 = outerRadius / gradientRadius
             val stop3 = 1f
+
+            val shadow = ContextCompat.getColor(context, R.color.shadow)
+            val shadowHint = ContextCompat.getColor(context, R.color.shadow_hint)
             mShadowPaint!!.shader = (RadialGradient(mDensity!! * SIZE / 2, mDensity!! * SIZE / 2, mDensity!!.times(gradientRadius),
-                    intArrayOf(Color.parseColor("#00000000"), Color.parseColor("#0D000000"), Color.parseColor("#0D000000"), Color.parseColor("#00000000")),
+                    intArrayOf(shadowHint, shadow, shadow, shadowHint),
                     floatArrayOf(stop0, stop1, stop2, stop3),
                     Shader.TileMode.CLAMP))
         }

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">@color/white</color>
+    <color name="primary_dark">@color/gray</color>
+
+    <color name="color_base">#8C0077</color>
+    <color name="color_base_press">#778C0077</color>
+
+    <color name="navigation_bg">@color/white</color>
+    <color name="bottomTool_bg">@color/white</color>
+
+    <color name="text_back">@color/selector_black_text</color>
+    <color name="text_sure">@color/selector_base_text</color>
+    <color name="text_preview">@color/selector_black_text</color>
+    <color name="text_original">@color/color_hint_text</color>
+    <color name="text_album">@color/selector_base_text</color>
+    <color name="text_camera">@color/color_hint_text</color>
+    <color name="text_item_album">@color/selector_black_text</color>
+    <color name="text_empty">@color/color_hint_text</color>
+
+    <color name="item_checkCircle_backgroundColor">@color/selector_base_text</color>
+    <color name="item_checkCircle_borderColor">@color/selector_white_text</color>
+    <color name="item_checkCircle_numColor">@color/selector_white_text</color>
+    <color name="item_checkRadio">@color/selector_base_text</color>
+
+    <color name="check_original_radio_disable">#808080</color>
+</resources>

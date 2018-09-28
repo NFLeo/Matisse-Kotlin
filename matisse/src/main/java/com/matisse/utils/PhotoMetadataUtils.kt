@@ -66,12 +66,14 @@ object PhotoMetadataUtils {
     }
 
     private fun isSelectableType(context: Context?, item: Item): Boolean {
-        if (context == null) {
+        val mimeTypeSet = SelectionSpec.getInstance().mimeTypeSet
+
+        if (context == null || mimeTypeSet == null) {
             return false
         }
 
         val resolver = context.contentResolver
-        for (type in SelectionSpec.getInstance().mimeTypeSet) {
+        for (type in mimeTypeSet) {
             if (MimeTypeManager.checkType(resolver, item.getContentUri(), type.getValue())) {
                 return true
             }
