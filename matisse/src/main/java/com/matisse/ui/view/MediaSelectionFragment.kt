@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.matisse.R
+import com.matisse.R.id.recyclerview
 import com.matisse.entity.Item
 import com.matisse.entity.Album
 import com.matisse.entity.ConstValue

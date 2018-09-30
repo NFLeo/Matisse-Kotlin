@@ -12,6 +12,7 @@ import android.widget.Toast
 import com.leo.matisse.R.id.btn_media_store
 import com.matisse.Matisse
 import com.matisse.MimeTypeManager.Companion.ofAll
+import com.matisse.MimeTypeManager.Companion.ofImage
 import com.matisse.entity.CaptureStrategy
 import com.matisse.entity.ConstValue
 import com.matisse.listener.OnCheckedListener
@@ -45,9 +46,10 @@ class MainActivity : AppCompatActivity() {
                                 return
                             }
                             Matisse.from(this@MainActivity)
-                                    .choose(ofAll(), false)
+                                    .choose(ofImage(), false)
                                     .countable(true)
                                     .capture(true)
+                                    .showSingleMediaType(true)
                                     .isCrop(true)
                                     .countable(false)
                                     .captureStrategy(CaptureStrategy(true, "${Platform.getPackageName(this@MainActivity)}.fileprovider"))

@@ -138,20 +138,20 @@ object PhotoMetadataUtils {
 
     }
 
-    fun shouldRotate(resolver: ContentResolver, uri: Uri): Boolean {
-        var exif: ExifInterface? = null
+    private fun shouldRotate(resolver: ContentResolver, uri: Uri): Boolean {
+        val exif: ExifInterface?
         try {
             exif = ExifInterfaceCompat.newInstance(getPath(resolver, uri))
         } catch (e: IOException) {
             Log.e(TAG, "could not read exif info of the image: $uri")
             return false
         }
-        var orientation = exif!!.getAttributeInt(ExifInterface.TAG_ORIENTATION, -1)
+        val orientation = exif!!.getAttributeInt(ExifInterface.TAG_ORIENTATION, -1)
         return orientation == ExifInterface.ORIENTATION_ROTATE_90
                 || orientation == ExifInterface.ORIENTATION_ROTATE_270
     }
 
-    fun getBitmapBounds(resolver: ContentResolver?, uri: Uri): Point {
+    private fun getBitmapBounds(resolver: ContentResolver?, uri: Uri): Point {
         var inStream: InputStream? = null
         try {
             val options = BitmapFactory.Options()

@@ -275,7 +275,9 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
                 val selectedUris = mSelectedCollection.asListOfUri() as ArrayList<Uri>
                 val selectedPaths = mSelectedCollection.asListOfString() as ArrayList<String>
 
-                if (mSpec?.openCrop() == true) {
+                val item = if (mSelectedCollection.asList().isEmpty()) null else mSelectedCollection.asList()[0]
+
+                if (mSpec?.openCrop() == true && mSpec?.isSupportCrop(item) == true) {
                     val intentCrop = Intent(this, ImageCropActivity::class.java)
                     intentCrop.putExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH, selectedPaths[0])
                     startActivityForResult(intentCrop, ConstValue.REQUEST_CODE_CROP)

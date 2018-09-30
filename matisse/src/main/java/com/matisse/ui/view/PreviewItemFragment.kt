@@ -32,7 +32,7 @@ class PreviewItemFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.fragment_preview_item, container, false)
+        return inflater.inflate(R.layout.fragment_preview_item, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -55,9 +55,9 @@ class PreviewItemFragment : Fragment() {
         image.displayType = ImageViewTouchBase.DisplayType.FIT_TO_SCREEN
         var size: Point = PhotoMetadataUtils.getBitmapSize(item.getContentUri(), activity)
         if (item.isGif()) {
-            SelectionSpec.getInstance().imageEngine.loadGifImage(context!!, size.x, size.y, image, item.getContentUri()!!)
+            SelectionSpec.getInstance().imageEngine.loadGifImage(context!!, size.x, size.y, image, item.getContentUri())
         } else {
-            SelectionSpec.getInstance().imageEngine.loadImage(context!!, size.x, size.y,image, item.getContentUri()!! )
+            SelectionSpec.getInstance().imageEngine.loadImage(context!!, size.x, size.y,image, item.getContentUri())
         }
     }
 

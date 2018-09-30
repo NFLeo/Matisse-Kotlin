@@ -140,7 +140,7 @@ class SelectedItemCollection(context: Context) {
     fun asListOfString(): List<String> {
         val paths = ArrayList<String>()
         mItems.forEach {
-            val path = PathUtils.getPath(mContext, it.getContentUri()!!)
+            val path = PathUtils.getPath(mContext, it.getContentUri())
             if (path != null) {
                 paths.add(path)
             }

@@ -221,9 +221,9 @@ open class BasePreviewActivity : AppCompatActivity(),
                 if (mSpec?.openCrop() == true) {
                     val item = mAdapter?.getMediaItem(pager.currentItem)
 
-                    if (item != null && item.isImage() && !item.isGif()) {
+                    if (mSpec?.isSupportCrop(item) == true) {
                         val intentCrop = Intent(this, ImageCropActivity::class.java)
-                        intentCrop.putExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH, PathUtils.getPath(this, item.getContentUri()))
+                        intentCrop.putExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH, PathUtils.getPath(this, item?.getContentUri()!!))
                         startActivityForResult(intentCrop, ConstValue.REQUEST_CODE_CROP)
                     } else {
                         sendBackResult(true)
@@ -262,6 +262,10 @@ open class BasePreviewActivity : AppCompatActivity(),
                         check_view.setChecked(false)
                     }
                 } else {
+                    if (mSpec?.maxImageSelectable!! <= 1) {
+                        mSelectedCollection.removeAll()
+                    }
+
                     if (assertAddSelection(item)) {
                         mSelectedCollection.add(item)
                         if (mSpec!!.countable) {

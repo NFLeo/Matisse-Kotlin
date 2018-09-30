@@ -20,7 +20,7 @@ import java.util.*
 
 class MediaStoreCompat {
 
-    private lateinit var mContext: WeakReference<Activity>
+    private var mContext: WeakReference<Activity>
     private var mFragment: WeakReference<Fragment>?
     private var mCaptureStrategy: CaptureStrategy? = null
     private var mCurrentPhotoUri: Uri? = null

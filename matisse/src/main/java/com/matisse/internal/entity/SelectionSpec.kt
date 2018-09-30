@@ -8,6 +8,7 @@ import com.matisse.R
 import com.matisse.engine.GlideEngine
 import com.matisse.engine.ImageEngine
 import com.matisse.entity.CaptureStrategy
+import com.matisse.entity.Item
 import com.matisse.filter.Filter
 import com.matisse.listener.OnCheckedListener
 import com.matisse.listener.OnSelectedListener
@@ -104,6 +105,10 @@ class SelectionSpec {
 
     fun openCrop(): Boolean {
         return isCrop && maxSelectable == 1
+    }
+
+    fun isSupportCrop(item: Item?): Boolean {
+        return item != null && item.isImage() && !item.isGif()
     }
 
     fun onlyShowImages(): Boolean {
