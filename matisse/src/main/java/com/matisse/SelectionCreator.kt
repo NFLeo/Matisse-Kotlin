@@ -84,8 +84,6 @@ internal constructor(private val mMatisse: Matisse, mimeTypes: Set<MimeType>, me
      *
      *
      * There are two built-in themes:
-     * 1. com.zhihu.matisse.R.style.Matisse_Zhihu;
-     * 2. com.zhihu.matisse.R.style.Matisse_Dracula
      * you can define a custom theme derived from the above ones or other themes.
      *
      * @param themeId theme resource id. Default value is com.zhihu.matisse.R.style.Matisse_Zhihu.
@@ -262,8 +260,6 @@ internal constructor(private val mMatisse: Matisse, mimeTypes: Set<MimeType>, me
      *
      *
      * There are two built-in image engines:
-     * 1. [com.zhihu.matisse.engine.impl.GlideEngine]
-     * 2. [com.zhihu.matisse.engine.impl.PicassoEngine]
      * And you can implement your own image engine.
      *
      * @param imageEngine [ImageEngine]
@@ -271,6 +267,7 @@ internal constructor(private val mMatisse: Matisse, mimeTypes: Set<MimeType>, me
      */
     fun imageEngine(imageEngine: ImageEngine): SelectionCreator {
         mSelectionSpec.imageEngine = imageEngine
+        mSelectionSpec.imageEngine?.init(mMatisse.activity?.applicationContext!!)
         return this
     }
 

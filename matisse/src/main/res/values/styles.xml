@@ -20,6 +20,7 @@
         <item name="bottomToolbar.height">@dimen/bottom_tool_height</item>
 
         <item name="textColor.Back">@color/text_back</item>
+        <item name="text.Back">@string/button_null</item>
         <item name="textColor.Sure">@color/text_sure</item>
         <item name="textColor.Preview">@color/text_preview</item>
         <item name="textColor.Album">@color/text_album</item>

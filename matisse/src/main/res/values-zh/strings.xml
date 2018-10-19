@@ -27,6 +27,7 @@
     <string name="button_sure_default">确定</string>
     <string name="button_sure">确定(%1$d)</string>
     <string name="button_complete">完成</string>
+    <string name="button_null">""</string>
 
     <string name="photo_grid_capture">拍一张</string>
     <string name="empty_text">还没有图片或视频</string>

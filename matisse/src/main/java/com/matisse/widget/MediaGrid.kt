@@ -76,10 +76,10 @@ class MediaGrid : SquareFrameLayout, View.OnClickListener {
 
     private fun setImage() {
         if (mMedia.isGif()) {
-            SelectionSpec.getInstance().imageEngine.loadGifThumbnail(context, mPreBindInfo.mResize,
+            SelectionSpec.getInstance().imageEngine?.loadGifThumbnail(context, mPreBindInfo.mResize,
                     mPreBindInfo.mPlaceholder, media_thumbnail, mMedia.getContentUri())
         } else {
-            SelectionSpec.getInstance().imageEngine.loadThumbnail(context, mPreBindInfo.mResize,
+            SelectionSpec.getInstance().imageEngine?.loadThumbnail(context, mPreBindInfo.mResize,
                     mPreBindInfo.mPlaceholder, media_thumbnail, mMedia.getContentUri())
         }
     }

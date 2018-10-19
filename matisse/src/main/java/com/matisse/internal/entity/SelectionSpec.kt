@@ -5,7 +5,6 @@ import android.support.annotation.StyleRes
 import com.matisse.MimeType
 import com.matisse.MimeTypeManager
 import com.matisse.R
-import com.matisse.engine.GlideEngine
 import com.matisse.engine.ImageEngine
 import com.matisse.entity.CaptureStrategy
 import com.matisse.entity.Item
@@ -38,7 +37,7 @@ class SelectionSpec {
     var orientation: Int = 0
     var originalable: Boolean = false
     var originalMaxSize: Int = 0
-    var imageEngine: ImageEngine = GlideEngine()
+    var imageEngine: ImageEngine? = null
     var onSelectedListener: OnSelectedListener? = null
     var onCheckedListener: OnCheckedListener? = null
 
@@ -86,7 +85,7 @@ class SelectionSpec {
         gridExpectedSize = 0
         thumbnailScale = 0.5f
 
-        imageEngine = GlideEngine()
+        imageEngine = null
         hasInited = true
 
         // crop

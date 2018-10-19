@@ -3,6 +3,7 @@ package com.matisse.engine
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.view.View
 import android.widget.ImageView
 
 /**
@@ -37,8 +38,6 @@ interface ImageEngine {
      * Load a gif image resource
      *
      * @param context context
-     * @param resizeX Desired x-size of the origin image
-     * @param resizeY Desired y-size of the origin image
      * @param imageView ImageView widget
      * @param uri Uri of the loaded image
      */
@@ -55,11 +54,12 @@ interface ImageEngine {
      */
     fun loadGifImage(context: Context, resizeX: Int, resizeY: Int, imageView: ImageView, uri: Uri)
 
-    /**
-     * Whether this implementation supports animated gif.
-     * Just knowledge of it, convenient for users.
-     *
-     * @return true support animated gif, false do not support animated gif.
-     */
-    fun supportAnimatedGif(): Boolean
+    fun cleanMemory(context: Context)
+
+    fun pause(context: Context)
+
+    fun resume(context: Context)
+
+    // 在application的onCreate中初始化
+    fun init(context: Context)
 }

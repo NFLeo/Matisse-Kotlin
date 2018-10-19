@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Parcelable
 import android.provider.MediaStore
 import com.matisse.MimeType
+import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
 
 /**
@@ -28,6 +29,7 @@ class Item(var id: Long, var mimeType: String, var size: Long = 0, var duration:
     }
 
 
+    @IgnoredOnParcel
     private var uri: Uri
 
     init {

@@ -8,7 +8,7 @@ publish {
     userOrg = 'nfleo'//bintray.com用户名
     groupId = 'com.nfleo'//jcenter上的路径
     artifactId = 'MatisseKotlin'//项目名称
-    publishVersion = '1.0.0'//版本号
+    publishVersion = '1.0.1'//版本号
     desc = 'this is for MatisseKotlin'
     website = 'https://github.com/NFLeo/Matisse-Kotlin'
 }
@@ -48,7 +48,6 @@ dependencies {
     implementation 'it.sephiroth.android.library.imagezoom:library:1.0.4'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "com.android.support:appcompat-v7:$rootProject.ext.support_library"
-    implementation "com.github.bumptech.glide:glide:$rootProject.ext.glide"
     implementation "com.android.support:design:$rootProject.ext.support_library"
     implementation "com.android.support:recyclerview-v7:$rootProject.ext.support_library"
     implementation "com.android.support.constraint:constraint-layout:$rootProject.ext.constraint"

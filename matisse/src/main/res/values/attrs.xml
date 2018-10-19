@@ -8,6 +8,7 @@
     <attr name="bottomToolbar.height" format="dimension" />
 
     <attr name="textColor.Back" format="reference|color" />
+    <attr name="text.Back" format="reference" />
     <attr name="textColor.Sure" format="reference|color" />
     <attr name="textColor.Preview" format="reference|color" />
     <attr name="textColor.Album" format="reference|color" />

@@ -51,6 +51,7 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
     private var mCursor: Cursor? = null
     private var bottomSheet: FolderBottomSheet? = null
     private var mLastFolderCheckedPosition: Int = 0
+    private lateinit var allAlbum: Album
 
     private var albumCallbacks = object : AlbumCallbacks {
         override fun onAlbumStart() {
@@ -61,8 +62,8 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
 
             Handler(Looper.getMainLooper()).post {
                 if (cursor.moveToFirst()) {
-                    val album = Album.valueOf(cursor)
-                    onAlbumSelected(album)
+                    allAlbum = Album.valueOf(cursor)
+                    onAlbumSelected(allAlbum)
                 }
             }
         }
@@ -227,9 +228,10 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
                 result.putStringArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH, selectedPath)
                 setResult(Activity.RESULT_OK, result)
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                    this@MatisseActivity.revokeUriPermission(contentUri,
+                            Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 }
-                this@MatisseActivity.revokeUriPermission(contentUri,
-                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
                 finish()
             }
             ConstValue.REQUEST_CODE_CROP -> {
@@ -311,6 +313,10 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
             }
 
             button_apply -> {
+                if (allAlbum.isAll() && allAlbum.isEmpty()) {
+                    return
+                }
+
                 bottomSheet = FolderBottomSheet.instance(this@MatisseActivity, mLastFolderCheckedPosition, "Folder")
                 bottomSheet?.callback = object : FolderBottomSheet.BottomSheetCallback {
                     override fun onItemClick(cursor: Cursor, position: Int) {

@@ -1,23 +1,9 @@
-/*
- * Copyright 2017 Zhihu Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package com.zhihu.matisse.sample
+package com.leo.matisse
 
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Looper
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
@@ -27,8 +13,24 @@ import com.matisse.engine.ImageEngine
 /**
  * [ImageEngine] implementation using Glide.
  */
-
 class Glide4Engine : ImageEngine {
+
+    override fun cleanMemory(context: Context) {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            Glide.get(context).clearMemory()
+        }
+    }
+
+    override fun pause(context: Context) {
+        Glide.with(context).pauseRequests()
+    }
+
+    override fun resume(context: Context) {
+        Glide.with(context).resumeRequests()
+    }
+
+    override fun init(context: Context) {
+    }
 
     override fun loadThumbnail(context: Context, resize: Int, placeholder: Drawable, imageView: ImageView, uri: Uri) {
         Glide.with(context)
@@ -73,9 +75,4 @@ class Glide4Engine : ImageEngine {
                         .fitCenter())
                 .into(imageView)
     }
-
-    override fun supportAnimatedGif(): Boolean {
-        return true
-    }
-
 }

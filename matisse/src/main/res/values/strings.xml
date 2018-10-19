@@ -9,6 +9,7 @@
     <string name="button_apply_default">Apply</string>
     <string name="button_apply">Apply(%1$d)</string>
     <string name="button_back">Back</string>
+    <string name="button_null">""</string>
     <string name="button_complete">Complete</string>
 
     <string name="photo_grid_capture">Camera</string>

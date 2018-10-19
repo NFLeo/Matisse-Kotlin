@@ -39,11 +39,11 @@ class PreviewItemFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val item: Item = arguments!!.getParcelable(ARGS_ITEM) ?: return
 
-        var videoPlayButton: View = view.findViewById(R.id.video_play_button)
+        val videoPlayButton: View = view.findViewById(R.id.video_play_button)
         if (item.isVideo()) {
             videoPlayButton.visibility = View.VISIBLE
             videoPlayButton.setOnClickListener {
-                var intent = Intent(Intent.ACTION_VIEW)
+                val intent = Intent(Intent.ACTION_VIEW)
                 intent.setDataAndType(item.getContentUri(), "video/*")
                 if (intent.resolveActivity(activity!!.packageManager) != null) startActivity(intent) else Toast.makeText(context, R.string.error_no_video_activity, Toast.LENGTH_SHORT).show()
             }
@@ -51,20 +51,19 @@ class PreviewItemFragment : Fragment() {
             videoPlayButton.visibility = View.GONE
         }
 
-        var image: ImageViewTouch = view.findViewById(R.id.image_view)
+        val image: ImageViewTouch = view.findViewById(R.id.image_view)
         image.displayType = ImageViewTouchBase.DisplayType.FIT_TO_SCREEN
-        var size: Point = PhotoMetadataUtils.getBitmapSize(item.getContentUri(), activity)
+        val size: Point = PhotoMetadataUtils.getBitmapSize(item.getContentUri(), activity)
         if (item.isGif()) {
-            SelectionSpec.getInstance().imageEngine.loadGifImage(context!!, size.x, size.y, image, item.getContentUri())
+            SelectionSpec.getInstance().imageEngine?.loadGifImage(context!!, size.x, size.y, image, item.getContentUri())
         } else {
-            SelectionSpec.getInstance().imageEngine.loadImage(context!!, size.x, size.y,image, item.getContentUri())
+            SelectionSpec.getInstance().imageEngine?.loadImage(context!!, size.x, size.y, image, item.getContentUri())
         }
     }
 
-
     fun resetView() {
         if (view != null) {
-            var image:ImageViewTouch = view!!.findViewById(R.id.image_view);
+            val image: ImageViewTouch = view!!.findViewById(R.id.image_view);
             image.resetMatrix()
         }
     }

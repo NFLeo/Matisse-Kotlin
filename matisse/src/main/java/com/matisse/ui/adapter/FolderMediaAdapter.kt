@@ -45,7 +45,7 @@ class FolderMediaAdapter(var context: Context, var mCurrentPosition: Int) : Recy
 
         // do not need to load animated Gif
         val mContext = holder.mIvBucketCover.context
-        SelectionSpec.getInstance().imageEngine.loadThumbnail(mContext, mContext.resources.getDimensionPixelSize(R
+        SelectionSpec.getInstance().imageEngine?.loadThumbnail(mContext, mContext.resources.getDimensionPixelSize(R
                 .dimen.media_grid_size), mPlaceholder,
                 holder.mIvBucketCover, Uri.fromFile(File(album.getCoverPath())))
     }

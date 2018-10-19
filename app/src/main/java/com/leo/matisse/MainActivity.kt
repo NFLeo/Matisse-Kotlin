@@ -9,9 +9,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
-import com.leo.matisse.R.id.btn_media_store
 import com.matisse.Matisse
-import com.matisse.MimeTypeManager.Companion.ofAll
 import com.matisse.MimeTypeManager.Companion.ofImage
 import com.matisse.entity.CaptureStrategy
 import com.matisse.entity.ConstValue
@@ -19,7 +17,6 @@ import com.matisse.listener.OnCheckedListener
 import com.matisse.listener.OnSelectedListener
 import com.matisse.utils.Platform
 import com.tbruyelle.rxpermissions2.RxPermissions
-import com.zhihu.matisse.sample.Glide4Engine
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_main.*
@@ -56,8 +53,7 @@ class MainActivity : AppCompatActivity() {
                                     .maxSelectable(1)
                                     .gridExpectedSize(resources.getDimensionPixelSize(R.dimen.grid_expected_size))
                                     .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
-                                    //.imageEngine(new GlideEngine())  // for glide-V3
-                                    .imageEngine(Glide4Engine())    // for glide-V4
+                                    .imageEngine(FrescoEngine())
                                     .setOnSelectedListener(object : OnSelectedListener {
                                         override fun onSelected(uriList: List<Uri>, pathList: List<String>) {
                                             // DO SOMETHING IMMEDIATELY HERE
