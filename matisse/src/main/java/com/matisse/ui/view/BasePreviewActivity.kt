@@ -8,6 +8,8 @@ import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.WindowManager
+import com.gyf.barlibrary.BarHide
+import com.gyf.barlibrary.ImmersionBar
 import com.matisse.R
 import com.matisse.R.id.*
 import com.matisse.entity.ConstValue
@@ -19,6 +21,7 @@ import com.matisse.ui.adapter.PreviewPagerAdapter
 import com.matisse.utils.PathUtils
 import com.matisse.utils.PhotoMetadataUtils
 import com.matisse.utils.Platform
+import com.matisse.utils.UIUtils
 import com.matisse.widget.CheckView
 import com.matisse.widget.IncapableDialog
 import kotlinx.android.synthetic.main.activity_media_preview.*
@@ -47,6 +50,8 @@ open class BasePreviewActivity : AppCompatActivity(),
             finish()
             return
         }
+
+        ImmersionBar.with(this).hideBar(BarHide.FLAG_HIDE_STATUS_BAR).init()
 
         setContentView(R.layout.activity_media_preview)
         if (Platform.hasKitKat19()) {

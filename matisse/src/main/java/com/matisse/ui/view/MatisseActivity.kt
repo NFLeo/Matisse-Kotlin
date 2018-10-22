@@ -10,17 +10,12 @@ import android.os.Handler
 import android.os.Looper
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import com.gyf.barlibrary.ImmersionBar
 import com.matisse.R
-import com.matisse.R.id.*
 import com.matisse.entity.Album
 import com.matisse.entity.ConstValue
-import com.matisse.entity.ConstValue.EXTRA_RESULT_BUNDLE
-import com.matisse.entity.ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE
 import com.matisse.entity.ConstValue.EXTRA_RESULT_SELECTION
 import com.matisse.entity.ConstValue.EXTRA_RESULT_SELECTION_PATH
-import com.matisse.entity.ConstValue.REQUEST_CODE_CAPTURE
-import com.matisse.entity.ConstValue.REQUEST_CODE_CROP
-import com.matisse.entity.ConstValue.REQUEST_CODE_PREVIEW
 import com.matisse.entity.Item
 import com.matisse.internal.entity.SelectionSpec
 import com.matisse.model.AlbumCallbacks
@@ -86,8 +81,9 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
             finish()
             return
         }
-
         setContentView(R.layout.activity_matisse)
+        ImmersionBar.with(this).titleBar(toolbar)
+                .statusBarDarkFont(mSpec?.isDarkStatus == true).init()
         initConfigs(savedInstanceState)
         initListener()
     }
@@ -111,8 +107,6 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
         }
         mAlbumCollection.loadAlbums()
         updateBottomToolbar()
-        // reset back resource color
-        UIUtils.setTextDrawable(this, button_back, R.attr.textColor_Back)
     }
 
     private fun initListener() {

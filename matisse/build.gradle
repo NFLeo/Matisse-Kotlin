@@ -51,6 +51,7 @@ dependencies {
     implementation "com.android.support:design:$rootProject.ext.support_library"
     implementation "com.android.support:recyclerview-v7:$rootProject.ext.support_library"
     implementation "com.android.support.constraint:constraint-layout:$rootProject.ext.constraint"
+    compileOnly 'com.gyf.barlibrary:barlibrary:2.3.0'
 }
 
 tasks.withType(JavaCompile) {

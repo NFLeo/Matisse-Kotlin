@@ -48,12 +48,13 @@ class MainActivity : AppCompatActivity() {
                                     .capture(true)
                                     .showSingleMediaType(true)
                                     .isCrop(true)
+                                    .setStatusIsDark(true)
                                     .countable(false)
                                     .captureStrategy(CaptureStrategy(true, "${Platform.getPackageName(this@MainActivity)}.fileprovider"))
                                     .maxSelectable(1)
                                     .gridExpectedSize(resources.getDimensionPixelSize(R.dimen.grid_expected_size))
                                     .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
-                                    .imageEngine(FrescoEngine())
+                                    .imageEngine(Glide4Engine())
                                     .setOnSelectedListener(object : OnSelectedListener {
                                         override fun onSelected(uriList: List<Uri>, pathList: List<String>) {
                                             // DO SOMETHING IMMEDIATELY HERE

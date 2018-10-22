@@ -369,6 +369,17 @@ internal constructor(private val mMatisse: Matisse, mimeTypes: Set<MimeType>, me
     }
 
     /**
+     * Set status text color
+     *
+     * @param isDark [Boolean]
+     * @return [SelectionCreator] for fluent API.
+     */
+    fun setStatusIsDark(isDark: Boolean): SelectionCreator {
+        mSelectionSpec.isDarkStatus = isDark
+        return this
+    }
+
+    /**
      * Start to select media and wait for result.
      *
      * @param requestCode Identity of the request Activity or Fragment.

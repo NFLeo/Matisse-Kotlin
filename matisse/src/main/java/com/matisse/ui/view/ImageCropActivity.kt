@@ -8,19 +8,16 @@ import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
-import android.view.WindowManager
-import android.widget.TextView
-import android.widget.Toast
+import com.gyf.barlibrary.ImmersionBar
 import com.matisse.R
-import com.matisse.R.id.*
 import com.matisse.entity.ConstValue
 import com.matisse.internal.entity.SelectionSpec
 import com.matisse.utils.BitmapUtils
-import com.matisse.utils.Platform
 import com.matisse.utils.UIUtils
 import com.matisse.widget.CropImageView
 import com.matisse.widget.IncapableDialog
-import kotlinx.android.synthetic.main.include_view_bottom.*
+import kotlinx.android.synthetic.main.activity_crop.*
+import kotlinx.android.synthetic.main.include_view_navigation.*
 import java.io.File
 
 class ImageCropActivity : AppCompatActivity(), View.OnClickListener, CropImageView.OnBitmapSaveCompleteListener {
@@ -38,11 +35,10 @@ class ImageCropActivity : AppCompatActivity(), View.OnClickListener, CropImageVi
         mSpec = SelectionSpec.getInstance()
         setTheme(mSpec.themeId)
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_crop)
 
-        if (Platform.hasKitKat19()) {
-            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-        }
+        ImmersionBar.with(this).titleBar(toolbar).statusBarDarkFont(mSpec.isDarkStatus).init()
 
         if (mSpec.needOrientationRestriction()) {
             requestedOrientation = mSpec.orientation
@@ -57,11 +53,8 @@ class ImageCropActivity : AppCompatActivity(), View.OnClickListener, CropImageVi
     private fun initView() {
 
         cv_crop_image = findViewById(R.id.cv_crop_image)
-        button_preview.text = getString(R.string.button_back)
-        button_apply.text = getString(R.string.button_complete)
-        button_preview.setOnClickListener(this)
-        button_apply.setOnClickListener(this)
-        original_layout.visibility = View.GONE
+        button_complete.setOnClickListener(this)
+        button_back.setOnClickListener(this)
     }
 
     private fun initCropFun() {
@@ -127,8 +120,8 @@ class ImageCropActivity : AppCompatActivity(), View.OnClickListener, CropImageVi
 
     override fun onClick(v: View?) {
         when (v) {
-            button_apply -> cv_crop_image.saveBitmapToFile(getCropCacheFolder(this), mOutputX, mOutputY, mIsSaveRectangle)
-            button_preview -> {
+            button_complete -> cv_crop_image.saveBitmapToFile(getCropCacheFolder(this), mOutputX, mOutputY, mIsSaveRectangle)
+            button_back -> {
                 setResult(Activity.RESULT_CANCELED)
                 finish()
             }

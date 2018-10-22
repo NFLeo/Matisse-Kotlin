@@ -1,13 +1,16 @@
 package com.matisse.utils
 
+import android.app.Activity
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.PorterDuff
+import android.os.Build
 import android.support.v4.app.FragmentActivity
 import android.util.DisplayMetrics
 import android.util.TypedValue
 import android.util.TypedValue.applyDimension
 import android.view.View
+import android.view.Window
 import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
@@ -31,7 +34,7 @@ object UIUtils {
                 incapableDialog.show((context as FragmentActivity).supportFragmentManager,
                         IncapableDialog::class.java.name)
             }
-        // default is TOAST
+            // default is TOAST
             IncapableCause.TOAST -> Toast.makeText(context, cause.mMessage, Toast.LENGTH_SHORT).show()
         }
     }
@@ -132,5 +135,85 @@ object UIUtils {
         val outMetrics = DisplayMetrics()// 创建了一张白纸
         windowManager.defaultDisplay.getMetrics(outMetrics)// 给白纸设置宽高
         return outMetrics.heightPixels
+    }
+
+    /**
+     * 设置状态栏字体颜色
+     * @param activity    activity
+     * @param isDark      isdark
+     */
+    fun setTextColorStatusBar(activity: Activity, isDark: Boolean) {
+        FlymeSetStatusBarLightMode(activity.window, isDark)
+        MIUISetStatusBarLightMode(activity.window, isDark)
+
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && isDark) {//6.0
+//            if (isDark) {
+//                activity.window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+//            } else {
+//                activity.window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
+//            }
+//        }
+    }
+
+    /**
+     * 设置状态栏图标为深色和魅族特定的文字风格
+     * 可以用来判断是否为Flyme用户
+     * @param window 需要设置的窗口
+     * @param dark   是否把状态栏字体及图标颜色设置为深色
+     * @return boolean 成功执行返回true
+     */
+    private fun FlymeSetStatusBarLightMode(window: Window?, dark: Boolean): Boolean {
+        var result = false
+        if (window != null) {
+            try {
+                val lp = window.attributes
+                val darkFlag = WindowManager.LayoutParams::class.java
+                        .getDeclaredField("MEIZU_FLAG_DARK_STATUS_BAR_ICON")
+                val meizuFlags = WindowManager.LayoutParams::class.java
+                        .getDeclaredField("meizuFlags")
+                darkFlag.isAccessible = true
+                meizuFlags.isAccessible = true
+                val bit = darkFlag.getInt(null)
+                var value = meizuFlags.getInt(lp)
+                value = if (dark) {
+                    value or bit
+                } else {
+                    value and bit.inv()
+                }
+                meizuFlags.setInt(lp, value)
+                window.attributes = lp
+                result = true
+            } catch (e: Exception) {
+            }
+        }
+        return result
+    }
+
+    /**
+     * 设置状态栏字体图标为深色，需要MIUIV6以上
+     * @param window 需要设置的窗口
+     * @param dark   是否把状态栏字体及图标颜色设置为深色
+     * @return boolean 成功执行返回true
+     */
+    private fun MIUISetStatusBarLightMode(window: Window?, dark: Boolean): Boolean {
+        var result = false
+        if (window != null) {
+            val clazz = window.javaClass
+            try {
+                val darkModeFlag: Int
+                val layoutParams = Class.forName("android.view.MiuiWindowManager\$LayoutParams")
+                val field = layoutParams.getField("EXTRA_FLAG_STATUS_BAR_DARK_MODE")
+                darkModeFlag = field.getInt(layoutParams)
+                val extraFlagField = clazz.getMethod("setExtraFlags", Int::class.javaPrimitiveType, Int::class.javaPrimitiveType)
+                if (dark) {
+                    extraFlagField.invoke(window, darkModeFlag, darkModeFlag)//状态栏透明且黑色字体
+                } else {
+                    extraFlagField.invoke(window, 0, darkModeFlag)//清除黑色字体
+                }
+                result = true
+            } catch (e: Exception) {
+            }
+        }
+        return result
     }
 }

@@ -52,6 +52,8 @@ class SelectionSpec {
 
     var hasInited: Boolean = false
 
+    var isDarkStatus: Boolean = false
+
     class InstanceHolder {
         companion object {
             val INSTANCE: SelectionSpec = SelectionSpec()
@@ -100,6 +102,8 @@ class SelectionSpec {
         // return original setting
         originalable = false
         originalMaxSize = Integer.MAX_VALUE
+
+        isDarkStatus = false
     }
 
     fun openCrop(): Boolean {

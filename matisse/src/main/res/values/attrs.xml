@@ -4,6 +4,8 @@
     <attr name="navigation.background" format="reference|color" />
     <attr name="navigation.backRes" format="reference" />
 
+    <attr name="preview.background" format="reference|color" />
+
     <attr name="bottomToolbar.bg" format="reference|color" />
     <attr name="bottomToolbar.height" format="dimension" />
 

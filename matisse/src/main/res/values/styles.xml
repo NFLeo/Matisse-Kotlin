@@ -14,6 +14,7 @@
 
         <item name="navigation.height">@dimen/navigation_height</item>
         <item name="navigation.background">@color/navigation_bg</item>
+        <item name="preview.background">@color/preview_bg</item>
         <item name="navigation.backRes">@drawable/icon_arrow_right_white</item>
 
         <item name="bottomToolbar.bg">@color/bottomTool_bg</item>
