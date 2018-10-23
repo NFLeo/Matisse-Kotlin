@@ -29,7 +29,7 @@ import java.lang.ref.WeakReference
  */
 class Matisse private constructor(activity: Activity?, fragment: Fragment? = null) {
 
-    private val mContext: WeakReference<Activity>
+    private val mContext: WeakReference<Activity> = WeakReference<Activity>(activity)
     private val mFragment: WeakReference<Fragment>?
 
     internal val activity: Activity?
@@ -41,7 +41,6 @@ class Matisse private constructor(activity: Activity?, fragment: Fragment? = nul
     private constructor(fragment: Fragment) : this(fragment.activity, fragment) {}
 
     init {
-        mContext = WeakReference<Activity>(activity)
         mFragment = WeakReference<Fragment>(fragment)
     }
 

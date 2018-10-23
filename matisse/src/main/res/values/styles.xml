@@ -9,45 +9,143 @@
     //====================================== Theme Zhihu ===========================================
 
     <style name="Matisse.Default" parent="Theme.AppCompat.Light.NoActionBar">
+        // 状态栏相关
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
 
+        // 顶部导航条高度
         <item name="navigation.height">@dimen/navigation_height</item>
+        // 顶部导航条背景色
         <item name="navigation.background">@color/navigation_bg</item>
+        // 图片预览界面背景色
         <item name="preview.background">@color/preview_bg</item>
+        // 顶部导航条返回按钮资源图
         <item name="navigation.backRes">@drawable/icon_arrow_right_white</item>
 
+        // 底部工具栏背景色
         <item name="bottomToolbar.bg">@color/bottomTool_bg</item>
+        // 底部工具栏高度
         <item name="bottomToolbar.height">@dimen/bottom_tool_height</item>
 
+        // 返回按钮颜色
         <item name="textColor.Back">@color/text_back</item>
+        // 返回按钮文字 当无文字是可设置为空字符串 如下
         <item name="text.Back">@string/button_null</item>
+        // 确定按钮颜色
         <item name="textColor.Sure">@color/text_sure</item>
+        // 预览按钮颜色
         <item name="textColor.Preview">@color/text_preview</item>
+        // 查看全部相册文件夹按钮颜色
         <item name="textColor.Album">@color/text_album</item>
+        // 原图选择控件文字颜色
         <item name="textColor.Original">@color/text_original</item>
-        <item name="textColor.Camera">@color/text_camera</item>
+        // 相册文件夹内部列表item颜色
         <item name="textColor.Item.Album">@color/text_item_album</item>
+        // 列表中可拍照状态下相机item文字颜色
+        <item name="textColor.Camera">@color/text_camera</item>
 
+        // 返回按钮文字大小
         <item name="textSize.Back">@dimen/text_back</item>
+        // 确认按钮文字大小
         <item name="textSize.Sure">@dimen/text_sure</item>
+        // 预览按钮文字大小
         <item name="textSize.Preview">@dimen/text_preview</item>
+        // 查看全部相册按钮文字大小
         <item name="textSize.Album">@dimen/text_album</item>
+        // 原图按钮文字大小
         <item name="textSize.Original">@dimen/text_original</item>
+        // 列表中可拍照状态下相机item文字大小
         <item name="textSize.Camera">@dimen/text_camera</item>
+        // 查看全部相册内item文字大小
         <item name="textSize.Item.Album">@dimen/text_item_album</item>
 
+        // 选中控件背景色
         <item name="item.checkCircle.backgroundColor">@color/item_checkCircle_backgroundColor</item>
+        // 选中控件圆环边框颜色
         <item name="item.checkCircle.borderColor">@color/item_checkCircle_borderColor</item>
+        // 原图radio控件颜色
         <item name="item.checkRadio">@color/item_checkRadio</item>
 
-        <!--<item name="album.thumbnail.placeholder">@color/album_dropdown_thumbnail_placeholder</item>-->
+        // 空状态文字颜色
         <item name="empty.textColor">@color/text_empty</item>
+        // 空状态文字大小
         <item name="empty.textSize">@dimen/text_empty</item>
+        <item name="empty.text">@string/empty_text</item>
+        // 空状态资源图
         <item name="empty.resource">@drawable/ic_empty_zhihu</item>
 
+        // 图片加载占位图
         <item name="item.placeholder">@color/zhihu_item_placeholder</item>
-        <item name="page.bg">@color/zhihu_page_bg</item>
+    </style>
+
+    <style name="Matisse.Dark" parent="Theme.AppCompat.Light.NoActionBar">
+        // 状态栏相关
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+
+        // 顶部导航条高度
+        <item name="navigation.height">@dimen/navigation_height</item>
+        // 顶部导航条背景色
+        <item name="navigation.background">@color/color_base</item>
+        // 图片预览界面背景色
+        <item name="preview.background">@color/preview_bg</item>
+        // 顶部导航条返回按钮资源图
+        <item name="navigation.backRes">@drawable/icon_arrow_right_white</item>
+
+        // 底部工具栏背景色
+        <item name="bottomToolbar.bg">@color/bottomTool_bg</item>
+        // 底部工具栏高度
+        <item name="bottomToolbar.height">@dimen/bottom_tool_height</item>
+
+        // 返回按钮颜色
+        <item name="textColor.Back">@color/text_back</item>
+        // 返回按钮文字 当无文字是可设置为空字符串 如下
+        <item name="text.Back">@string/button_back</item>
+        // 确定按钮颜色
+        <item name="textColor.Sure">@color/text_sure</item>
+        // 预览按钮颜色
+        <item name="textColor.Preview">@color/text_preview</item>
+        // 查看全部相册文件夹按钮颜色
+        <item name="textColor.Album">@color/text_album</item>
+        // 原图选择控件文字颜色
+        <item name="textColor.Original">@color/text_original</item>
+        // 相册文件夹内部列表item颜色
+        <item name="textColor.Item.Album">@color/text_item_album</item>
+        // 列表中可拍照状态下相机item文字颜色
+        <item name="textColor.Camera">@color/text_camera</item>
+
+        // 返回按钮文字大小
+        <item name="textSize.Back">@dimen/text_back</item>
+        // 确认按钮文字大小
+        <item name="textSize.Sure">@dimen/text_sure</item>
+        // 预览按钮文字大小
+        <item name="textSize.Preview">@dimen/text_preview</item>
+        // 查看全部相册按钮文字大小
+        <item name="textSize.Album">@dimen/text_album</item>
+        // 原图按钮文字大小
+        <item name="textSize.Original">@dimen/text_original</item>
+        // 列表中可拍照状态下相机item文字大小
+        <item name="textSize.Camera">@dimen/text_camera</item>
+        // 查看全部相册内item文字大小
+        <item name="textSize.Item.Album">@dimen/text_item_album</item>
+
+        // 选中控件背景色
+        <item name="item.checkCircle.backgroundColor">@color/item_checkCircle_backgroundColor</item>
+        // 选中控件圆环边框颜色
+        <item name="item.checkCircle.borderColor">@color/item_checkCircle_borderColor</item>
+        // 原图radio控件颜色
+        <item name="item.checkRadio">@color/item_checkRadio</item>
+
+        // 空状态文字颜色
+        <item name="empty.textColor">@color/text_empty</item>
+        // 空状态文字大小
+        <item name="empty.textSize">@dimen/text_empty</item>
+        <item name="empty.text">@string/empty_text</item>
+        // 空状态资源图
+        <item name="empty.resource">@drawable/ic_empty_zhihu</item>
+
+        // 图片加载占位图
+        <item name="item.placeholder">@color/zhihu_item_placeholder</item>
     </style>
 
 </resources>

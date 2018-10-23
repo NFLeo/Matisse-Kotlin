@@ -32,6 +32,7 @@
     <attr name="item.checkRadio" format="reference|color" />
 
     <attr name="empty.textColor" format="reference|color" />
+    <attr name="empty.text" format="reference" />
     <attr name="empty.textSize" format="dimension" />
     <attr name="empty.resource" format="reference" />
 

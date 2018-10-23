@@ -51,7 +51,9 @@ open class BasePreviewActivity : AppCompatActivity(),
             return
         }
 
-        ImmersionBar.with(this).hideBar(BarHide.FLAG_HIDE_STATUS_BAR).init()
+        if (Platform.isClassExists("com.gyf.barlibrary.ImmersionBar")) {
+            ImmersionBar.with(this).hideBar(BarHide.FLAG_HIDE_STATUS_BAR).init()
+        }
 
         setContentView(R.layout.activity_media_preview)
         if (Platform.hasKitKat19()) {

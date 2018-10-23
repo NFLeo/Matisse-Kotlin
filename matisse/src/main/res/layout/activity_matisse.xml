@@ -46,7 +46,7 @@
             android:drawablePadding="8dp"
             android:drawableTop="?attr/empty.resource"
             android:gravity="center"
-            android:text="@string/empty_text"
+            android:text="?attr/empty.text"
             android:textColor="?attr/empty.textColor"
             android:textSize="?attr/empty.textSize" />
 

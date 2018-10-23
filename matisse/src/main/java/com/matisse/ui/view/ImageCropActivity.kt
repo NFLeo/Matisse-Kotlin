@@ -13,6 +13,7 @@ import com.matisse.R
 import com.matisse.entity.ConstValue
 import com.matisse.internal.entity.SelectionSpec
 import com.matisse.utils.BitmapUtils
+import com.matisse.utils.Platform
 import com.matisse.utils.UIUtils
 import com.matisse.widget.CropImageView
 import com.matisse.widget.IncapableDialog
@@ -38,7 +39,9 @@ class ImageCropActivity : AppCompatActivity(), View.OnClickListener, CropImageVi
 
         setContentView(R.layout.activity_crop)
 
-        ImmersionBar.with(this).titleBar(toolbar).statusBarDarkFont(mSpec.isDarkStatus).init()
+        if (Platform.isClassExists("com.gyf.barlibrary.ImmersionBar")) {
+            ImmersionBar.with(this).titleBar(toolbar).statusBarDarkFont(mSpec.isDarkStatus).init()
+        }
 
         if (mSpec.needOrientationRestriction()) {
             requestedOrientation = mSpec.orientation

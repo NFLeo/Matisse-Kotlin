@@ -33,4 +33,13 @@ object Platform {
 
         return ""
     }
+
+    fun isClassExists(classFullName: String): Boolean {
+        return try {
+            Class.forName(classFullName)
+            true
+        } catch (e: ClassNotFoundException) {
+            false
+        }
+    }
 }

@@ -23,10 +23,7 @@ import com.matisse.model.AlbumCollection
 import com.matisse.model.SelectedItemCollection
 import com.matisse.ui.adapter.AlbumMediaAdapter
 import com.matisse.ui.adapter.FolderMediaAdapter
-import com.matisse.utils.MediaStoreCompat
-import com.matisse.utils.PathUtils
-import com.matisse.utils.PhotoMetadataUtils
-import com.matisse.utils.UIUtils
+import com.matisse.utils.*
 import com.matisse.widget.IncapableDialog
 import kotlinx.android.synthetic.main.activity_matisse.*
 import kotlinx.android.synthetic.main.include_view_bottom.*
@@ -82,8 +79,11 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
             return
         }
         setContentView(R.layout.activity_matisse)
-        ImmersionBar.with(this).titleBar(toolbar)
-                .statusBarDarkFont(mSpec?.isDarkStatus == true).init()
+
+        if (Platform.isClassExists("com.gyf.barlibrary.ImmersionBar")) {
+            ImmersionBar.with(this).titleBar(toolbar)
+                    .statusBarDarkFont(mSpec?.isDarkStatus == true).init()
+        }
         initConfigs(savedInstanceState)
         initListener()
     }
