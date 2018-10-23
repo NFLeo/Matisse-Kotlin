@@ -45,6 +45,23 @@ Matisse核心功能：[https://github.com/zhihu/Matisse](https://github.com/zhih
 
 3. 为适配7.0，,项目manifest的privider标签下 paths文件中添加
     <external-path  name="my_images" path="Pictures"/>
+
+4. 项目gradle中添加
+
+// 具体版本需自行配置
+ext {
+    compileSdkVersion = 27
+
+    minSdkVersion = 19
+    targetSdkVersion = 27
+
+    versionCode = 110
+    versionName = "1.1.1"
+
+    support_library = '27.1.1'
+    glide = '4.7.1'
+    constraint = '1.1.3'
+}
 ```
 
 | Default Style                  | Other Style Preview                  | Preview                          |

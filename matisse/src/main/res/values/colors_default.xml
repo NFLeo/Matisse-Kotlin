@@ -24,7 +24,6 @@
     // 选择控件边框颜色
     <color name="item_checkCircle_borderColor">@color/selector_white_text</color>
     // 选择控件文字状态文字颜色
-    <color name="item_checkCircle_numColor">@color/selector_white_text</color>
 
     // 选择控件背景色
     <color name="item_checkRadio">@color/selector_base_text</color>
