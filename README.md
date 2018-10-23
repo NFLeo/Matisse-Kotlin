@@ -1,9 +1,12 @@
 ![Image](/image/banner.png)
-[Matisse-kotlin](https://github.com/NFLeo/Matisse-Kotlin)
+
+[Matisse-kotlin地址](https://github.com/NFLeo/Matisse-Kotlin)
 
 首先感谢：
 Matisse核心功能：[https://github.com/zhihu/Matisse](https://github.com/zhihu/Matisse)
+
 裁剪提供者：廖子尧  github地址：[https://github.com/jeasonlzy](https://github.com/jeasonlzy) 
+
 图片压缩提供者：[https://github.com/nanchen2251](https://github.com/nanchen2251)
 
 # Matisse
@@ -55,7 +58,7 @@ Matisse核心功能：[https://github.com/zhihu/Matisse](https://github.com/zhih
 
 ## How do I use Matisse?
 ```
-com.nfleo:MatisseKotlin:1.0.2
+com.nfleo:MatisseKotlin:1.0.3
 ```
 #### Permission
 The library requires two permissions:
@@ -67,7 +70,7 @@ So if you are targeting Android 6.0+, you need to handle runtime permission requ
 #### Simple usage snippet
 ------
 
-####配置主题
+### 配置主题
 使用套路与原项目一直，只是多增加了一些参数，另外定制时需配置所提供的所有参数。
 ```
     <style name="Matisse.Default" parent="Theme.AppCompat.Light.NoActionBar">
