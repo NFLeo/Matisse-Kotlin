@@ -61,8 +61,8 @@ class CompressHelper(private val context: Context) {
      */
     fun compressToFile(file: File): File {
         return BitmapUtil.compressImage(context, Uri.fromFile(file), maxWidth, maxHeight,
-                compressFormat, bitmapConfig, quality, destinationDirectoryPath!!,
-                fileNamePrefix!!, fileName!!)
+                compressFormat, bitmapConfig, quality, destinationDirectoryPath,
+                fileNamePrefix, fileName)
     }
 
     /**
