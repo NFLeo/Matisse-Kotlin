@@ -45,6 +45,8 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
     private var mLastFolderCheckedPosition: Int = 0
     private lateinit var allAlbum: Album
 
+    private var mImmersionBar:ImmersionBar? = null
+
     private var albumCallbacks = object : AlbumCallbacks {
         override fun onAlbumStart() {
         }
@@ -81,8 +83,8 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
         setContentView(R.layout.activity_matisse)
 
         if (Platform.isClassExists("com.gyf.barlibrary.ImmersionBar")) {
-            ImmersionBar.with(this).titleBar(toolbar)
-                    .statusBarDarkFont(mSpec?.isDarkStatus == true).init()
+            mImmersionBar = ImmersionBar.with(this)
+            mImmersionBar?.titleBar(toolbar)?.statusBarDarkFont(mSpec?.isDarkStatus == true)?.init()
         }
         initConfigs(savedInstanceState)
         initListener()
@@ -127,6 +129,7 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
 
     override fun onDestroy() {
         super.onDestroy()
+        mImmersionBar?.destroy()
         mAlbumCollection.onDestory()
         mSpec?.onCheckedListener = null
         mSpec?.onSelectedListener = null

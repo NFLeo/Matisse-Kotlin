@@ -2,7 +2,6 @@ package com.matisse.ui.view
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
@@ -11,7 +10,6 @@ import android.view.WindowManager
 import com.gyf.barlibrary.BarHide
 import com.gyf.barlibrary.ImmersionBar
 import com.matisse.R
-import com.matisse.R.id.*
 import com.matisse.entity.ConstValue
 import com.matisse.entity.IncapableCause
 import com.matisse.entity.Item
@@ -21,7 +19,6 @@ import com.matisse.ui.adapter.PreviewPagerAdapter
 import com.matisse.utils.PathUtils
 import com.matisse.utils.PhotoMetadataUtils
 import com.matisse.utils.Platform
-import com.matisse.utils.UIUtils
 import com.matisse.widget.CheckView
 import com.matisse.widget.IncapableDialog
 import kotlinx.android.synthetic.main.activity_media_preview.*
@@ -39,6 +36,7 @@ open class BasePreviewActivity : AppCompatActivity(),
 
     var mPreviousPos = -1
     var originalEnable = false
+    private var mImmersionBar:ImmersionBar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         mSpec = SelectionSpec.getInstance()
@@ -52,7 +50,8 @@ open class BasePreviewActivity : AppCompatActivity(),
         }
 
         if (Platform.isClassExists("com.gyf.barlibrary.ImmersionBar")) {
-            ImmersionBar.with(this).hideBar(BarHide.FLAG_HIDE_STATUS_BAR).init()
+            mImmersionBar = ImmersionBar.with(this)
+            mImmersionBar?.hideBar(BarHide.FLAG_HIDE_STATUS_BAR)?.init()
         }
 
         setContentView(R.layout.activity_media_preview)
@@ -309,5 +308,10 @@ open class BasePreviewActivity : AppCompatActivity(),
         val cause = mSelectedCollection.isAcceptable(item)
         IncapableCause.handleCause(this, cause)
         return cause == null
+    }
+
+    override fun onDestroy() {
+        mImmersionBar?.destroy()
+        super.onDestroy()
     }
 }

@@ -32,6 +32,8 @@ class ImageCropActivity : AppCompatActivity(), View.OnClickListener, CropImageVi
     private lateinit var mSpec: SelectionSpec
     private lateinit var imagePath: String
 
+    private var mImmersionBar:ImmersionBar? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         mSpec = SelectionSpec.getInstance()
         setTheme(mSpec.themeId)
@@ -40,7 +42,8 @@ class ImageCropActivity : AppCompatActivity(), View.OnClickListener, CropImageVi
         setContentView(R.layout.activity_crop)
 
         if (Platform.isClassExists("com.gyf.barlibrary.ImmersionBar")) {
-            ImmersionBar.with(this).titleBar(toolbar).statusBarDarkFont(mSpec.isDarkStatus).init()
+            mImmersionBar = ImmersionBar.with(this)
+            mImmersionBar?.titleBar(toolbar)?.statusBarDarkFont(mSpec.isDarkStatus)?.init()
         }
 
         if (mSpec.needOrientationRestriction()) {
@@ -140,11 +143,12 @@ class ImageCropActivity : AppCompatActivity(), View.OnClickListener, CropImageVi
     }
 
     override fun onDestroy() {
-        super.onDestroy()
+        mImmersionBar?.destroy()
         cv_crop_image.setOnBitmapSaveCompleteListener(null)
         if (null != mBitmap && !mBitmap?.isRecycled!!) {
             mBitmap?.recycle()
             mBitmap = null
         }
+        super.onDestroy()
     }
 }
