@@ -73,7 +73,7 @@ class AlbumMediaLoader(context: Context, selection: String, selectionArgs: Array
         }
         // ===============================================================
 
-        private val ORDER_BY = MediaStore.Images.Media.DATE_TAKEN + " DESC"
+        private const val ORDER_BY = MediaStore.Images.Media.DATE_TAKEN + " DESC"
 
         fun newInstance(context: Context, album: Album, capture: Boolean): CursorLoader {
             val selection: String

@@ -455,7 +455,7 @@ class CropImageView : AppCompatImageView {
      * @return bitmap after crop
      */
     fun getCropBitmap(expectWidth: Int, exceptHeight: Int, isSaveRectangle: Boolean): Bitmap? {
-        if (expectWidth <= 0 || exceptHeight < 0) return null
+        if (expectWidth <= 0 || exceptHeight < 0 || drawable == null) return null
         var srcBitmap = (drawable as BitmapDrawable).bitmap
         srcBitmap = rotate(srcBitmap, sumRotationLevel * 90f)
         return makeCropBitmap(srcBitmap, mFocusRect, getImageMatrixRect(), expectWidth, exceptHeight, isSaveRectangle);
@@ -552,7 +552,10 @@ class CropImageView : AppCompatImageView {
     fun saveBitmapToFile(folder: File, expectWidth: Int, exceptHeight: Int, isSaveRectangle: Boolean) {
         if (mSaving) return
         mSaving = true
-        val croppedImage = getCropBitmap(expectWidth, exceptHeight, isSaveRectangle)
+
+        // picture in the album maybe the file is not exist
+        val croppedImage = getCropBitmap(expectWidth, exceptHeight, isSaveRectangle) ?: return
+
         var outputFormat: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG
         var saveFile = createFile(folder, "IMG_", ".jpg")
         if (mStyle == CropImageView.Style.CIRCLE && !isSaveRectangle) {
@@ -563,7 +566,7 @@ class CropImageView : AppCompatImageView {
         val finalSaveFile = saveFile
         object : Thread() {
             override fun run() {
-                saveOutput(croppedImage!!, finalOutputFormat, finalSaveFile)
+                saveOutput(croppedImage, finalOutputFormat, finalSaveFile)
             }
         }.start()
     }

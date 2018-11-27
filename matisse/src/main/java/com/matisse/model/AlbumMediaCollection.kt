@@ -17,9 +17,9 @@ class AlbumMediaCollection : LoaderManager.LoaderCallbacks<Cursor> {
     private var mCallbacks: AlbumCallbacks? = null
 
     companion object {
-        val LOADER_ID = 2
-        val ARGS_ALBUM = "args_album"
-        val ARGS_ENABLE_CAPTURE = "args_enable_capture"
+        const val LOADER_ID = 2
+        const val ARGS_ALBUM = "args_album"
+        const val ARGS_ENABLE_CAPTURE = "args_enable_capture"
     }
 
     fun onCreate(context: FragmentActivity, callbacks: AlbumCallbacks) {
