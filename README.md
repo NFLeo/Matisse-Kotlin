@@ -75,7 +75,7 @@ ext {
 
 ## How do I use Matisse?
 ```
-com.nfleo:MatisseKotlin:1.0.3
+com.nfleo:MatisseKotlin:1.1.0
 ```
 #### Permission
 The library requires two permissions:

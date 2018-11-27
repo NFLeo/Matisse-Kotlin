@@ -116,7 +116,7 @@ object PhotoMetadataUtils {
 
     fun getBitmapSize(uri: Uri?, activity: Activity?): Point {
         val resolver = activity!!.contentResolver
-        var imageSize = getBitmapBounds(resolver, uri!!)
+        val imageSize = getBitmapBounds(resolver, uri!!)
         var w = imageSize.x
         var h = imageSize.y
         if (PhotoMetadataUtils.shouldRotate(resolver, uri)) {
@@ -124,12 +124,12 @@ object PhotoMetadataUtils {
             h = imageSize.x
         }
         if (h == 0) return Point(MAX_WIDTH, MAX_WIDTH)
-        var metrics: DisplayMetrics = DisplayMetrics()
+        val metrics = DisplayMetrics()
         activity.windowManager.defaultDisplay.getMetrics(metrics)
-        var screenWidth = metrics.widthPixels
-        var screenHeight = metrics.heightPixels
-        var widthScale = screenWidth / w
-        var heightScale = screenHeight / h
+        val screenWidth = metrics.widthPixels
+        val screenHeight = metrics.heightPixels
+        val widthScale = screenWidth / w
+        val heightScale = screenHeight / h
         if (widthScale > heightScale) {
             return Point((w * widthScale), (h * heightScale))
         }
@@ -164,10 +164,12 @@ object PhotoMetadataUtils {
         } catch (e: FileNotFoundException) {
             return Point(0, 0)
         } finally {
-            inStream == null ?: try {
-                inStream!!.close()
-            } catch (e: IOException) {
-                e.printStackTrace()
+            if (inStream != null) {
+                try {
+                    inStream.close()
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
             }
         }
     }
