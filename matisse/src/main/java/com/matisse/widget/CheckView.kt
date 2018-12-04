@@ -20,7 +20,7 @@ class CheckView : View {
         const val UNCHECKED: Int = Integer.MIN_VALUE
         private const val STROKE_WIDTH: Float = 3.0f
         private const val SHADOW_WIDTH = 6.0f
-        private const val SIZE = 48
+        private const val SIZE = 40
         private const val STROKE_RADIUS = 11.5f
         private const val BG_RADIUS = 11.0f
         private const val CONTENT_SIZE = 16

@@ -36,7 +36,6 @@ open class BasePreviewActivity : AppCompatActivity(),
 
     var mPreviousPos = -1
     var originalEnable = false
-    private var mImmersionBar:ImmersionBar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         mSpec = SelectionSpec.getInstance()
@@ -50,8 +49,7 @@ open class BasePreviewActivity : AppCompatActivity(),
         }
 
         if (Platform.isClassExists("com.gyf.barlibrary.ImmersionBar")) {
-            mImmersionBar = ImmersionBar.with(this)
-            mImmersionBar?.hideBar(BarHide.FLAG_HIDE_STATUS_BAR)?.init()
+            ImmersionBar.with(this).hideBar(BarHide.FLAG_HIDE_STATUS_BAR)?.init()
         }
 
         setContentView(R.layout.activity_media_preview)
@@ -311,7 +309,9 @@ open class BasePreviewActivity : AppCompatActivity(),
     }
 
     override fun onDestroy() {
-        mImmersionBar?.destroy()
+        if (Platform.isClassExists("com.gyf.barlibrary.ImmersionBar")) {
+            ImmersionBar.with(this).destroy()
+        }
         super.onDestroy()
     }
 }

@@ -80,8 +80,8 @@
 
     <style name="Matisse.Dark" parent="Theme.AppCompat.Light.NoActionBar">
         // 状态栏相关
-        <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primary_dark</item>
+        // 状态栏颜色 该属性同系统，低版本不支持
+        <item name="colorPrimaryDark">@color/color_base</item>
 
         // 顶部导航条高度
         <item name="navigation.height">@dimen/navigation_height</item>
