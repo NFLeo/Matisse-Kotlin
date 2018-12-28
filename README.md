@@ -28,7 +28,7 @@ Matisse核心功能：[https://github.com/zhihu/Matisse](https://github.com/zhih
 关于打包报错问题：
 
 使用：
-1. gradle中添加 implementation 'com.nfleo:MatisseKotlin:1.0.2'
+1. gradle中添加 implementation 'com.nfleo:MatisseKotlin:1.1.0'
 2. AnidroidManifest.xml中添加以下代码
 
         <activity android:name="com.matisse.ui.view.MatisseActivity" />
@@ -77,7 +77,7 @@ ext {
 ```
 com.nfleo:MatisseKotlin:1.1.0
 ```
-#### Permission
+#### Permission 添加权限申请
 The library requires two permissions:
 - `android.permission.READ_EXTERNAL_STORAGE`
 - `android.permission.WRITE_EXTERNAL_STORAGE`
@@ -167,8 +167,21 @@ Matisse.from(this@MainActivity)
 ```
 Start `MatisseActivity` from current `Activity` or `Fragment`:
 
-```java
+```
+kotlin项目调用
 Matisse.from(MainActivity.this)
+        .choose(MimeType.allOf())
+        .countable(true)
+        .maxSelectable(9)
+        .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
+        .gridExpectedSize(getResources().getDimensionPixelSize(R.dimen.grid_expected_size))
+        .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
+        .thumbnailScale(0.85f)
+        .imageEngine(new GlideEngine())
+        .forResult(REQUEST_CODE_CHOOSE);
+
+java项目调用
+Matisse.Companion.from(MainActivity.this)
         .choose(MimeType.allOf())
         .countable(true)
         .maxSelectable(9)
