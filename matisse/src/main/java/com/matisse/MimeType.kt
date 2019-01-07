@@ -1,7 +1,5 @@
 package com.matisse
 
-import com.matisse.MimeTypeManager.Companion.arraySetOf
-
 /**
  * Describe : MIME Type enumeration to restrict selectable media on the selection activity.
  * Matisse only supports images and videos.

@@ -10,8 +10,7 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
 import com.matisse.Matisse
-import com.matisse.MimeTypeManager.Companion.ofAll
-import com.matisse.MimeTypeManager.Companion.ofImage
+import com.matisse.MimeTypeManager
 import com.matisse.compress.CompressHelper
 import com.matisse.compress.FileUtil
 import com.matisse.entity.CaptureStrategy
@@ -48,7 +47,7 @@ class MainActivity : AppCompatActivity() {
                                 return
                             }
                             Matisse.from(this@MainActivity)
-                                    .choose(ofAll(), false)
+                                    .choose(MimeTypeManager.ofAll(), false)
                                     .countable(true)
                                     .capture(true)
                                     .showSingleMediaType(true)

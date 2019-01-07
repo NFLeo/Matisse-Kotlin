@@ -170,7 +170,7 @@ Start `MatisseActivity` from current `Activity` or `Fragment`:
 ```
 kotlin项目调用
 Matisse.from(MainActivity.this)
-        .choose(MimeType.allOf())
+        .choose(MimeTypeManager.ofAll())
         .countable(true)
         .maxSelectable(9)
         .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
@@ -182,7 +182,7 @@ Matisse.from(MainActivity.this)
 
 java项目调用
 Matisse.Companion.from(MainActivity.this)
-        .choose(MimeType.allOf())
+        .choose(MimeTypeManager.Companion.ofAll())
         .countable(true)
         .maxSelectable(9)
         .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
@@ -193,7 +193,7 @@ Matisse.Companion.from(MainActivity.this)
         .forResult(REQUEST_CODE_CHOOSE);
 
 Matisse.from(SampleActivity.this)
-        .choose(MimeType.ofAll(), false)      // 展示所有类型文件（图片 视频 gif）
+        .choose(MimeTypeManager.ofAll(), false)      // 展示所有类型文件（图片 视频 gif）
         .capture(true)                        // 可拍照
         .countable(true)                      // 记录文件选择顺序
         .captureStrategy(new CaptureStrategy(true, "cache path"))
@@ -210,4 +210,72 @@ Matisse.from(SampleActivity.this)
         .setStatusIsDark(true)            // 设置状态栏文字颜色 需依赖ImmersionBar库
         .imageEngine(new GlideEngine())   // 加载库需外部实现
         .forResult(REQUEST_CODE_CHOOSE);
+```
+
+为方便后期兼容Fresco，图片加载类需外部实现
+**注意：**目前慎用Fresco（尽管提供了栗子）！！！，图片加载兼容了Fresco，***但，图片放大预览并未兼容***
+```
+class Glide4Engine : ImageEngine {
+
+    override fun cleanMemory(context: Context) {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            Glide.get(context).clearMemory()
+        }
+    }
+
+    override fun pause(context: Context) {
+        Glide.with(context).pauseRequests()
+    }
+
+    override fun resume(context: Context) {
+        Glide.with(context).resumeRequests()
+    }
+
+    override fun init(context: Context) {
+    }
+
+    override fun loadThumbnail(context: Context, resize: Int, placeholder: Drawable, imageView: ImageView, uri: Uri) {
+        Glide.with(context)
+                .asBitmap() // some .jpeg files are actually gif
+                .load(uri)
+                .apply(RequestOptions()
+                        .override(resize, resize)
+                        .placeholder(placeholder)
+                        .centerCrop())
+                .into(imageView)
+    }
+
+    override fun loadGifThumbnail(context: Context, resize: Int, placeholder: Drawable, imageView: ImageView,
+                                  uri: Uri) {
+        Glide.with(context)
+                .asBitmap() // some .jpeg files are actually gif
+                .load(uri)
+                .apply(RequestOptions()
+                        .override(resize, resize)
+                        .placeholder(placeholder)
+                        .centerCrop())
+                .into(imageView)
+    }
+
+    override fun loadImage(context: Context, resizeX: Int, resizeY: Int, imageView: ImageView, uri: Uri) {
+        Glide.with(context)
+                .load(uri)
+                .apply(RequestOptions()
+                        .override(resizeX, resizeY)
+                        .priority(Priority.HIGH)
+                        .fitCenter())
+                .into(imageView)
+    }
+
+    override fun loadGifImage(context: Context, resizeX: Int, resizeY: Int, imageView: ImageView, uri: Uri) {
+        Glide.with(context)
+                .asGif()
+                .load(uri)
+                .apply(RequestOptions()
+                        .override(resizeX, resizeY)
+                        .priority(Priority.HIGH)
+                        .fitCenter())
+                .into(imageView)
+    }
+}
 ```
