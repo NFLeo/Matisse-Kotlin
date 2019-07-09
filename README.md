@@ -28,7 +28,7 @@ Matisse核心功能：[https://github.com/zhihu/Matisse](https://github.com/zhih
 关于打包报错问题：
 
 使用：
-1. gradle中添加 implementation 'com.nfleo:MatisseKotlin:1.1.0'
+1. gradle中添加 implementation 'com.nfleo:MatisseKotlin:1.1.1'
 2. AnidroidManifest.xml中添加以下代码
 
         <activity android:name="com.matisse.ui.view.MatisseActivity" />
@@ -75,7 +75,7 @@ ext {
 
 ## How do I use Matisse?
 ```
-com.nfleo:MatisseKotlin:1.1.0
+com.nfleo:MatisseKotlin:1.1.1
 ```
 #### Permission 添加权限申请
 The library requires two permissions:
@@ -165,12 +165,24 @@ Matisse.from(this@MainActivity)
              .setStatusIsDark(true)   // 按需设置状态栏文字颜色
              .theme(R.style.Matisse_Default)    // 设置成所需主题
 ```
+
+### 注意：1.1.1版本支持外部设置设置状态栏颜色，关于状态栏与状态栏底色问题
+##### 项目内部 仅添加了该库(`compileOnly 'com.gyf.barlibrary:barlibrary:2.3.0'`)的编译
+需要根据样式修改状态栏文字颜色，图片预览界面状态栏隐藏功能，需在自己项目中引入该库
+```
+Matisse.from(this@MainActivity)
+             ...
+             .setStatusIsDark(true)   // 设置状态栏文字颜色 true=黑色  false=白色
+             .theme(R.style.Matisse_Default)    // 设置成所需主题
+             ...
+```
+
 Start `MatisseActivity` from current `Activity` or `Fragment`:
 
 ```
 kotlin项目调用
 Matisse.from(MainActivity.this)
-        .choose(MimeTypeManager.ofAll())
+        .choose(MimeTypeManager.ofAll(), false)
         .countable(true)
         .maxSelectable(9)
         .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
@@ -182,7 +194,7 @@ Matisse.from(MainActivity.this)
 
 java项目调用
 Matisse.Companion.from(MainActivity.this)
-        .choose(MimeTypeManager.Companion.ofAll())
+        .choose(MimeTypeManager.Companion.ofAll(), false)
         .countable(true)
         .maxSelectable(9)
         .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
