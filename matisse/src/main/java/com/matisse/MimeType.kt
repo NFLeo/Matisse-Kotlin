@@ -46,7 +46,7 @@ enum class MimeType {
     },
 
     MP4 {
-        override fun getValue() = MimeTypeManager.arraySetOf("m4v")
+        override fun getValue() = MimeTypeManager.arraySetOf("m4v","mp4")
         override fun getKey() = "video/mp4"
         override fun initEnum() = MimeTypeManager(getKey(), getValue())
     },
@@ -58,13 +58,13 @@ enum class MimeType {
     },
 
     THREEGPP {
-        override fun getValue() = MimeTypeManager.arraySetOf("3gpp")
+        override fun getValue() = MimeTypeManager.arraySetOf("3gp","3gpp")
         override fun getKey() = "video/3gpp"
         override fun initEnum() = MimeTypeManager(getKey(), getValue())
     },
 
     THREEGPP2 {
-        override fun getValue() = MimeTypeManager.arraySetOf("3gpp2")
+        override fun getValue() = MimeTypeManager.arraySetOf("3g2","3gpp2")
         override fun getKey() = "video/3gpp2"
         override fun initEnum() = MimeTypeManager(getKey(), getValue())
     },
