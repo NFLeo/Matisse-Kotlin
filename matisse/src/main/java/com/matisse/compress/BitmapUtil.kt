@@ -1,21 +1,12 @@
 package com.matisse.compress
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Canvas
-import android.graphics.Matrix
-import android.graphics.Paint
+import android.graphics.*
 import android.media.ExifInterface
 import android.net.Uri
 import android.text.TextUtils
-
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileNotFoundException
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.InputStream
+import java.io.*
+import kotlin.math.roundToInt
 
 /**
  * 图片处理工具类
@@ -27,7 +18,10 @@ import java.io.InputStream
 
 object BitmapUtil {
 
-    fun getScaledBitmap(context: Context, imageUri: Uri, maxWidth: Float, maxHeight: Float, bitmapConfig: Bitmap.Config): Bitmap? {
+    fun getScaledBitmap(
+        context: Context, imageUri: Uri, maxWidth: Float,
+        maxHeight: Float, bitmapConfig: Bitmap.Config
+    ): Bitmap? {
         val filePath = FileUtil.getRealPathFromURI(context, imageUri)
         var scaledBitmap: Bitmap? = null
 
@@ -38,7 +32,7 @@ object BitmapUtil {
         options.inJustDecodeBounds = true
         var bmp: Bitmap? = BitmapFactory.decodeFile(filePath, options)
         if (bmp == null) {
-            var inputStream: InputStream? = null
+            var inputStream: InputStream?
             try {
                 inputStream = FileInputStream(filePath!!)
                 BitmapFactory.decodeStream(inputStream, null, options)
@@ -56,12 +50,17 @@ object BitmapUtil {
         if (actualHeight == -1 || actualWidth == -1) {
             try {
                 val exifInterface = ExifInterface(filePath)
-                actualHeight = exifInterface.getAttributeInt(ExifInterface.TAG_IMAGE_LENGTH, ExifInterface.ORIENTATION_NORMAL)//获取图片的高度
-                actualWidth = exifInterface.getAttributeInt(ExifInterface.TAG_IMAGE_WIDTH, ExifInterface.ORIENTATION_NORMAL)//获取图片的宽度
+                // 获取图片的高度
+                actualHeight = exifInterface.getAttributeInt(
+                    ExifInterface.TAG_IMAGE_LENGTH, ExifInterface.ORIENTATION_NORMAL
+                )
+                // 获取图片的宽度
+                actualWidth = exifInterface.getAttributeInt(
+                    ExifInterface.TAG_IMAGE_WIDTH, ExifInterface.ORIENTATION_NORMAL
+                )
             } catch (e: IOException) {
                 e.printStackTrace()
             }
-
         }
 
         if (actualWidth <= 0 || actualHeight <= 0) {
@@ -79,17 +78,21 @@ object BitmapUtil {
 
         //width and height values are set maintaining the aspect ratio of the image
         if (actualHeight > maxHeight || actualWidth > maxWidth) {
-            if (imgRatio < maxRatio) {
-                imgRatio = maxHeight / actualHeight
-                actualWidth = (imgRatio * actualWidth).toInt()
-                actualHeight = maxHeight.toInt()
-            } else if (imgRatio > maxRatio) {
-                imgRatio = maxWidth / actualWidth
-                actualHeight = (imgRatio * actualHeight).toInt()
-                actualWidth = maxWidth.toInt()
-            } else {
-                actualHeight = maxHeight.toInt()
-                actualWidth = maxWidth.toInt()
+            when {
+                imgRatio < maxRatio -> {
+                    imgRatio = maxHeight / actualHeight
+                    actualWidth = (imgRatio * actualWidth).toInt()
+                    actualHeight = maxHeight.toInt()
+                }
+                imgRatio > maxRatio -> {
+                    imgRatio = maxWidth / actualWidth
+                    actualHeight = (imgRatio * actualHeight).toInt()
+                    actualWidth = maxWidth.toInt()
+                }
+                else -> {
+                    actualHeight = maxHeight.toInt()
+                    actualWidth = maxWidth.toInt()
+                }
             }
         }
 
@@ -108,7 +111,7 @@ object BitmapUtil {
             // load the bitmap getTempFile its path
             bmp = BitmapFactory.decodeFile(filePath, options)
             if (bmp == null) {
-                var inputStream: InputStream? = null
+                val inputStream: InputStream?
                 try {
                     inputStream = FileInputStream(filePath!!)
                     BitmapFactory.decodeStream(inputStream, null, options)
@@ -116,15 +119,12 @@ object BitmapUtil {
                 } catch (exception: IOException) {
                     exception.printStackTrace()
                 }
-
             }
         } catch (exception: OutOfMemoryError) {
             exception.printStackTrace()
         }
 
-        if (actualHeight <= 0 || actualWidth <= 0) {
-            return null
-        }
+        if (actualHeight <= 0 || actualWidth <= 0) return null
 
         try {
             scaledBitmap = Bitmap.createBitmap(actualWidth, actualHeight, bitmapConfig)
@@ -148,16 +148,16 @@ object BitmapUtil {
             exif = ExifInterface(filePath)
             val orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 0)
             val matrix = Matrix()
-            if (orientation == 6) {
-                matrix.postRotate(90f)
-            } else if (orientation == 3) {
-                matrix.postRotate(180f)
-            } else if (orientation == 8) {
-                matrix.postRotate(270f)
+            when (orientation) {
+                6 -> matrix.postRotate(90f)
+                3 -> matrix.postRotate(180f)
+                8 -> matrix.postRotate(270f)
             }
-            scaledBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0,
-                    scaledBitmap.width, scaledBitmap.height,
-                    matrix, true)
+            scaledBitmap = Bitmap.createBitmap(
+                scaledBitmap, 0, 0,
+                scaledBitmap.width, scaledBitmap.height,
+                matrix, true
+            )
         } catch (e: IOException) {
             e.printStackTrace()
         }
@@ -165,15 +165,19 @@ object BitmapUtil {
         return scaledBitmap
     }
 
-    fun compressImage(context: Context, imageUri: Uri, maxWidth: Float, maxHeight: Float,
-                      compressFormat: Bitmap.CompressFormat, bitmapConfig: Bitmap.Config,
-                      quality: Int, parentPath: String, prefix: String, fileName: String): File {
+    fun compressImage(
+        context: Context, imageUri: Uri, maxWidth: Float, maxHeight: Float,
+        compressFormat: Bitmap.CompressFormat, bitmapConfig: Bitmap.Config,
+        quality: Int, parentPath: String, prefix: String, fileName: String
+    ): File {
         var out: FileOutputStream? = null
-        val filename = generateFilePath(context, parentPath, imageUri, compressFormat.name.toLowerCase(), prefix, fileName)
+        val filename = generateFilePath(
+            context, parentPath, imageUri, compressFormat.name.toLowerCase(), prefix, fileName
+        )
         try {
             out = FileOutputStream(filename)
             // 通过文件名写入
-            val newBmp = BitmapUtil.getScaledBitmap(context, imageUri, maxWidth, maxHeight, bitmapConfig)
+            val newBmp = getScaledBitmap(context, imageUri, maxWidth, maxHeight, bitmapConfig)
             newBmp?.compress(compressFormat, quality, out)
 
         } catch (e: FileNotFoundException) {
@@ -189,33 +193,37 @@ object BitmapUtil {
         return File(filename)
     }
 
-    fun generateFilePath(context: Context, parentPath: String, uri: Uri,
-                         extension: String, prefix: String, fileName: String): String {
-        var prefix = prefix
-        var fileName = fileName
+    private fun generateFilePath(
+        context: Context, parentPath: String, uri: Uri,
+        extension: String, prefix: String, fileName: String
+    ): String {
+        var cPrefix = prefix
+        var cFileName = fileName
         val file = File(parentPath)
         if (!file.exists()) {
             file.mkdirs()
         }
-        /** if prefix is null, set prefix ""  */
-        prefix = if (TextUtils.isEmpty(prefix)) "" else prefix
-        /** reset fileName by prefix and custom file name  */
-        fileName = if (TextUtils.isEmpty(fileName)) prefix + FileUtil.splitFileName(FileUtil.getFileName(context, uri))[0] else fileName
-        return file.absolutePath + File.separator + fileName + "." + extension
+        // if prefix is null, set prefix ""
+        cPrefix = if (TextUtils.isEmpty(cPrefix)) "" else cPrefix
+        // reset fileName by prefix and custom file name
+        cFileName = if (TextUtils.isEmpty(cFileName)) cPrefix + FileUtil.splitFileName(
+            FileUtil.getFileName(context, uri)
+        )[0] else cFileName
+        return file.absolutePath + File.separator + cFileName + "." + extension
     }
 
 
     /**
      * 计算inSampleSize
      */
-    fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
+    private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
         val height = options.outHeight
         val width = options.outWidth
         var inSampleSize = 1
 
         if (height > reqHeight || width > reqWidth) {
-            val heightRatio = Math.round(height.toFloat() / reqHeight.toFloat())
-            val widthRatio = Math.round(width.toFloat() / reqWidth.toFloat())
+            val heightRatio = (height.toFloat() / reqHeight.toFloat()).roundToInt()
+            val widthRatio = (width.toFloat() / reqWidth.toFloat()).roundToInt()
             inSampleSize = if (heightRatio < widthRatio) heightRatio else widthRatio
         }
 

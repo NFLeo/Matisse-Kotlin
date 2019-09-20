@@ -31,49 +31,27 @@ import kotlinx.android.synthetic.main.include_view_navigation.*
 import java.util.*
 
 class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionProvider,
-        AlbumMediaAdapter.CheckStateListener, AlbumMediaAdapter.OnMediaClickListener,
-        AlbumMediaAdapter.OnPhotoCapture, View.OnClickListener {
+    AlbumMediaAdapter.CheckStateListener, AlbumMediaAdapter.OnMediaClickListener,
+    AlbumMediaAdapter.OnPhotoCapture, View.OnClickListener {
 
-    private var mMediaStoreCompat: MediaStoreCompat? = null
-    private var mSpec: SelectionSpec? = null
-    private var mOriginalEnable: Boolean = false
-    private val mAlbumCollection = AlbumCollection()
-    private val mSelectedCollection = SelectedItemCollection(this)
+    private var mediaStoreCompat: MediaStoreCompat? = null
+    private var spec: SelectionSpec? = null
+    private var originalEnable: Boolean = false
+    private val albumCollection = AlbumCollection()
+    private val selectedCollection = SelectedItemCollection(this)
 
-    private var mCursor: Cursor? = null
+    private var cursor: Cursor? = null
     private var bottomSheet: FolderBottomSheet? = null
-    private var mLastFolderCheckedPosition: Int = 0
+    private var lastFolderCheckedPosition: Int = 0
     private lateinit var allAlbum: Album
 
-    private var albumCallbacks = object : AlbumCallbacks {
-        override fun onAlbumStart() {
-        }
-
-        override fun onAlbumLoad(cursor: Cursor) {
-            mCursor = cursor
-
-            Handler(Looper.getMainLooper()).post {
-                if (cursor.moveToFirst()) {
-                    allAlbum = Album.valueOf(cursor)
-                    onAlbumSelected(allAlbum)
-                }
-            }
-        }
-
-        override fun onAlbumReset() {
-            if (bottomSheet != null && bottomSheet?.mAdapter != null) {
-                mCursor = null
-                bottomSheet?.mAdapter?.swapCursor(null)
-            }
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        mSpec = SelectionSpec.getInstance()
-        setTheme(mSpec?.themeId!!)
+        spec = SelectionSpec.getInstance()
+        setTheme(spec?.themeId!!)
         super.onCreate(savedInstanceState)
 
-        if (!mSpec?.hasInited!!) {
+        if (!spec?.hasInited!!) {
             setResult(Activity.RESULT_CANCELED)
             finish()
             return
@@ -81,30 +59,53 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
         setContentView(R.layout.activity_matisse)
 
         if (Platform.isClassExists("com.gyf.barlibrary.ImmersionBar")) {
-            ImmersionBar.with(this).titleBar(toolbar)?.statusBarDarkFont(mSpec?.isDarkStatus == true)?.init()
+            ImmersionBar.with(this).titleBar(toolbar)
+                ?.statusBarDarkFont(spec?.isDarkStatus == true)?.init()
         }
         initConfigs(savedInstanceState)
         initListener()
     }
 
     private fun initConfigs(savedInstanceState: Bundle?) {
-        if (mSpec?.needOrientationRestriction()!!) {
-            requestedOrientation = mSpec?.orientation!!
+        if (spec?.needOrientationRestriction()!!) {
+            requestedOrientation = spec?.orientation!!
         }
 
-        if (mSpec?.capture!!) {
-            mMediaStoreCompat = MediaStoreCompat(this)
-            if (mSpec?.captureStrategy == null)
+        if (spec?.capture!!) {
+            mediaStoreCompat = MediaStoreCompat(this)
+            if (spec?.captureStrategy == null)
                 throw RuntimeException("Don't forget to set CaptureStrategy.")
-            mMediaStoreCompat?.setCaptureStrategy(mSpec?.captureStrategy!!)
+            mediaStoreCompat?.setCaptureStrategy(spec?.captureStrategy!!)
         }
 
-        mSelectedCollection.onCreate(savedInstanceState)
-        mAlbumCollection.onCreate(this, albumCallbacks)
-        if (savedInstanceState != null) {
-            mAlbumCollection.onRestoreInstanceState(savedInstanceState)
-        }
-        mAlbumCollection.loadAlbums()
+        selectedCollection.onCreate(savedInstanceState)
+        albumCollection.onCreate(this, object : AlbumCallbacks {
+            override fun onAlbumStart() {
+                // do nothing
+            }
+
+            override fun onAlbumLoad(cursor: Cursor) {
+                this@MatisseActivity.cursor = cursor
+
+                Handler(Looper.getMainLooper()).post {
+                    if (cursor.moveToFirst()) {
+                        allAlbum = Album.valueOf(cursor)
+                        onAlbumSelected(allAlbum)
+                    }
+                }
+            }
+
+            override fun onAlbumReset() {
+                if (bottomSheet != null && bottomSheet?.adapter != null) {
+                    cursor = null
+                    bottomSheet?.adapter?.swapCursor(null)
+                }
+            }
+        })
+        if (savedInstanceState != null)
+            albumCollection.onRestoreInstanceState(savedInstanceState)
+
+        albumCollection.loadAlbums()
         updateBottomToolbar()
     }
 
@@ -119,9 +120,9 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
 
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
-        mSelectedCollection.onSaveInstanceState(outState!!)
-        mAlbumCollection.onSaveInstanceState(outState)
-        outState.putBoolean(ConstValue.CHECK_STATE, mOriginalEnable)
+        selectedCollection.onSaveInstanceState(outState!!)
+        albumCollection.onSaveInstanceState(outState)
+        outState.putBoolean(ConstValue.CHECK_STATE, originalEnable)
     }
 
     override fun onDestroy() {
@@ -129,9 +130,9 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
         if (Platform.isClassExists("com.gyf.barlibrary.ImmersionBar")) {
             ImmersionBar.with(this).destroy()
         }
-        mAlbumCollection.onDestory()
-        mSpec?.onCheckedListener = null
-        mSpec?.onSelectedListener = null
+        albumCollection.onDestroy()
+        spec?.onCheckedListener = null
+        spec?.onSelectedListener = null
     }
 
     override fun onBackPressed() {
@@ -141,27 +142,26 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
 
     override fun onUpdate() {
         updateBottomToolbar()
-        if (mSpec!!.onSelectedListener != null) {
-            mSpec!!.onSelectedListener?.onSelected(
-                    mSelectedCollection.asListOfUri(), mSelectedCollection.asListOfString())
+        if (spec!!.onSelectedListener != null) {
+            spec!!.onSelectedListener?.onSelected(
+                selectedCollection.asListOfUri(), selectedCollection.asListOfString()
+            )
         }
     }
 
     override fun capture() {
-        if (mMediaStoreCompat != null) {
-            mMediaStoreCompat?.dispatchCaptureIntent(this, ConstValue.REQUEST_CODE_CAPTURE)
+        if (mediaStoreCompat != null) {
+            mediaStoreCompat?.dispatchCaptureIntent(this, ConstValue.REQUEST_CODE_CAPTURE)
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode != Activity.RESULT_OK)
-            return
+        if (resultCode != Activity.RESULT_OK) return
 
         var cropPath: String? = null
-        if (data != null) {
+        if (data != null)
             cropPath = data.getStringExtra(ConstValue.EXTRA_RESULT_BUNDLE)
-        }
 
         when (requestCode) {
             ConstValue.REQUEST_CODE_PREVIEW -> {
@@ -173,10 +173,14 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
                 }
 
                 val resultBundle = data?.getBundleExtra(ConstValue.EXTRA_RESULT_BUNDLE)
-                val selected = resultBundle?.getParcelableArrayList<Item>(ConstValue.STATE_SELECTION)
-                mOriginalEnable = data?.getBooleanExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, false) ?: false
-                val collectionType = resultBundle?.getInt(ConstValue.STATE_COLLECTION_TYPE,
-                        SelectedItemCollection.COLLECTION_UNDEFINED)
+                val selected =
+                    resultBundle?.getParcelableArrayList<Item>(ConstValue.STATE_SELECTION)
+                originalEnable =
+                    data?.getBooleanExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, false) ?: false
+                val collectionType = resultBundle?.getInt(
+                    ConstValue.STATE_COLLECTION_TYPE,
+                    SelectedItemCollection.COLLECTION_UNDEFINED
+                )
                 if (data?.getBooleanExtra(ConstValue.EXTRA_RESULT_APPLY, false) == true) {
                     val result = Intent()
                     val selectedUris = ArrayList<Uri>()
@@ -187,15 +191,20 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
                             selectedPaths.add(PathUtils.getPath(this, item.getContentUri())!!)
                         }
                     }
-                    result.putParcelableArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION, selectedUris)
-                    result.putStringArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH, selectedPaths)
-                    result.putExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, mOriginalEnable)
+                    result.putParcelableArrayListExtra(
+                        EXTRA_RESULT_SELECTION, selectedUris
+                    )
+                    result.putStringArrayListExtra(
+                        EXTRA_RESULT_SELECTION_PATH, selectedPaths
+                    )
+                    result.putExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, originalEnable)
                     setResult(Activity.RESULT_OK, result)
                     finish()
                 } else {
-                    mSelectedCollection.overwrite(selected!!, collectionType!!)
+                    selectedCollection.overwrite(selected!!, collectionType!!)
                     val mediaSelectionFragment = supportFragmentManager.findFragmentByTag(
-                            MediaSelectionFragment::class.java.simpleName)
+                        MediaSelectionFragment::class.java.simpleName
+                    )
                     if (mediaSelectionFragment is MediaSelectionFragment) {
                         mediaSelectionFragment.refreshMediaGrid()
                     }
@@ -204,28 +213,30 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
             }
 
             ConstValue.REQUEST_CODE_CAPTURE -> {
-                val contentUri = mMediaStoreCompat!!.getCurrentPhotoUri()
-                val path = mMediaStoreCompat!!.getCurrentPhotoPath()
+                val contentUri = mediaStoreCompat!!.getCurrentPhotoUri()
+                val path = mediaStoreCompat!!.getCurrentPhotoPath()
                 val selected = ArrayList<Uri>()
                 selected.add(contentUri!!)
                 val selectedPath = ArrayList<String>()
                 selectedPath.add(path!!)
 
                 // Check is Crop first
-                if (mSpec?.openCrop() == true) {
+                if (spec?.openCrop() == true) {
                     val intentCrop = Intent(this, ImageCropActivity::class.java)
-                    intentCrop.putExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH, selectedPath[0])
+                    intentCrop.putExtra(EXTRA_RESULT_SELECTION_PATH, selectedPath[0])
                     startActivityForResult(intentCrop, ConstValue.REQUEST_CODE_CROP)
                     return
                 }
 
                 val result = Intent()
-                result.putParcelableArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION, selected)
-                result.putStringArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH, selectedPath)
+                result.putParcelableArrayListExtra(EXTRA_RESULT_SELECTION, selected)
+                result.putStringArrayListExtra(EXTRA_RESULT_SELECTION_PATH, selectedPath)
                 setResult(Activity.RESULT_OK, result)
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                    this@MatisseActivity.revokeUriPermission(contentUri,
-                            Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    this@MatisseActivity.revokeUriPermission(
+                        contentUri,
+                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    )
                 }
 
                 finish()
@@ -247,45 +258,46 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
         finish()
     }
 
-    override fun provideSelectedItemCollection() = mSelectedCollection
+    override fun provideSelectedItemCollection() = selectedCollection
 
     override fun onMediaClick(album: Album?, item: Item, adapterPosition: Int) {
 
         val intent = Intent(this, AlbumPreviewActivity::class.java)
         intent.putExtra(ConstValue.EXTRA_ALBUM, album)
         intent.putExtra(ConstValue.EXTRA_ITEM, item)
-        intent.putExtra(ConstValue.EXTRA_DEFAULT_BUNDLE, mSelectedCollection.getDataWithBundle())
-        intent.putExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, mOriginalEnable)
+        intent.putExtra(ConstValue.EXTRA_DEFAULT_BUNDLE, selectedCollection.getDataWithBundle())
+        intent.putExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, originalEnable)
         startActivityForResult(intent, ConstValue.REQUEST_CODE_PREVIEW)
     }
 
     override fun onClick(v: View?) {
         when (v) {
-            button_back -> {
-                onBackPressed()
-            }
+            button_back -> onBackPressed()
 
             button_preview -> {
-                SelectedPreviewActivity.instance(this@MatisseActivity, mSelectedCollection.getDataWithBundle(), mOriginalEnable)
+                SelectedPreviewActivity.instance(
+                    this@MatisseActivity, selectedCollection.getDataWithBundle(), originalEnable
+                )
             }
 
             button_complete -> {
-                val selectedUris = mSelectedCollection.asListOfUri() as ArrayList<Uri>
-                val selectedPaths = mSelectedCollection.asListOfString() as ArrayList<String>
+                val selectedUris = selectedCollection.asListOfUri() as ArrayList<Uri>
+                val selectedPaths = selectedCollection.asListOfString() as ArrayList<String>
 
-                val item = if (mSelectedCollection.asList().isEmpty()) null else mSelectedCollection.asList()[0]
+                val item =
+                    if (selectedCollection.asList().isEmpty()) null else selectedCollection.asList()[0]
 
-                if (mSpec?.openCrop() == true && mSpec?.isSupportCrop(item) == true) {
+                if (spec?.openCrop() == true && spec?.isSupportCrop(item) == true) {
                     val intentCrop = Intent(this, ImageCropActivity::class.java)
-                    intentCrop.putExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH, selectedPaths[0])
+                    intentCrop.putExtra(EXTRA_RESULT_SELECTION_PATH, selectedPaths[0])
                     startActivityForResult(intentCrop, ConstValue.REQUEST_CODE_CROP)
                     return
                 }
 
                 val result = Intent()
-                result.putParcelableArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION, selectedUris)
-                result.putStringArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH, selectedPaths)
-                result.putExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, mOriginalEnable)
+                result.putParcelableArrayListExtra(EXTRA_RESULT_SELECTION, selectedUris)
+                result.putStringArrayListExtra(EXTRA_RESULT_SELECTION_PATH, selectedPaths)
+                result.putExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, originalEnable)
                 setResult(Activity.RESULT_OK, result)
                 finish()
             }
@@ -293,32 +305,33 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
             original_layout -> {
                 val count = countOverMaxSize()
                 if (count > 0) {
-                    val incapableDialog = IncapableDialog.newInstance("",
-                            getString(R.string.error_over_original_count, count, mSpec?.originalMaxSize))
-                    incapableDialog.show(supportFragmentManager,
-                            IncapableDialog::class.java.name)
+                    val incapableDialog = IncapableDialog.newInstance(
+                        "",
+                        getString(R.string.error_over_original_count, count, spec?.originalMaxSize)
+                    )
+                    incapableDialog.show(supportFragmentManager, IncapableDialog::class.java.name)
                     return
                 }
 
-                mOriginalEnable = !mOriginalEnable
-                original.setChecked(mOriginalEnable)
+                originalEnable = !originalEnable
+                original.setChecked(originalEnable)
 
-                if (mSpec?.onCheckedListener != null) {
-                    mSpec?.onCheckedListener!!.onCheck(mOriginalEnable)
+                if (spec?.onCheckedListener != null) {
+                    spec?.onCheckedListener!!.onCheck(originalEnable)
                 }
             }
 
             button_apply -> {
-                if (allAlbum.isAll() && allAlbum.isEmpty()) {
-                    return
-                }
+                if (allAlbum.isAll() && allAlbum.isEmpty()) return
 
-                bottomSheet = FolderBottomSheet.instance(this@MatisseActivity, mLastFolderCheckedPosition, "Folder")
+                bottomSheet = FolderBottomSheet.instance(
+                    this@MatisseActivity, lastFolderCheckedPosition, "Folder"
+                )
                 bottomSheet?.callback = object : FolderBottomSheet.BottomSheetCallback {
                     override fun onItemClick(cursor: Cursor, position: Int) {
-                        mLastFolderCheckedPosition = position
+                        lastFolderCheckedPosition = position
 
-                        mAlbumCollection.setStateCurrentSelection(position)
+                        albumCollection.setStateCurrentSelection(position)
                         cursor.moveToPosition(position)
                         val album = Album.valueOf(cursor)
 
@@ -330,7 +343,7 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
                     }
 
                     override fun initData(adapter: FolderMediaAdapter) {
-                        adapter.swapCursor(mCursor)
+                        adapter.swapCursor(cursor)
                     }
                 }
             }
@@ -339,12 +352,12 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
 
     private fun updateBottomToolbar() {
 
-        val selectedCount = mSelectedCollection.count()
+        val selectedCount = selectedCollection.count()
         if (selectedCount == 0) {
             button_preview.isEnabled = false
             button_complete.isEnabled = false
             button_complete.text = getString(R.string.button_complete)
-        } else if (selectedCount == 1 && mSpec!!.singleSelectionModeEnabled()) {
+        } else if (selectedCount == 1 && spec!!.singleSelectionModeEnabled()) {
             button_preview.isEnabled = true
             button_complete.setText(R.string.button_complete)
             button_complete.isEnabled = true
@@ -354,7 +367,7 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
             button_complete.text = getString(R.string.button_sure, selectedCount)
         }
 
-        if (mSpec!!.originalable) {
+        if (spec!!.originalable) {
             original_layout.visibility = View.VISIBLE
             updateOriginalState()
         } else {
@@ -363,27 +376,29 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
     }
 
     private fun updateOriginalState() {
-        original!!.setChecked(mOriginalEnable)
+        original!!.setChecked(originalEnable)
         if (countOverMaxSize() > 0) {
-            if (mOriginalEnable) {
-                val incapableDialog = IncapableDialog.newInstance("",
-                        getString(R.string.error_over_original_size, mSpec!!.originalMaxSize))
+            if (originalEnable) {
+                val incapableDialog = IncapableDialog.newInstance(
+                    "",
+                    getString(R.string.error_over_original_size, spec!!.originalMaxSize)
+                )
                 incapableDialog.show(supportFragmentManager, IncapableDialog::class.java.name)
                 original!!.setChecked(false)
-                mOriginalEnable = false
+                originalEnable = false
             }
         }
     }
 
     private fun countOverMaxSize(): Int {
         var count = 0
-        val selectedCount = mSelectedCollection.count()
+        val selectedCount = selectedCollection.count()
         for (i in 0 until selectedCount) {
-            val item = mSelectedCollection.asList()[i]
+            val item = selectedCollection.asList()[i]
 
             if (item.isImage()) {
                 val size = PhotoMetadataUtils.getSizeInMB(item.size)
-                if (size > mSpec!!.originalMaxSize) {
+                if (size > spec!!.originalMaxSize) {
                     count++
                 }
             }
@@ -400,8 +415,8 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
             UIUtils.setViewVisible(true, container)
             val fragment = MediaSelectionFragment.newInstance(album)
             supportFragmentManager.beginTransaction()
-                    .replace(container.id, fragment, MediaSelectionFragment::class.java.simpleName)
-                    .commitAllowingStateLoss()
+                .replace(container.id, fragment, MediaSelectionFragment::class.java.simpleName)
+                .commitAllowingStateLoss()
         }
     }
 }

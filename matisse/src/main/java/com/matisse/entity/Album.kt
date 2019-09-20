@@ -10,59 +10,62 @@ import com.matisse.R
 
 class Album() : Parcelable {
 
-    private var mId: String = ""
-    private var mCoverPath: String = ""
-    private var mDisplayName: String = ""
-    private var mCount: Long = 0
-    private var mIsCheck: Boolean = false
+    private var id: String = ""
+    private var coverPath: String = ""
+    private var displayName: String = ""
+    private var count: Long = 0
+    private var isCheck: Boolean = false
 
     constructor(parcel: Parcel) : this() {
-        mId = parcel.readString()
-        mCoverPath = parcel.readString()
-        mDisplayName = parcel.readString()
-        mCount = parcel.readLong()
-        mIsCheck = parcel.readByte() != 0.toByte()
+        id = parcel.readString()
+        coverPath = parcel.readString()
+        displayName = parcel.readString()
+        count = parcel.readLong()
+        isCheck = parcel.readByte() != 0.toByte()
     }
 
     constructor(mId: String, mCoverPath: String, mDisplayName: String, mCount: Long) :
             this(mId, mCoverPath, mDisplayName, mCount, false)
 
-    constructor(mId: String, mCoverPath: String, mDisplayName: String, mCount: Long, mIsCheck: Boolean) : this() {
-        this.mId = mId
-        this.mCoverPath = mCoverPath
-        this.mDisplayName = mDisplayName
-        this.mCount = mCount
-        this.mIsCheck = mIsCheck
+    constructor(
+        mId: String, mCoverPath: String, mDisplayName: String,
+        mCount: Long, mIsCheck: Boolean
+    ) : this() {
+        this.id = mId
+        this.coverPath = mCoverPath
+        this.displayName = mDisplayName
+        this.count = mCount
+        this.isCheck = mIsCheck
     }
 
-    fun getId() = mId
+    fun getId() = id
 
-    fun getCoverPath() = mCoverPath
+    fun getCoverPath() = coverPath
 
-    fun getCount() = mCount
+    fun getCount() = count
 
     fun addCaptureCount() {
-        mCount++
+        count++
     }
 
     fun getDisplayName(context: Context): String {
         return if (isAll()) {
             context.getString(R.string.album_name_all)
-        } else mDisplayName
+        } else displayName
     }
 
-    fun isAll() = ALBUM_ID_ALL == mId
+    fun isAll() = ALBUM_ID_ALL == id
 
-    fun isEmpty() = mCount == 0L
+    fun isEmpty() = count == 0L
 
-    fun isChecked() = mIsCheck
+    fun isChecked() = isCheck
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(mId)
-        parcel.writeString(mCoverPath)
-        parcel.writeString(mDisplayName)
-        parcel.writeLong(mCount)
-        parcel.writeByte(if (mIsCheck) 1 else 0)
+        parcel.writeString(id)
+        parcel.writeString(coverPath)
+        parcel.writeString(displayName)
+        parcel.writeLong(count)
+        parcel.writeByte(if (isCheck) 1 else 0)
     }
 
     override fun describeContents(): Int {
@@ -83,9 +86,10 @@ class Album() : Parcelable {
         }
 
         fun valueOf(cursor: Cursor) = Album(
-                cursor.getString(cursor.getColumnIndex(AlbumLoader.BUCKET_ID)),
-                cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DATA)),
-                cursor.getString(cursor.getColumnIndex(AlbumLoader.BUCKET_DISPLAY_NAME)),
-                cursor.getLong(cursor.getColumnIndex(AlbumLoader.COLUMN_COUNT)))
+            cursor.getString(cursor.getColumnIndex(AlbumLoader.BUCKET_ID)),
+            cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DATA)),
+            cursor.getString(cursor.getColumnIndex(AlbumLoader.BUCKET_DISPLAY_NAME)),
+            cursor.getLong(cursor.getColumnIndex(AlbumLoader.COLUMN_COUNT))
+        )
     }
 }

@@ -21,13 +21,16 @@ class IncapableCause {
                 NONE -> {
                 }
                 DIALOG -> {
-                    val incapableDialog = IncapableDialog.newInstance(cause.mTitle!!, cause.mMessage!!)
-                    incapableDialog.show((context as FragmentActivity).supportFragmentManager,
-                            IncapableDialog::class.java.name)
+                    val incapableDialog =
+                        IncapableDialog.newInstance(cause.mTitle!!, cause.mMessage!!)
+                    incapableDialog.show(
+                        (context as FragmentActivity).supportFragmentManager,
+                        IncapableDialog::class.java.name
+                    )
                 }
                 TOAST -> Toast.makeText(context, cause.mMessage, Toast.LENGTH_SHORT).show()
                 else -> Toast.makeText(context, cause.mMessage, Toast.LENGTH_SHORT).show()
-            }// do nothing.
+            }
         }
     }
 
@@ -52,10 +55,4 @@ class IncapableCause {
         mTitle = title
         mMessage = message
     }
-
-    /**
-     * handleCause(Context context, IncapableCause cause)
-     *
-     * 为静态方法 见UIUtils.handleCause(Context, IncapableCause)
-     **/
 }

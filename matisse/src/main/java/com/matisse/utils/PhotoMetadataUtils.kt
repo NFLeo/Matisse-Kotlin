@@ -29,8 +29,8 @@ import java.util.*
 object PhotoMetadataUtils {
 
     private val TAG = PhotoMetadataUtils::class.java.simpleName
-    private val MAX_WIDTH = 1600
-    private val SCHEME_CONTENT = "content"
+    private const val MAX_WIDTH = 1600
+    private const val SCHEME_CONTENT = "content"
 
 
     fun getPath(resolver: ContentResolver, uri: Uri): String? {
@@ -38,10 +38,11 @@ object PhotoMetadataUtils {
             var cursor: Cursor? = null
 
             try {
-                cursor = resolver.query(uri, arrayOf(MediaStore.Images.ImageColumns.DATA), null, null, null)
-                if (cursor == null || !cursor.moveToFirst()) {
-                    return null
-                }
+                cursor = resolver.query(
+                    uri, arrayOf(MediaStore.Images.ImageColumns.DATA),
+                    null, null, null
+                )
+                if (cursor == null || !cursor.moveToFirst()) return null
 
                 return cursor.getString(cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA))
             } finally {
@@ -53,9 +54,8 @@ object PhotoMetadataUtils {
     }
 
     fun isAcceptable(context: Context, item: Item): IncapableCause? {
-        if (!isSelectableType(context, item)) {
+        if (!isSelectableType(context, item))
             return IncapableCause(context.getString(R.string.error_file_type))
-        }
 
         if (SelectionSpec.getInstance().filters != null) {
             SelectionSpec.getInstance().filters?.forEach {
@@ -68,9 +68,7 @@ object PhotoMetadataUtils {
     private fun isSelectableType(context: Context?, item: Item): Boolean {
         val mimeTypeSet = SelectionSpec.getInstance().mimeTypeSet
 
-        if (context == null || mimeTypeSet == null) {
-            return false
-        }
+        if (context == null || mimeTypeSet == null) return false
 
         val resolver = context.contentResolver
         for (type in mimeTypeSet) {
@@ -82,25 +80,24 @@ object PhotoMetadataUtils {
     }
 
     fun getBitmapBound(resolver: ContentResolver, uri: Uri): Point {
-        var `is`: InputStream? = null
+        var inputStream: InputStream? = null
         try {
             val options = BitmapFactory.Options()
             options.inJustDecodeBounds = true
-            `is` = resolver.openInputStream(uri)
-            BitmapFactory.decodeStream(`is`, null, options)
+            inputStream = resolver.openInputStream(uri)
+            BitmapFactory.decodeStream(inputStream, null, options)
             val width = options.outWidth
             val height = options.outHeight
             return Point(width, height)
         } catch (e: FileNotFoundException) {
             return Point(0, 0)
         } finally {
-            if (`is` != null) {
+            if (inputStream != null) {
                 try {
-                    `is`.close()
+                    inputStream.close()
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
-
             }
         }
     }
@@ -109,7 +106,6 @@ object PhotoMetadataUtils {
         val df = NumberFormat.getNumberInstance(Locale.US) as DecimalFormat
         df.applyPattern("0.0")
         var result = df.format((sizeInBytes.toFloat() / 1024f / 1024f).toDouble())
-        Log.e(TAG, "getSizeInMB: $result")
         result = result.replace(",".toRegex(), ".") // in some case , 0.0 will be 0,0
         return java.lang.Float.valueOf(result)
     }
@@ -119,7 +115,7 @@ object PhotoMetadataUtils {
         val imageSize = getBitmapBounds(resolver, uri!!)
         var w = imageSize.x
         var h = imageSize.y
-        if (PhotoMetadataUtils.shouldRotate(resolver, uri)) {
+        if (shouldRotate(resolver, uri)) {
             w = imageSize.y
             h = imageSize.x
         }
@@ -130,12 +126,9 @@ object PhotoMetadataUtils {
         val screenHeight = metrics.heightPixels
         val widthScale = screenWidth / w
         val heightScale = screenHeight / h
-        if (widthScale > heightScale) {
-            return Point((w * widthScale), (h * heightScale))
-        }
+        if (widthScale > heightScale) return Point((w * widthScale), (h * heightScale))
 
         return Point((w * widthScale), (h * heightScale))
-
     }
 
     private fun shouldRotate(resolver: ContentResolver, uri: Uri): Boolean {
@@ -143,7 +136,6 @@ object PhotoMetadataUtils {
         try {
             exif = ExifInterfaceCompat.newInstance(getPath(resolver, uri))
         } catch (e: IOException) {
-            Log.e(TAG, "could not read exif info of the image: $uri")
             return false
         }
         val orientation = exif!!.getAttributeInt(ExifInterface.TAG_ORIENTATION, -1)

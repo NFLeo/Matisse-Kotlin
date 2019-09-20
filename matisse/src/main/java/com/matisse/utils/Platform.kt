@@ -9,18 +9,12 @@ import android.os.Build
  */
 object Platform {
 
-    fun hasKitKat19(): Boolean {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
-    }
+    fun hasKitKat19() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
 
-    fun hasKitO26(): Boolean {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-    }
+    fun hasKitO26() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
 
     fun getPackageName(context: Context?): String? {
-        if (context == null) {
-            return ""
-        }
+        if (context == null) return ""
 
         val manager = context.packageManager
 

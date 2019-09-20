@@ -4,37 +4,32 @@ import android.graphics.Rect
 import android.support.v7.widget.RecyclerView
 import android.view.View
 
-class MediaGridInset : RecyclerView.ItemDecoration {
-    private var mSpanCount: Int = 0
-    private var mSpacing: Int = 0
-    private var mIncludeEdge: Boolean = false
+class MediaGridInset(
+    private var spanCount: Int, private var spacing: Int, private var includeEdge: Boolean
+) : RecyclerView.ItemDecoration() {
 
-    constructor(mSpanCount: Int, mSpacing: Int, mIncludeEdge: Boolean) : super() {
-        this.mSpanCount = mSpanCount
-        this.mSpacing = mSpacing
-        this.mIncludeEdge = mIncludeEdge
-    }
-
-    override fun getItemOffsets(outRect: Rect?, view: View?, parent: RecyclerView?, state: RecyclerView.State?) {
+    override fun getItemOffsets(
+        outRect: Rect?, view: View?, parent: RecyclerView?, state: RecyclerView.State?
+    ) {
         val position = parent?.getChildAdapterPosition(view) ?: 0
-        val column = position % mSpanCount
+        val column = position % spanCount
 
         outRect?.apply {
-            if (mIncludeEdge) {
-                left = mSpacing - column * mSpacing / mSpanCount
-                right = (column + 1) * mSpacing / mSpanCount
+            if (includeEdge) {
+                left = spacing - column * spacing / spanCount
+                right = (column + 1) * spacing / spanCount
 
-                if (position < mSpanCount) {
-                    top = mSpacing
+                if (position < spanCount) {
+                    top = spacing
                 }
 
-                bottom = mSpacing
+                bottom = spacing
             } else {
-                left = column * mSpacing / mSpanCount
-                right = mSpacing - (column + 1) * mSpacing / mSpanCount
+                left = column * spacing / spanCount
+                right = spacing - (column + 1) * spacing / spanCount
 
-                if (position >= mSpanCount) {
-                    top = mSpacing
+                if (position >= spanCount) {
+                    top = spacing
                 }
             }
         }

@@ -21,7 +21,10 @@ interface ImageEngine {
      * @param imageView ImageView widget
      * @param uri Uri of the loaded image
      */
-    fun loadThumbnail(context: Context, resize: Int, placeholder: Drawable, imageView: ImageView, uri: Uri)
+    fun loadThumbnail(
+        context: Context, resize: Int, placeholder: Drawable,
+        imageView: ImageView, uri: Uri
+    )
 
     /**
      * Load thumbnail of a static image resource
@@ -32,7 +35,10 @@ interface ImageEngine {
      * @param imageView ImageView widget
      * @param uri Uri of the loaded image
      */
-    fun loadGifThumbnail(context: Context, resize: Int, placeholder: Drawable, imageView: ImageView, uri: Uri)
+    fun loadGifThumbnail(
+        context: Context, resize: Int, placeholder: Drawable,
+        imageView: ImageView, uri: Uri
+    )
 
     /**
      * Load a gif image resource

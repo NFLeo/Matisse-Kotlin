@@ -20,11 +20,11 @@ import java.util.*
 
 class MediaStoreCompat {
 
-    private var mContext: WeakReference<Activity>
-    private var mFragment: WeakReference<Fragment>?
-    private var mCaptureStrategy: CaptureStrategy? = null
-    private var mCurrentPhotoUri: Uri? = null
-    private var mCurrentPhotoPath: String? = null
+    private var kContext: WeakReference<Activity>
+    private var kFragment: WeakReference<Fragment>?
+    private var captureStrategy: CaptureStrategy? = null
+    private var currentPhotoUri: Uri? = null
+    private var currentPhotoPath: String? = null
 
     companion object {
         fun hasCameraFeature(context: Context): Boolean {
@@ -34,18 +34,13 @@ class MediaStoreCompat {
     }
 
     constructor(activity: Activity) : this(activity, null)
-
     constructor(activity: Activity, fragment: Fragment?) {
-        mContext = WeakReference(activity)
-        mFragment = if (fragment == null) {
-            null
-        } else {
-            WeakReference(fragment)
-        }
+        kContext = WeakReference(activity)
+        kFragment = if (fragment == null) null else WeakReference(fragment)
     }
 
     fun setCaptureStrategy(strategy: CaptureStrategy) {
-        mCaptureStrategy = strategy
+        captureStrategy = strategy
     }
 
     fun dispatchCaptureIntent(context: Context, requestCode: Int) {
@@ -60,55 +55,58 @@ class MediaStoreCompat {
             }
 
             if (photoFile != null) {
-                mCurrentPhotoPath = photoFile.absolutePath
-                mCurrentPhotoUri = FileProvider.getUriForFile(mContext.get()!!, mCaptureStrategy?.authority!!, photoFile)
+                currentPhotoPath = photoFile.absolutePath
+                currentPhotoUri = FileProvider.getUriForFile(
+                    kContext.get()!!, captureStrategy?.authority!!, photoFile
+                )
 
-                captureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mCurrentPhotoUri)
+                captureIntent.putExtra(MediaStore.EXTRA_OUTPUT, currentPhotoUri)
                 captureIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
                     val resInfoList = context.packageManager
-                            .queryIntentActivities(captureIntent, PackageManager.MATCH_DEFAULT_ONLY)
+                        .queryIntentActivities(captureIntent, PackageManager.MATCH_DEFAULT_ONLY)
                     for (resolveInfo in resInfoList) {
                         val packageName = resolveInfo.activityInfo.packageName
-                        context.grantUriPermission(packageName, mCurrentPhotoUri,
-                                Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                        context.grantUriPermission(
+                            packageName, currentPhotoUri,
+                            Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION
+                        )
                     }
                 }
 
-                if (mFragment != null) {
-                    mFragment?.get()!!.startActivityForResult(captureIntent, requestCode)
+                if (kFragment != null) {
+                    kFragment?.get()!!.startActivityForResult(captureIntent, requestCode)
                 } else {
-                    mContext.get()!!.startActivityForResult(captureIntent, requestCode)
+                    kContext.get()!!.startActivityForResult(captureIntent, requestCode)
                 }
             }
         }
     }
 
     private fun createImageFile(): File? {
-        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
-                .format(Date())
+        val timeStamp = SimpleDateFormat(
+            "yyyyMMdd_HHmmss", Locale.getDefault()
+        ).format(Date())
         val imageFileName = String.format("JPEG_%s.jpg", timeStamp)
         val storageDir: File
-        if (mCaptureStrategy?.isPublic!!) {
-            storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-
+        if (captureStrategy?.isPublic!!) {
+            storageDir =
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
             if (!storageDir.exists()) storageDir.mkdirs()
         } else {
-            storageDir = mContext.get()?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!
+            storageDir = kContext.get()?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!
         }
 
         // Avoid joining path components manually
         val tempFile = File(storageDir, imageFileName)
 
         // Handle the situation that user's external storage is not ready
-        if (Environment.MEDIA_MOUNTED != EnvironmentCompat.getStorageState(tempFile)) {
-            return null
-        }
+        if (Environment.MEDIA_MOUNTED != EnvironmentCompat.getStorageState(tempFile)) return null
 
         return tempFile
     }
 
-    fun getCurrentPhotoUri() = mCurrentPhotoUri
+    fun getCurrentPhotoUri() = currentPhotoUri
 
-    fun getCurrentPhotoPath() = mCurrentPhotoPath
+    fun getCurrentPhotoPath() = currentPhotoPath
 }

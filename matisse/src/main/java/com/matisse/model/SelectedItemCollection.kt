@@ -17,12 +17,11 @@ import java.util.LinkedHashSet
 
 class SelectedItemCollection(context: Context) {
 
-    private var mContext: Context = context
-    private lateinit var mItems: LinkedHashSet<Item>
-    private var mCollectionType = COLLECTION_UNDEFINED
+    private var context: Context = context
+    private lateinit var items: LinkedHashSet<Item>
+    private var collectionType = COLLECTION_UNDEFINED
 
     companion object {
-
         /**
          * Empty collection
          */
@@ -43,27 +42,27 @@ class SelectedItemCollection(context: Context) {
 
     fun onCreate(bundle: Bundle?) {
         if (bundle == null) {
-            mItems = linkedSetOf()
+            items = linkedSetOf()
         } else {
             val saved = bundle.getParcelableArrayList<Item>(STATE_SELECTION)
-            mItems = LinkedHashSet(saved!!)
-            mCollectionType = bundle.getInt(STATE_COLLECTION_TYPE, COLLECTION_UNDEFINED)
+            items = LinkedHashSet(saved!!)
+            collectionType = bundle.getInt(STATE_COLLECTION_TYPE, COLLECTION_UNDEFINED)
         }
     }
 
     fun setDefaultSelection(uris: List<Item>) {
-        mItems.addAll(uris)
+        items.addAll(uris)
     }
 
     fun onSaveInstanceState(outState: Bundle) {
-        outState.putParcelableArrayList(STATE_SELECTION, ArrayList(mItems))
-        outState.putInt(STATE_COLLECTION_TYPE, mCollectionType)
+        outState.putParcelableArrayList(STATE_SELECTION, ArrayList(items))
+        outState.putInt(STATE_COLLECTION_TYPE, collectionType)
     }
 
     fun getDataWithBundle(): Bundle {
         val bundle = Bundle()
-        bundle.putParcelableArrayList(STATE_SELECTION, ArrayList(mItems))
-        bundle.putInt(STATE_COLLECTION_TYPE, mCollectionType)
+        bundle.putParcelableArrayList(STATE_SELECTION, ArrayList(items))
+        bundle.putInt(STATE_COLLECTION_TYPE, collectionType)
         return bundle
     }
 
@@ -71,20 +70,20 @@ class SelectedItemCollection(context: Context) {
         if (typeConflict(item)) {
             throw IllegalArgumentException("Can't select images and videos at the same time.")
         }
-        val added = mItems.add(item)
+        val added = items.add(item)
         if (added) {
-            when (mCollectionType) {
+            when (collectionType) {
                 COLLECTION_UNDEFINED -> {
                     if (item.isImage()) {
-                        mCollectionType = COLLECTION_IMAGE
+                        collectionType = COLLECTION_IMAGE
                     } else if (item.isVideo()) {
-                        mCollectionType = COLLECTION_VIDEO
+                        collectionType = COLLECTION_VIDEO
                     }
                 }
 
                 COLLECTION_IMAGE, COLLECTION_VIDEO -> {
                     if (item.isVideo() || item.isImage()) {
-                        mCollectionType = COLLECTION_MIXED
+                        collectionType = COLLECTION_MIXED
                     }
                 }
             }
@@ -93,7 +92,7 @@ class SelectedItemCollection(context: Context) {
     }
 
     fun remove(item: Item): Boolean {
-        val removed = mItems.remove(item)
+        val removed = items.remove(item)
         if (removed) {
             resetType()
         }
@@ -101,37 +100,35 @@ class SelectedItemCollection(context: Context) {
     }
 
     fun removeAll() {
-        mItems.clear()
+        items.clear()
         resetType()
     }
 
     private fun resetType() {
-        if (mItems.size == 0) {
-            mCollectionType = COLLECTION_UNDEFINED
+        if (items.size == 0) {
+            collectionType = COLLECTION_UNDEFINED
         } else {
-            if (mCollectionType == COLLECTION_MIXED) {
+            if (collectionType == COLLECTION_MIXED) {
                 refineCollectionType()
             }
         }
     }
 
     fun overwrite(items: java.util.ArrayList<Item>, collectionType: Int) {
-        mCollectionType = if (items.size == 0) {
+        this.collectionType = if (items.size == 0) {
             COLLECTION_UNDEFINED
         } else {
             collectionType
         }
-        mItems.clear()
-        mItems.addAll(items)
+        this.items.clear()
+        this.items.addAll(items)
     }
 
-    fun asList(): List<Item> {
-        return ArrayList(mItems)
-    }
+    fun asList() = ArrayList(items)
 
     fun asListOfUri(): List<Uri> {
         val uris = ArrayList<Uri>()
-        for (item in mItems) {
+        for (item in items) {
             uris.add(item.getContentUri())
         }
         return uris
@@ -139,8 +136,8 @@ class SelectedItemCollection(context: Context) {
 
     fun asListOfString(): List<String> {
         val paths = ArrayList<String>()
-        mItems.forEach {
-            val path = PathUtils.getPath(mContext, it.getContentUri())
+        items.forEach {
+            val path = PathUtils.getPath(context, it.getContentUri())
             if (path != null) {
                 paths.add(path)
             }
@@ -154,52 +151,53 @@ class SelectedItemCollection(context: Context) {
             val maxSelectable = currentMaxSelectable()
 
             val cause = try {
-                mContext.getString(
-                        R.string.error_over_count,
-                        maxSelectable)
+                context.getString(
+                    R.string.error_over_count,
+                    maxSelectable
+                )
             } catch (e: Resources.NotFoundException) {
-                mContext.getString(
-                        R.string.error_over_count,
-                        maxSelectable)
+                context.getString(
+                    R.string.error_over_count,
+                    maxSelectable
+                )
             } catch (e: NoClassDefFoundError) {
-                mContext.getString(
-                        R.string.error_over_count,
-                        maxSelectable)
+                context.getString(
+                    R.string.error_over_count,
+                    maxSelectable
+                )
             }
 
             return IncapableCause(cause)
         } else if (typeConflict(item)) {
-            return IncapableCause(mContext.getString(R.string.error_type_conflict))
+            return IncapableCause(context.getString(R.string.error_type_conflict))
         }
 
-        return PhotoMetadataUtils.isAcceptable(mContext, item)
+        return PhotoMetadataUtils.isAcceptable(context, item)
     }
 
-    fun maxSelectableReached(): Boolean {
-        return mItems.size == currentMaxSelectable()
-    }
+    fun maxSelectableReached() = items.size == currentMaxSelectable()
 
     // depends
     private fun currentMaxSelectable(): Int {
         val spec = SelectionSpec.getInstance()
         return when {
             spec.maxSelectable > 0 -> spec.maxSelectable
-            mCollectionType == COLLECTION_IMAGE -> spec.maxImageSelectable
-            mCollectionType == COLLECTION_VIDEO -> spec.maxVideoSelectable
+            collectionType == COLLECTION_IMAGE -> spec.maxImageSelectable
+            collectionType == COLLECTION_VIDEO -> spec.maxVideoSelectable
             else -> spec.maxSelectable
         }
     }
 
-    fun getCollectionType() = mCollectionType
+    fun getCollectionType() = collectionType
 
-    fun isEmpty() = mItems.isEmpty()
+    fun isEmpty() = items.isEmpty()
 
-    fun isSelected(item: Item?) = mItems.contains(item)
+    fun isSelected(item: Item?) = items.contains(item)
 
-    fun count() = mItems.size
+    fun count() = items.size
 
     fun checkedNumOf(item: Item?): Int {
-        val index = ArrayList(mItems).indexOf(item)
+        val index = ArrayList(items).indexOf(item)
         return if (index == -1) CheckView.UNCHECKED else index + 1
     }
 
@@ -207,17 +205,17 @@ class SelectedItemCollection(context: Context) {
         var hasImage = false
         var hasVideo = false
 
-        mItems.forEach {
+        items.forEach {
             if (it.isImage() && !hasImage) hasImage = true
             if (it.isVideo() && !hasVideo) hasVideo = true
         }
 
         if (hasImage && hasVideo) {
-            mCollectionType = COLLECTION_MIXED
+            collectionType = COLLECTION_MIXED
         } else if (hasImage) {
-            mCollectionType = COLLECTION_IMAGE
+            collectionType = COLLECTION_IMAGE
         } else if (hasVideo) {
-            mCollectionType = COLLECTION_VIDEO
+            collectionType = COLLECTION_VIDEO
         }
     }
 
@@ -225,9 +223,8 @@ class SelectedItemCollection(context: Context) {
      * Determine whether there will be conflict media types. A user can only select images and videos at the same time
      * while [SelectionSpec.mediaTypeExclusive] is set to false.
      */
-    private fun typeConflict(item: Item): Boolean {
-        return SelectionSpec.getInstance().mediaTypeExclusive && (item.isImage()
-                && (mCollectionType == COLLECTION_VIDEO || mCollectionType == COLLECTION_MIXED) || item.isVideo()
-                && (mCollectionType == COLLECTION_IMAGE || mCollectionType == COLLECTION_MIXED))
-    }
+    private fun typeConflict(item: Item) =
+        SelectionSpec.getInstance().mediaTypeExclusive
+                && (item.isImage() && (collectionType == COLLECTION_VIDEO || collectionType == COLLECTION_MIXED)
+                || item.isVideo() && (collectionType == COLLECTION_IMAGE || collectionType == COLLECTION_MIXED))
 }

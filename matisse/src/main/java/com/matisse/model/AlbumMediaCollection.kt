@@ -12,9 +12,9 @@ import java.lang.ref.WeakReference
 
 class AlbumMediaCollection : LoaderManager.LoaderCallbacks<Cursor> {
 
-    private var mContext: WeakReference<Context>? = null
-    private var mLoaderManager: LoaderManager? = null
-    private var mCallbacks: AlbumCallbacks? = null
+    private var context: WeakReference<Context>? = null
+    private var loaderManager: LoaderManager? = null
+    private var callbacks: AlbumCallbacks? = null
 
     companion object {
         const val LOADER_ID = 2
@@ -23,15 +23,15 @@ class AlbumMediaCollection : LoaderManager.LoaderCallbacks<Cursor> {
     }
 
     fun onCreate(context: FragmentActivity, callbacks: AlbumCallbacks) {
-        mContext = WeakReference(context)
-        mLoaderManager = context.supportLoaderManager
-        mCallbacks = callbacks
+        this.context = WeakReference(context)
+        loaderManager = context.supportLoaderManager
+        this.callbacks = callbacks
     }
 
-    fun onDestory() {
-        mLoaderManager?.destroyLoader(LOADER_ID)
-        if (mCallbacks != null) {
-            mCallbacks = null
+    fun onDestroy() {
+        loaderManager?.destroyLoader(LOADER_ID)
+        if (callbacks != null) {
+            callbacks = null
         }
     }
 
@@ -43,31 +43,33 @@ class AlbumMediaCollection : LoaderManager.LoaderCallbacks<Cursor> {
         val args = Bundle()
         args.putParcelable(ARGS_ALBUM, target)
         args.putBoolean(ARGS_ENABLE_CAPTURE, enableCapture)
-        mLoaderManager?.initLoader(LOADER_ID, args, this)
+        loaderManager?.initLoader(LOADER_ID, args, this)
     }
 
     override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor> {
-        val content = mContext?.get()
+        val content = context?.get()
 
         val album = args?.getParcelable<Album>(ARGS_ALBUM)
-        return AlbumMediaLoader.newInstance(content!!, album!!, album.isAll()
-                && args.getBoolean(ARGS_ENABLE_CAPTURE, false))
+        return AlbumMediaLoader.newInstance(
+            content!!, album!!, album.isAll()
+                    && args.getBoolean(ARGS_ENABLE_CAPTURE, false)
+        )
     }
 
     override fun onLoadFinished(loader: Loader<Cursor>, data: Cursor?) {
-        if (mContext?.get() == null) {
+        if (context?.get() == null) {
             return
         }
 
-        mCallbacks?.onAlbumLoad(data!!)
+        callbacks?.onAlbumLoad(data!!)
     }
 
     override fun onLoaderReset(loader: Loader<Cursor>) {
-        if (mContext?.get() == null) {
+        if (context?.get() == null) {
             return
         }
 
-        mCallbacks?.onAlbumReset()
+        callbacks?.onAlbumReset()
     }
 
 

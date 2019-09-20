@@ -15,11 +15,12 @@ import com.matisse.ui.adapter.FolderMediaAdapter
 import com.matisse.utils.UIUtils
 
 class FolderBottomSheet : BottomSheetDialogFragment() {
-    private var mParentView: View? = null
+
+    private var kParentView: View? = null
     private lateinit var recyclerView: RecyclerView
-    var mAdapter: FolderMediaAdapter? = null
+    var adapter: FolderMediaAdapter? = null
     var callback: BottomSheetCallback? = null
-    private var mCurrentPosition: Int = 0
+    private var currentPosition: Int = 0
 
     companion object {
         fun instance(context: Context, currentPos: Int, tag: String): FolderBottomSheet {
@@ -34,36 +35,36 @@ class FolderBottomSheet : BottomSheetDialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mCurrentPosition = arguments?.getInt(ConstValue.FOLDER_CHECK_POSITION, 0) ?: 0
+        currentPosition = arguments?.getInt(ConstValue.FOLDER_CHECK_POSITION, 0) ?: 0
     }
 
     override fun getContentView(inflater: LayoutInflater, container: ViewGroup): View {
-        if (mParentView == null) {
-            mParentView = inflater.inflate(R.layout.dialog_bottom_sheet_folder, container, false)
+        if (kParentView == null) {
+            kParentView = inflater.inflate(R.layout.dialog_bottom_sheet_folder, container, false)
             setDefaultHeight(UIUtils.getScreenHeight(context!!) / 2)
             initView()
         } else {
-            if (mParentView?.parent != null) {
-                val parent = mParentView?.parent as ViewGroup
+            if (kParentView?.parent != null) {
+                val parent = kParentView?.parent as ViewGroup
                 parent.removeView(view)
             }
         }
-        return mParentView!!
+        return kParentView!!
     }
 
     private fun initView() {
-        recyclerView = mParentView?.findViewById(R.id.recyclerview)!!
+        recyclerView = kParentView?.findViewById(R.id.recyclerview)!!
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.setHasFixedSize(true)
-        mAdapter = FolderMediaAdapter(context!!, mCurrentPosition)
-        recyclerView.adapter = mAdapter
+        adapter = FolderMediaAdapter(context!!, currentPosition)
+        recyclerView.adapter = adapter
 
-        callback?.initData(mAdapter!!)
+        callback?.initData(adapter!!)
 
-        mAdapter?.mItemClickListener = object : FolderMediaAdapter.OnItemClickListener {
+        adapter?.itemClickListener = object : FolderMediaAdapter.OnItemClickListener {
             override fun onItemClick(view: View, position: Int) {
                 dismiss()
-                callback?.onItemClick(mAdapter?.getCursor()!!, position)
+                callback?.onItemClick(adapter?.getCursor()!!, position)
             }
         }
     }

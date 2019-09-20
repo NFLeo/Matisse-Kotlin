@@ -4,7 +4,6 @@ import android.content.Context
 import android.database.Cursor
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -17,14 +16,15 @@ import com.matisse.internal.entity.SelectionSpec
 import com.matisse.widget.CheckRadioView
 import java.io.File
 
-class FolderMediaAdapter(var context: Context, var mCurrentPosition: Int) : RecyclerViewCursorAdapter<FolderMediaAdapter.FolderViewHolder>(null) {
+class FolderMediaAdapter(var context: Context, var mCurrentPosition: Int) :
+    RecyclerViewCursorAdapter<FolderMediaAdapter.FolderViewHolder>(null) {
 
-    var mItemClickListener: OnItemClickListener? = null
-    private var mPlaceholder: Drawable
+    var itemClickListener: OnItemClickListener? = null
+    private var placeholder: Drawable
 
     init {
         val ta = context.theme.obtainStyledAttributes(intArrayOf(R.attr.item_placeholder))
-        mPlaceholder = ta.getDrawable(0)
+        placeholder = ta.getDrawable(0)
         ta.recycle()
     }
 
@@ -32,51 +32,56 @@ class FolderMediaAdapter(var context: Context, var mCurrentPosition: Int) : Recy
 
         val album = Album.valueOf(cursor)
 
-        holder.mTvBucketName.text = """${album.getDisplayName(holder.mTvBucketName.context)}(${album.getCount()})"""
+        holder.tvBucketName.text =
+            """${album.getDisplayName(holder.tvBucketName.context)}(${album.getCount()})"""
 
         if (cursor.position == mCurrentPosition) {
-            holder.mRbSelected.animate().scaleX(1f).scaleY(1f).start()
-            holder.mRbSelected.setChecked(true)
+            holder.rbSelected.animate().scaleX(1f).scaleY(1f).start()
+            holder.rbSelected.setChecked(true)
         } else {
-            holder.mRbSelected.scaleX = 0f
-            holder.mRbSelected.scaleY = 0f
-            holder.mRbSelected.setChecked(false)
+            holder.rbSelected.scaleX = 0f
+            holder.rbSelected.scaleY = 0f
+            holder.rbSelected.setChecked(false)
         }
 
         // do not need to load animated Gif
-        val mContext = holder.mIvBucketCover.context
-        SelectionSpec.getInstance().imageEngine?.loadThumbnail(mContext, mContext.resources.getDimensionPixelSize(R
-                .dimen.media_grid_size), mPlaceholder,
-                holder.mIvBucketCover, Uri.fromFile(File(album.getCoverPath())))
+        val mContext = holder.ivBucketCover.context
+        SelectionSpec.getInstance().imageEngine?.loadThumbnail(
+            mContext, mContext.resources.getDimensionPixelSize(
+                R
+                    .dimen.media_grid_size
+            ), placeholder, holder.ivBucketCover, Uri.fromFile(File(album.getCoverPath()))
+        )
     }
 
     override fun getItemViewType(position: Int, cursor: Cursor) = 0
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FolderViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_album_folder, parent, false)
-        return FolderViewHolder(parent, view)
-    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FolderViewHolder =
+        FolderViewHolder(
+            parent,
+            LayoutInflater.from(parent.context).inflate(R.layout.item_album_folder, parent, false)
+        )
 
     inner class FolderViewHolder(private val mParentView: ViewGroup, itemView: View) :
-            RecyclerView.ViewHolder(itemView), View.OnClickListener {
+        RecyclerView.ViewHolder(itemView), View.OnClickListener {
 
-        var mTvBucketName: TextView = itemView.findViewById(R.id.tv_bucket_name)
-        var mIvBucketCover: ImageView = itemView.findViewById(R.id.iv_bucket_cover)
-        var mRbSelected: CheckRadioView = itemView.findViewById(R.id.rb_selected)
+        var tvBucketName: TextView = itemView.findViewById(R.id.tv_bucket_name)
+        var ivBucketCover: ImageView = itemView.findViewById(R.id.iv_bucket_cover)
+        var rbSelected: CheckRadioView = itemView.findViewById(R.id.rb_selected)
 
         init {
             itemView.setOnClickListener(this)
         }
 
         override fun onClick(v: View) {
-            if (mItemClickListener != null) {
-                mItemClickListener!!.onItemClick(v, layoutPosition)
+            if (itemClickListener != null) {
+                itemClickListener!!.onItemClick(v, layoutPosition)
             }
 
             mCurrentPosition = layoutPosition
             setRadioDisChecked(mParentView)
-            mRbSelected.animate().scaleX(1f).scaleY(1f).start()
-            mRbSelected.setChecked(true)
+            rbSelected.animate().scaleX(1f).scaleY(1f).start()
+            rbSelected.setChecked(true)
         }
 
         /**
@@ -85,9 +90,7 @@ class FolderMediaAdapter(var context: Context, var mCurrentPosition: Int) : Recy
          * @param parentView
          */
         private fun setRadioDisChecked(parentView: ViewGroup?) {
-            if (parentView == null || parentView.childCount < 1) {
-                return
-            }
+            if (parentView == null || parentView.childCount < 1) return
 
             for (i in 0 until parentView.childCount) {
                 val itemView = parentView.getChildAt(i)

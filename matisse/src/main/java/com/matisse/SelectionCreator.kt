@@ -32,32 +32,31 @@ import com.matisse.listener.OnSelectedListener
 import com.matisse.ui.view.MatisseActivity
 import com.matisse.widget.CropImageView
 import java.io.File
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy
 import java.util.*
 
 /**
  * Fluent API for building media select specification.
- */
-class SelectionCreator
-/**
  * Constructs a new specification builder on the context.
  *
  * @param matisse   a requester context wrapper.
  * @param mimeTypes MIME type set to select.
  */
-internal constructor(private val mMatisse: Matisse, mimeTypes: Set<MimeType>, mediaTypeExclusive: Boolean) {
+class SelectionCreator(
+    private val mMatisse: Matisse, mimeTypes: Set<MimeType>, mediaTypeExclusive: Boolean
+) {
     private val mSelectionSpec: SelectionSpec = SelectionSpec.getCleanInstance()
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-    @IntDef(SCREEN_ORIENTATION_UNSPECIFIED, SCREEN_ORIENTATION_LANDSCAPE,
-            SCREEN_ORIENTATION_PORTRAIT, SCREEN_ORIENTATION_USER, SCREEN_ORIENTATION_BEHIND,
-            SCREEN_ORIENTATION_SENSOR, SCREEN_ORIENTATION_NOSENSOR, SCREEN_ORIENTATION_SENSOR_LANDSCAPE,
-            SCREEN_ORIENTATION_SENSOR_PORTRAIT, SCREEN_ORIENTATION_REVERSE_LANDSCAPE,
-            SCREEN_ORIENTATION_REVERSE_PORTRAIT, SCREEN_ORIENTATION_FULL_SENSOR,
-            SCREEN_ORIENTATION_USER_LANDSCAPE, SCREEN_ORIENTATION_USER_PORTRAIT,
-            SCREEN_ORIENTATION_FULL_USER, SCREEN_ORIENTATION_LOCKED)
-    @Retention(RetentionPolicy.SOURCE)
+    @IntDef(
+        SCREEN_ORIENTATION_UNSPECIFIED, SCREEN_ORIENTATION_LANDSCAPE,
+        SCREEN_ORIENTATION_PORTRAIT, SCREEN_ORIENTATION_USER, SCREEN_ORIENTATION_BEHIND,
+        SCREEN_ORIENTATION_SENSOR, SCREEN_ORIENTATION_NOSENSOR, SCREEN_ORIENTATION_SENSOR_LANDSCAPE,
+        SCREEN_ORIENTATION_SENSOR_PORTRAIT, SCREEN_ORIENTATION_REVERSE_LANDSCAPE,
+        SCREEN_ORIENTATION_REVERSE_PORTRAIT, SCREEN_ORIENTATION_FULL_SENSOR,
+        SCREEN_ORIENTATION_USER_LANDSCAPE, SCREEN_ORIENTATION_USER_PORTRAIT,
+        SCREEN_ORIENTATION_FULL_USER, SCREEN_ORIENTATION_LOCKED
+    )
+    @kotlin.annotation.Retention(AnnotationRetention.SOURCE)
     internal annotation class ScreenOrientation
 
     init {
@@ -129,7 +128,9 @@ internal constructor(private val mMatisse: Matisse, mimeTypes: Set<MimeType>, me
      * @param maxVideoSelectable Maximum selectable count for video.
      * @return
      */
-    fun maxSelectablePerMediaType(maxImageSelectable: Int, maxVideoSelectable: Int): SelectionCreator {
+    fun maxSelectablePerMediaType(
+        maxImageSelectable: Int, maxVideoSelectable: Int
+    ): SelectionCreator {
         if (maxImageSelectable < 1 || maxVideoSelectable < 1)
             throw IllegalArgumentException("max selectable must be greater than or equal to one")
         mSelectionSpec.maxSelectable = -1
@@ -154,8 +155,6 @@ internal constructor(private val mMatisse: Matisse, mimeTypes: Set<MimeType>, me
 
     /**
      * Determines whether the photo capturing is enabled or not on the media grid view.
-     *
-     *
      * If this value is set true, photo capturing entry will appear only on All Media's page.
      *
      * @param enable Whether to enable capturing or not. Default value is false;
@@ -215,8 +214,6 @@ internal constructor(private val mMatisse: Matisse, mimeTypes: Set<MimeType>, me
 
     /**
      * Set a fixed span count for the media grid. Same for different screen orientations.
-     *
-     *
      * This will be ignored when [.gridExpectedSize] is set.
      *
      * @param spanCount Requested span count.
@@ -242,8 +239,7 @@ internal constructor(private val mMatisse: Matisse, mimeTypes: Set<MimeType>, me
     }
 
     /**
-     * Photo thumbnail's scale compared to the View's size. It should be a float value in (0.0,
-     * 1.0].
+     * Photo thumbnail's scale compared to the View's size. It should be a float value in (0.0,1.0].
      *
      * @param scale Thumbnail's scale in (0.0, 1.0]. Default value is 0.5.
      * @return [SelectionCreator] for fluent API.
@@ -257,8 +253,6 @@ internal constructor(private val mMatisse: Matisse, mimeTypes: Set<MimeType>, me
 
     /**
      * Provide an image engine.
-     *
-     *
      * There are two built-in image engines:
      * And you can implement your own image engine.
      *

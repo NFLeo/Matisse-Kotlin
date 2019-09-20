@@ -19,8 +19,9 @@ import it.sephiroth.android.library.imagezoom.ImageViewTouchBase
  * Created by liubo on 2018/9/6.
  */
 class PreviewItemFragment : Fragment() {
+
     companion object {
-        private val ARGS_ITEM = "args_item"
+        private const val ARGS_ITEM = "args_item"
 
         fun newInstance(item: Item): PreviewItemFragment {
             val fragment = PreviewItemFragment()
@@ -31,9 +32,9 @@ class PreviewItemFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_preview_item, container, false)
-    }
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ) = inflater.inflate(R.layout.fragment_preview_item, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -45,7 +46,10 @@ class PreviewItemFragment : Fragment() {
             videoPlayButton.setOnClickListener {
                 val intent = Intent(Intent.ACTION_VIEW)
                 intent.setDataAndType(item.getContentUri(), "video/*")
-                if (intent.resolveActivity(activity!!.packageManager) != null) startActivity(intent) else Toast.makeText(context, R.string.error_no_video_activity, Toast.LENGTH_SHORT).show()
+                if (intent.resolveActivity(activity!!.packageManager) != null) startActivity(intent)
+                else Toast.makeText(
+                    context, R.string.error_no_video_activity, Toast.LENGTH_SHORT
+                ).show()
             }
         } else {
             videoPlayButton.visibility = View.GONE
@@ -55,9 +59,13 @@ class PreviewItemFragment : Fragment() {
         image.displayType = ImageViewTouchBase.DisplayType.FIT_TO_SCREEN
         val size: Point = PhotoMetadataUtils.getBitmapSize(item.getContentUri(), activity)
         if (item.isGif()) {
-            SelectionSpec.getInstance().imageEngine?.loadGifImage(context!!, size.x, size.y, image, item.getContentUri())
+            SelectionSpec.getInstance().imageEngine?.loadGifImage(
+                context!!, size.x, size.y, image, item.getContentUri()
+            )
         } else {
-            SelectionSpec.getInstance().imageEngine?.loadImage(context!!, size.x, size.y, image, item.getContentUri())
+            SelectionSpec.getInstance().imageEngine?.loadImage(
+                context!!, size.x, size.y, image, item.getContentUri()
+            )
         }
     }
 

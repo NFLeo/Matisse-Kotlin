@@ -10,33 +10,29 @@ import com.matisse.ui.view.PreviewItemFragment
 /**
  * Created by liubo on 2018/9/6.
  */
-class PreviewPagerAdapter(manager: FragmentManager, listener: OnPrimaryItemSetListener?) : FragmentPagerAdapter(manager) {
-    var mItems: ArrayList<Item> = ArrayList()
-    var mListener: OnPrimaryItemSetListener? = null
+class PreviewPagerAdapter(manager: FragmentManager, listener: OnPrimaryItemSetListener?) :
+    FragmentPagerAdapter(manager) {
+
+    var items: ArrayList<Item> = ArrayList()
+    var kListener: OnPrimaryItemSetListener? = null
 
     init {
-        this.mListener = listener
+        this.kListener = listener
     }
 
-    override fun getCount(): Int {
-        return mItems.size
-    }
+    override fun getCount() = items.size
 
-    override fun getItem(position: Int): Fragment {
-        return PreviewItemFragment.newInstance(mItems[position])
-    }
+    override fun getItem(position: Int) = PreviewItemFragment.newInstance(items[position])
 
     override fun setPrimaryItem(container: ViewGroup, position: Int, `object`: Any) {
         super.setPrimaryItem(container, position, `object`)
-        mListener?.onPrimaryItemSet(position)
+        kListener?.onPrimaryItemSet(position)
     }
 
-    fun getMediaItem(position: Int): Item? {
-        return mItems[position]
-    }
+    fun getMediaItem(position: Int) = items[position]
 
     fun addAll(items: List<Item>) {
-        mItems.addAll(items)
+        this.items.addAll(items)
     }
 
     interface OnPrimaryItemSetListener {

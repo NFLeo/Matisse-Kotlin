@@ -16,8 +16,8 @@ import kotlinx.android.synthetic.main.activity_media_preview.*
  */
 class AlbumPreviewActivity : BasePreviewActivity(), AlbumCallbacks {
 
-    var mCollection: AlbumMediaCollection = AlbumMediaCollection()
-    var mIsAlreadySetPosition = false
+    private var collection: AlbumMediaCollection = AlbumMediaCollection()
+    private var isAlreadySetPosition = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,15 +27,15 @@ class AlbumPreviewActivity : BasePreviewActivity(), AlbumCallbacks {
             return
         }
 
-        mCollection.onCreate(this, this)
+        collection.onCreate(this, this)
         val album = intent.getParcelableExtra<Album>(ConstValue.EXTRA_ALBUM)
-        mCollection.load(album)
+        collection.load(album)
         val item = intent.getParcelableExtra<Item>(ConstValue.EXTRA_ITEM)
         check_view?.apply {
-            if (mSpec?.countable!!) {
-                setCheckedNum(mSelectedCollection.checkedNumOf(item))
+            if (spec?.countable!!) {
+                setCheckedNum(selectedCollection.checkedNumOf(item))
             } else {
-                setChecked(mSelectedCollection.isSelected(item))
+                setChecked(selectedCollection.isSelected(item))
             }
         }
         updateSize(item)
@@ -43,7 +43,7 @@ class AlbumPreviewActivity : BasePreviewActivity(), AlbumCallbacks {
 
     override fun onDestroy() {
         super.onDestroy()
-        mCollection.onDestory()
+        collection.onDestroy()
     }
 
     override fun onAlbumLoad(cursor: Cursor) {
@@ -58,12 +58,12 @@ class AlbumPreviewActivity : BasePreviewActivity(), AlbumCallbacks {
         val adapter = pager?.adapter as PreviewPagerAdapter
         adapter.addAll(items)
         adapter.notifyDataSetChanged()
-        if (!mIsAlreadySetPosition) {
-            mIsAlreadySetPosition = true
+        if (!isAlreadySetPosition) {
+            isAlreadySetPosition = true
             val selected = intent.getParcelableExtra<Item>(ConstValue.EXTRA_ITEM)
             val selectedIndex = items.indexOf(selected)
             pager?.setCurrentItem(selectedIndex, false)
-            mPreviousPos = selectedIndex
+            previousPos = selectedIndex
         }
     }
 

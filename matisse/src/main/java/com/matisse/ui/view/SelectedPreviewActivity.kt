@@ -4,11 +4,9 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import com.matisse.R.id.check_view
 import com.matisse.entity.ConstValue
 import com.matisse.entity.Item
 import com.matisse.internal.entity.SelectionSpec
-import com.matisse.model.SelectedItemCollection
 import kotlinx.android.synthetic.main.activity_media_preview.*
 
 /**
@@ -34,16 +32,16 @@ class SelectedPreviewActivity : BasePreviewActivity() {
         }
         val bundle = intent.getBundleExtra(ConstValue.EXTRA_DEFAULT_BUNDLE)
         val selected = bundle.getParcelableArrayList<Item>(ConstValue.STATE_SELECTION)
-        mAdapter?.addAll(selected)
-        mAdapter?.notifyDataSetChanged()
+        adapter?.addAll(selected)
+        adapter?.notifyDataSetChanged()
         check_view?.apply {
-            if (mSpec!!.countable) {
+            if (spec!!.countable) {
                 setCheckedNum(1)
             } else {
                 setChecked(true)
             }
         }
-        mPreviousPos = 0
+        previousPos = 0
         updateSize(selected[0])
     }
 }

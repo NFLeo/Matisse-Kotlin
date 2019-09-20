@@ -8,8 +8,8 @@ import com.matisse.R
 class IncapableDialog : DialogFragment() {
 
     companion object {
-        val EXTRA_TITLE = "extra_title"
-        val EXTRA_MESSAGE = "extra_message"
+        private const val EXTRA_TITLE = "extra_title"
+        private const val EXTRA_MESSAGE = "extra_message"
 
         fun newInstance(title: String?, message: String?): IncapableDialog {
             val dialog = IncapableDialog()
@@ -26,11 +26,9 @@ class IncapableDialog : DialogFragment() {
         val message = arguments?.getString(EXTRA_MESSAGE) ?: ""
 
         val builder = activity?.let { AlertDialog.Builder(it) }
-        if (!title.isEmpty()) {
-            builder?.setTitle(title)
-        }
+        if (title.isNotEmpty()) builder?.setTitle(title)
 
-        if (!message.isEmpty()) {
+        if (message.isNotEmpty()) {
             builder?.setMessage(message)
         }
 

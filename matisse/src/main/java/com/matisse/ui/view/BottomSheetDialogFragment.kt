@@ -2,7 +2,6 @@ package com.matisse.ui.view
 
 import android.os.Bundle
 import android.support.design.widget.BottomSheetBehavior
-import android.support.v4.app.FragmentManager
 import android.support.v7.app.AppCompatDialogFragment
 import android.util.DisplayMetrics
 import android.view.*
@@ -11,37 +10,38 @@ import com.matisse.R
 
 abstract class BottomSheetDialogFragment : AppCompatDialogFragment() {
 
-    private lateinit var mBehavior: BottomSheetBehavior<*>
+    private lateinit var kBehavior: BottomSheetBehavior<*>
     private var coordinator: ViewGroup? = null
     private var bottomSheet: FrameLayout? = null
     private var contentView: View? = null
-    private var mDefaultHeight = -1
-    var mCancelable = true
+    private var defaultHeight = -1
+    private var kCancelable = true
 
     private var mBottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
         override fun onSlide(bottomSheet: View, slideOffset: Float) {
+            // do noting
         }
 
         override fun onStateChanged(bottomSheet: View, newState: Int) {
-            if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                dismiss()
-            }
+            if (newState == BottomSheetBehavior.STATE_HIDDEN) dismiss()
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View? {
         coordinator = inflater.inflate(R.layout.dialog_bottom_sheet, container) as ViewGroup
         bottomSheet = coordinator?.findViewById(R.id.design_bottom_sheet)
 
-        mBehavior = BottomSheetBehavior.from(bottomSheet)
-        mBehavior.setBottomSheetCallback(mBottomSheetCallback)
-        mBehavior.isHideable = mCancelable
+        kBehavior = BottomSheetBehavior.from(bottomSheet)
+        kBehavior.setBottomSheetCallback(mBottomSheetCallback)
+        kBehavior.isHideable = kCancelable
 
         contentView = getContentView(inflater, coordinator!!)
         bottomSheet?.addView(contentView)
 
-        if (mDefaultHeight != -1) {
-            setDefaultHeight(mDefaultHeight)
+        if (defaultHeight != -1) {
+            setDefaultHeight(defaultHeight)
         }
 
         // 设置 dialog 位于屏幕底部，并且设置出入动画
@@ -53,7 +53,7 @@ abstract class BottomSheetDialogFragment : AppCompatDialogFragment() {
     }
 
     fun setDefaultHeight(defaultHeight: Int) {
-        mDefaultHeight = defaultHeight
+        this.defaultHeight = defaultHeight
         if (bottomSheet != null) {
             bottomSheet?.layoutParams?.width = -1
             bottomSheet?.layoutParams?.height = defaultHeight
@@ -66,7 +66,7 @@ abstract class BottomSheetDialogFragment : AppCompatDialogFragment() {
         activity?.windowManager?.defaultDisplay?.getMetrics(dm)
         //窗口高度
         val screenHeight = dm.heightPixels
-        mBehavior.peekHeight = screenHeight
+        kBehavior.peekHeight = screenHeight
     }
 
     private fun initBackAction() {
@@ -79,9 +79,9 @@ abstract class BottomSheetDialogFragment : AppCompatDialogFragment() {
 
     override fun setCancelable(cancelable: Boolean) {
         super.setCancelable(cancelable)
-        if (mCancelable != cancelable) {
-            mCancelable = cancelable
-            mBehavior.isHideable = cancelable
+        if (kCancelable != cancelable) {
+            kCancelable = cancelable
+            kBehavior.isHideable = cancelable
         }
     }
 
@@ -100,14 +100,6 @@ abstract class BottomSheetDialogFragment : AppCompatDialogFragment() {
             win.setWindowAnimations(R.style.Animation_Bottom)
         }
     }
-
-//    override fun show(manager: FragmentManager, tag: String) {
-//        val ft = manager.beginTransaction()
-//        ft.add(this, tag)
-//        ft.commitAllowingStateLoss()
-//        // 解决 调用show后无法获取布局
-//        manager.executePendingTransactions()
-//    }
 
     abstract fun getContentView(inflater: LayoutInflater, container: ViewGroup): View
 

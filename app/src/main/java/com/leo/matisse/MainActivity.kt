@@ -24,6 +24,8 @@ import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_main.*
 import java.text.DecimalFormat
+import kotlin.math.log10
+import kotlin.math.pow
 
 class MainActivity : AppCompatActivity() {
 
@@ -33,62 +35,59 @@ class MainActivity : AppCompatActivity() {
 
         btn_media_store.setOnClickListener {
             RxPermissions(this@MainActivity)
-                    .request(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA)
-                    .subscribe(object : Observer<Boolean> {
-                        override fun onComplete() {
-                        }
+                .request(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA)
+                .subscribe {
 
-                        override fun onSubscribe(d: Disposable) {
-                        }
-
-                        override fun onNext(boolean: Boolean) {
-                            if (!boolean) {
-                                Toast.makeText(this@MainActivity, R.string.permission_request_denied, Toast.LENGTH_LONG).show()
-                                return
+                    if (!it) {
+                        Toast.makeText(
+                            this@MainActivity,
+                            R.string.permission_request_denied,
+                            Toast.LENGTH_LONG
+                        ).show()
+                        return@subscribe
+                    }
+                    Matisse.from(this@MainActivity)
+                        .choose(MimeTypeManager.ofAll(), false)
+                        .countable(true)
+                        .capture(true)
+                        .showSingleMediaType(true)
+                        .isCrop(true)
+                        .cropStyle(CropImageView.Style.CIRCLE)
+                        .setStatusIsDark(false)
+                        .theme(R.style.Matisse_Dark)
+                        .captureStrategy(
+                            CaptureStrategy(
+                                true,
+                                "${Platform.getPackageName(this@MainActivity)}.fileprovider"
+                            )
+                        )
+                        .maxSelectable(3)
+                        .thumbnailScale(0.8f)
+                        .gridExpectedSize(resources.getDimensionPixelSize(R.dimen.grid_expected_size))
+                        .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+                        .imageEngine(Glide4Engine())
+                        .setOnSelectedListener(object : OnSelectedListener {
+                            override fun onSelected(uriList: List<Uri>, pathList: List<String>) {
+                                // DO SOMETHING IMMEDIATELY HERE
+                                Log.e("onSelected", "onSelected: pathList=$pathList")
                             }
-                            Matisse.from(this@MainActivity)
-                                    .choose(MimeTypeManager.ofAll(), false)
-                                    .countable(true)
-                                    .capture(true)
-                                    .showSingleMediaType(true)
-                                    .isCrop(true)
-                                    .cropStyle(CropImageView.Style.CIRCLE)
-                                    .setStatusIsDark(false)
-                                    .theme(R.style.Matisse_Dark)
-                                    .captureStrategy(CaptureStrategy(true, "${Platform.getPackageName(this@MainActivity)}.fileprovider"))
-                                    .maxSelectable(1)
-                                    .thumbnailScale(0.8f)
-                                    .gridExpectedSize(resources.getDimensionPixelSize(R.dimen.grid_expected_size))
-                                    .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
-                                    .imageEngine(Glide4Engine())
-                                    .setOnSelectedListener(object : OnSelectedListener {
-                                        override fun onSelected(uriList: List<Uri>, pathList: List<String>) {
-                                            // DO SOMETHING IMMEDIATELY HERE
-                                            Log.e("onSelected", "onSelected: pathList=$pathList")
-                                        }
-                                    })
-                                    .originalEnable(false)
-                                    .maxOriginalSize(10)
-                                    .setOnCheckedListener(object : OnCheckedListener {
-                                        override fun onCheck(isChecked: Boolean) {
-                                            // DO SOMETHING IMMEDIATELY HERE
-                                            Log.e("isChecked", "onCheck: isChecked=$isChecked")
-                                        }
-                                    })
-                                    .forResult(ConstValue.REQUEST_CODE_CHOOSE)
-                        }
-
-                        override fun onError(e: Throwable) {
-                        }
-                    })
+                        })
+                        .originalEnable(false)
+                        .maxOriginalSize(10)
+                        .setOnCheckedListener(object : OnCheckedListener {
+                            override fun onCheck(isChecked: Boolean) {
+                                // DO SOMETHING IMMEDIATELY HERE
+                                Log.e("isChecked", "onCheck: isChecked=$isChecked")
+                            }
+                        })
+                        .forResult(ConstValue.REQUEST_CODE_CHOOSE)
+                }
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (data == null) {
-            return
-        }
+        if (data == null) return
 
         if (requestCode == ConstValue.REQUEST_CODE_CHOOSE && resultCode == Activity.RESULT_OK) {
             var string = ""
@@ -109,23 +108,21 @@ class MainActivity : AppCompatActivity() {
             val file = FileUtil.getFileByPath(Matisse.obtainPathResult(data)[0])
 
             // 压缩后的文件         （多个文件压缩可以循环压缩）
-            if (file != null) {
-                val file1 = CompressHelper.getDefault(applicationContext)?.compressToFile(file)
-                string += getReadableFileSize(file.length()) + " PK " +
-                        getReadableFileSize(file1?.length() ?: 0)
-                string = "\n\n" + string
-            }
+            val file1 = CompressHelper.getDefault(applicationContext)?.compressToFile(file)
+            string += getReadableFileSize(file.length()) + " PK " +
+                    getReadableFileSize(file1?.length() ?: 0)
+            string = "\n\n$string"
 
-            text.text = "\n\n" + string
+            text.text = "\n\n$string"
         }
     }
 
     private fun getReadableFileSize(size: Long): String {
-        if (size <= 0) {
-            return "0"
-        }
+        if (size <= 0) return "0"
+
         val units = arrayOf("B", "KB", "MB", "GB", "TB")
-        val digitGroups = (Math.log10(size.toDouble()) / Math.log10(1024.0)).toInt()
-        return DecimalFormat("#,##0.#").format(size / Math.pow(1024.0, digitGroups.toDouble())) + " " + units[digitGroups]
+        val digitGroups = (log10(size.toDouble()) / log10(1024.0)).toInt()
+        return DecimalFormat("#,##0.#")
+            .format(size / 1024.0.pow(digitGroups.toDouble())) + " " + units[digitGroups]
     }
 }

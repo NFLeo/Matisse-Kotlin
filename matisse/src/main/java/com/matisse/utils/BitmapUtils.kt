@@ -17,7 +17,9 @@ object BitmapUtils {
             // 从指定路径下读取图片，并获取其EXIF信息
             val exifInterface = ExifInterface(path)
             // 获取图片的旋转信息
-            val orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+            val orientation = exifInterface.getAttributeInt(
+                ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL
+            )
             when (orientation) {
                 ExifInterface.ORIENTATION_ROTATE_90 -> degree = 90
                 ExifInterface.ORIENTATION_ROTATE_180 -> degree = 180

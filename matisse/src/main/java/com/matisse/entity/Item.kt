@@ -14,18 +14,19 @@ import kotlinx.android.parcel.Parcelize
  * Created by Leo on 2018/9/4 on 16:18.
  */
 @Parcelize
-class Item(var id: Long, var mimeType: String, var size: Long = 0, var duration: Long = 0) : Parcelable {
+class Item(var id: Long, var mimeType: String, var size: Long = 0, var duration: Long = 0) :
+    Parcelable {
 
     companion object {
         const val ITEM_ID_CAPTURE: Long = -1
         const val ITEM_DISPLAY_NAME_CAPTURE = "Capture"
 
-        fun valueOf(cursor: Cursor): Item {
-            return Item(cursor.getLong(cursor.getColumnIndex(MediaStore.Files.FileColumns._ID)),
-                    cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE)),
-                    cursor.getLong(cursor.getColumnIndex(MediaStore.MediaColumns.SIZE)),
-                    cursor.getLong(cursor.getColumnIndex("duration")))
-        }
+        fun valueOf(cursor: Cursor) = Item(
+            cursor.getLong(cursor.getColumnIndex(MediaStore.Files.FileColumns._ID)),
+            cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE)),
+            cursor.getLong(cursor.getColumnIndex(MediaStore.MediaColumns.SIZE)),
+            cursor.getLong(cursor.getColumnIndex("duration"))
+        )
     }
 
 
@@ -36,8 +37,7 @@ class Item(var id: Long, var mimeType: String, var size: Long = 0, var duration:
         val contentUri: Uri = when {
             isImage() -> MediaStore.Images.Media.EXTERNAL_CONTENT_URI
             isVideo() -> MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-            else -> // ?
-                MediaStore.Files.getContentUri("external")
+            else -> MediaStore.Files.getContentUri("external")
         }
         uri = ContentUris.withAppendedId(contentUri, id)
     }
@@ -50,37 +50,30 @@ class Item(var id: Long, var mimeType: String, var size: Long = 0, var duration:
                 || mimeType == MimeType.WEBP.getKey()
     }
 
-    fun isGif(): Boolean {
-        return mimeType == MimeType.GIF.getKey()
-    }
+    fun isGif() = mimeType == MimeType.GIF.getKey()
 
-    fun isVideo(): Boolean {
-        return mimeType == MimeType.MPEG.getKey()
-                || mimeType == MimeType.MP4.getKey()
-                || mimeType == MimeType.QUICKTIME.getKey()
-                || mimeType == MimeType.THREEGPP.getKey()
-                || mimeType == MimeType.THREEGPP2.getKey()
-                || mimeType == MimeType.MKV.getKey()
-                || mimeType == MimeType.WEBM.getKey()
-                || mimeType == MimeType.TS.getKey()
-                || mimeType == MimeType.AVI.getKey()
-    }
+    fun isVideo() = mimeType == MimeType.MPEG.getKey()
+            || mimeType == MimeType.MP4.getKey()
+            || mimeType == MimeType.QUICKTIME.getKey()
+            || mimeType == MimeType.THREEGPP.getKey()
+            || mimeType == MimeType.THREEGPP2.getKey()
+            || mimeType == MimeType.MKV.getKey()
+            || mimeType == MimeType.WEBM.getKey()
+            || mimeType == MimeType.TS.getKey()
+            || mimeType == MimeType.AVI.getKey()
 
     fun getContentUri() = uri
 
     fun isCapture() = id == ITEM_ID_CAPTURE
 
-    override fun describeContents(): Int {
-        return 0
-    }
+    override fun describeContents() = 0
 
-    override fun equals(obj: Any?): Boolean {
-        if (obj !is Item) {
-            return false
-        }
+    override fun equals(other: Any?): Boolean {
+        if (other !is Item) return false
 
-        val other = obj as Item?
-        return ((id == other!!.id && (mimeType == other.mimeType)) && (uri == other.uri) && size == other.size && duration == other.duration)
+        val otherItem = other as Item?
+        return ((id == otherItem!!.id && (mimeType == otherItem.mimeType))
+                && (uri == otherItem.uri) && size == otherItem.size && duration == otherItem.duration)
     }
 
     override fun hashCode(): Int {

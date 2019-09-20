@@ -21,30 +21,29 @@ import kotlinx.android.synthetic.main.activity_crop.*
 import kotlinx.android.synthetic.main.include_view_navigation.*
 import java.io.File
 
-class ImageCropActivity : AppCompatActivity(), View.OnClickListener, CropImageView.OnBitmapSaveCompleteListener {
+class ImageCropActivity : AppCompatActivity(), View.OnClickListener,
+    CropImageView.OnBitmapSaveCompleteListener {
 
-    private lateinit var cv_crop_image: CropImageView
-
-    private var mBitmap: Bitmap? = null
-    private var mIsSaveRectangle: Boolean = false
-    private var mOutputX: Int = 0
-    private var mOutputY: Int = 0
-    private lateinit var mSpec: SelectionSpec
+    private var bitmap: Bitmap? = null
+    private var isSaveRectangle: Boolean = false
+    private var outputX: Int = 0
+    private var outputY: Int = 0
+    private lateinit var spec: SelectionSpec
     private lateinit var imagePath: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        mSpec = SelectionSpec.getInstance()
-        setTheme(mSpec.themeId)
+        spec = SelectionSpec.getInstance()
+        setTheme(spec.themeId)
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_crop)
 
         if (Platform.isClassExists("com.gyf.barlibrary.ImmersionBar")) {
-            ImmersionBar.with(this).titleBar(toolbar)?.statusBarDarkFont(mSpec.isDarkStatus)?.init()
+            ImmersionBar.with(this).titleBar(toolbar)?.statusBarDarkFont(spec.isDarkStatus)?.init()
         }
 
-        if (mSpec.needOrientationRestriction()) {
-            requestedOrientation = mSpec.orientation
+        if (spec.needOrientationRestriction()) {
+            requestedOrientation = spec.orientation
         }
 
         imagePath = intent.getStringExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH)
@@ -54,27 +53,27 @@ class ImageCropActivity : AppCompatActivity(), View.OnClickListener, CropImageVi
     }
 
     private fun initView() {
-
-        cv_crop_image = findViewById(R.id.cv_crop_image)
         button_complete.setOnClickListener(this)
         button_back.setOnClickListener(this)
     }
 
     private fun initCropFun() {
-        mOutputX = mSpec.cropOutPutX
-        mOutputY = mSpec.cropOutPutY
-        mIsSaveRectangle = mSpec.isCropSaveRectangle
+        outputX = spec.cropOutPutX
+        outputY = spec.cropOutPutY
+        isSaveRectangle = spec.isCropSaveRectangle
 
-        val cropFocusNormalWidth = UIUtils.getScreenWidth(this) - UIUtils.dp2px(this, 50f).toInt()
-        val cropFocusNormalHeight = UIUtils.getScreenHeight(this) - UIUtils.dp2px(this, 400f).toInt()
+        val cropFocusNormalWidth =
+            UIUtils.getScreenWidth(this) - UIUtils.dp2px(this, 50f).toInt()
+        val cropFocusNormalHeight =
+            UIUtils.getScreenHeight(this) - UIUtils.dp2px(this, 400f).toInt()
 
-        val cropWidth = if (mSpec.cropFocusWidth in 1..(cropFocusNormalWidth - 1))
-            mSpec.cropFocusWidth else cropFocusNormalWidth
+        val cropWidth = if (spec.cropFocusWidth in 1 until cropFocusNormalWidth)
+            spec.cropFocusWidth else cropFocusNormalWidth
 
-        val cropHeight = if (mSpec.cropFocusHeight in 1..(cropFocusNormalHeight - 1))
-            mSpec.cropFocusHeight else cropFocusNormalHeight
+        val cropHeight = if (spec.cropFocusHeight in 1 until cropFocusNormalHeight)
+            spec.cropFocusHeight else cropFocusNormalHeight
 
-        cv_crop_image.setFocusStyle(mSpec.cropStyle)
+        cv_crop_image.setFocusStyle(spec.cropStyle)
         cv_crop_image.setFocusWidth(cropWidth)
         cv_crop_image.setFocusHeight(cropHeight)
         cv_crop_image.setOnBitmapSaveCompleteListener(this)
@@ -84,17 +83,21 @@ class ImageCropActivity : AppCompatActivity(), View.OnClickListener, CropImageVi
         options.inJustDecodeBounds = true
         BitmapFactory.decodeFile(imagePath, options)
         val displayMetrics = resources.displayMetrics
-        options.inSampleSize = calculateInSampleSize(options, displayMetrics.widthPixels, displayMetrics.heightPixels)
+        options.inSampleSize =
+            calculateInSampleSize(options, displayMetrics.widthPixels, displayMetrics.heightPixels)
         options.inJustDecodeBounds = false
-        mBitmap = BitmapFactory.decodeFile(imagePath, options)
-        mBitmap?.let {
-            val rotateBitmap = cv_crop_image.rotate(it, BitmapUtils.getBitmapDegree(imagePath).toFloat())
+        bitmap = BitmapFactory.decodeFile(imagePath, options)
+        bitmap?.let {
+            val rotateBitmap =
+                cv_crop_image.rotate(it, BitmapUtils.getBitmapDegree(imagePath).toFloat())
             // 设置默认旋转角度
             cv_crop_image.setImageBitmap(rotateBitmap)
         }
     }
 
-    private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
+    private fun calculateInSampleSize(
+        options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int
+    ): Int {
         val width = options.outWidth
         val height = options.outHeight
         var inSampleSize = 1
@@ -116,14 +119,17 @@ class ImageCropActivity : AppCompatActivity(), View.OnClickListener, CropImageVi
     }
 
     override fun onBitmapSaveError(file: File) {
-        val incapableDialog = IncapableDialog.newInstance("",
-                getString(R.string.error_crop))
+        val incapableDialog = IncapableDialog.newInstance(
+            "", getString(R.string.error_crop)
+        )
         incapableDialog.show(supportFragmentManager, IncapableDialog::class.java.name)
     }
 
     override fun onClick(v: View?) {
         when (v) {
-            button_complete -> cv_crop_image.saveBitmapToFile(getCropCacheFolder(this), mOutputX, mOutputY, mIsSaveRectangle)
+            button_complete -> cv_crop_image.saveBitmapToFile(
+                getCropCacheFolder(this), outputX, outputY, isSaveRectangle
+            )
             button_back -> {
                 setResult(Activity.RESULT_CANCELED)
                 finish()
@@ -132,8 +138,8 @@ class ImageCropActivity : AppCompatActivity(), View.OnClickListener, CropImageVi
     }
 
     private fun getCropCacheFolder(context: Context): File {
-        return if (mSpec.cropCacheFolder != null && mSpec.cropCacheFolder?.exists() == true && mSpec.cropCacheFolder?.isDirectory == true) {
-            mSpec.cropCacheFolder!!
+        return if (spec.cropCacheFolder != null && spec.cropCacheFolder?.exists() == true && spec.cropCacheFolder?.isDirectory == true) {
+            spec.cropCacheFolder!!
         } else {
             File(context.cacheDir.toString() + "/Matisse/cropTemp/")
         }
@@ -144,9 +150,9 @@ class ImageCropActivity : AppCompatActivity(), View.OnClickListener, CropImageVi
             ImmersionBar.with(this).destroy()
         }
         cv_crop_image.setOnBitmapSaveCompleteListener(null)
-        if (null != mBitmap && !mBitmap?.isRecycled!!) {
-            mBitmap?.recycle()
-            mBitmap = null
+        if (null != bitmap && !bitmap?.isRecycled!!) {
+            bitmap?.recycle()
+            bitmap = null
         }
         super.onDestroy()
     }

@@ -26,80 +26,89 @@ class CheckView : View {
         private const val CONTENT_SIZE = 16
     }
 
-    private var mCountable: Boolean = false
-    private var mChecked: Boolean = false
-    private var mCheckedNum = 0
-    private var mStrokePaint: Paint? = null
-    private var mBackgroundPaint: Paint? = null
-    private var mTextPaint: Paint? = null
-    private var mShadowPaint: Paint? = null
-    private var mCheckDrawable: Drawable? = null
-    private var mDensity: Float? = 0f
-    private var mCheckRect: Rect? = null
-    private var mEnable = true
+    private var countable: Boolean = false
+    private var checked: Boolean = false
+    private var checkedNum = 0
+    private var strokePaint: Paint? = null
+    private var backgroundPaint: Paint? = null
+    private var textPaint: Paint? = null
+    private var shadowPaint: Paint? = null
+    private var checkDrawable: Drawable? = null
+    private var density: Float? = 0f
+    private var checkRect: Rect? = null
+    private var enable = true
 
     constructor(context: Context?) : this(context, null, 0)
     constructor(context: Context?, attrs: AttributeSet?) : this(context, attrs, 0)
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context, attrs, defStyleAttr
+    ) {
         initParams(context)
     }
 
     private fun initParams(context: Context?) {
 
-        mDensity = context?.resources?.displayMetrics?.density
+        density = context?.resources?.displayMetrics?.density
 
-        mStrokePaint = Paint()
-        mStrokePaint?.isAntiAlias = true
-        mStrokePaint?.style = Paint.Style.STROKE
-        mStrokePaint?.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_OVER)
-        mStrokePaint?.strokeWidth = STROKE_WIDTH * mDensity!!
+        strokePaint = Paint()
+        strokePaint?.isAntiAlias = true
+        strokePaint?.style = Paint.Style.STROKE
+        strokePaint?.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_OVER)
+        strokePaint?.strokeWidth = STROKE_WIDTH * density!!
 
-        val ta: TypedArray = context?.theme?.obtainStyledAttributes(intArrayOf(R.attr.item_checkCircle_borderColor))!!
-        val defaultColor = ResourcesCompat.getColor(context.resources, R.color.item_checkCircle_borderColor, context.theme)
+        val ta: TypedArray =
+            context?.theme?.obtainStyledAttributes(intArrayOf(R.attr.item_checkCircle_borderColor))!!
+        val defaultColor = ResourcesCompat.getColor(
+            context.resources,
+            R.color.item_checkCircle_borderColor,
+            context.theme
+        )
         val color = ta.getColor(0, defaultColor)
         ta.recycle()
-        mStrokePaint?.color = color
+        strokePaint?.color = color
 
-        mCheckDrawable = ResourcesCompat.getDrawable(context.resources, R.drawable.ic_check_white_18dp, context.theme)
+        checkDrawable = ResourcesCompat.getDrawable(
+            context.resources, R.drawable.ic_check_white_18dp, context.theme
+        )
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
 
-        val sizeSpec = MeasureSpec.makeMeasureSpec((mDensity!! * SIZE).toInt(), MeasureSpec.EXACTLY)
+        val sizeSpec = MeasureSpec.makeMeasureSpec((density!! * SIZE).toInt(), MeasureSpec.EXACTLY)
         super.onMeasure(sizeSpec, sizeSpec)
     }
 
     fun setEnable(enable: Boolean) {
-        if (mEnable != enable) {
-            mEnable = enable
+        if (this.enable != enable) {
+            this.enable = enable
             invalidate()
         }
     }
 
     fun setCountable(boolean: Boolean) {
-        if (mCountable != boolean) {
-            mCountable = boolean
+        if (countable != boolean) {
+            countable = boolean
             invalidate()
         }
     }
 
     fun setChecked(boolean: Boolean) {
-        if (mCountable) {
+        if (countable) {
             throw IllegalStateException("CheckView is countable, call setCheckedNum() instead.")
         }
 
-        mChecked = boolean
+        checked = boolean
         invalidate()
     }
 
     fun setCheckedNum(num: Int) {
-        if (!mCountable) {
+        if (!countable) {
             throw IllegalStateException("CheckView is not countable, call setChecked() instead.")
         }
         if (num != UNCHECKED && num < 0) {
             throw  IllegalStateException("the num can't be negative")
         }
-        mCheckedNum = num
+        checkedNum = num
         invalidate()
     }
 
@@ -108,70 +117,89 @@ class CheckView : View {
 
         // draw outer and inner shadow
         initShadowPaint()
-        canvas?.drawCircle(mDensity!! * SIZE / 2, mDensity!! * SIZE / 2, mDensity!!.times(STROKE_RADIUS + STROKE_WIDTH / 2 + SHADOW_WIDTH), mShadowPaint)
+        canvas?.drawCircle(
+            density!! * SIZE / 2, density!! * SIZE / 2,
+            density!!.times(STROKE_RADIUS + STROKE_WIDTH / 2 + SHADOW_WIDTH), shadowPaint
+        )
 
         // draw white stroke
-        canvas?.drawCircle(mDensity!! * SIZE / 2, mDensity!! * SIZE / 2, mDensity!!.times(STROKE_RADIUS), mStrokePaint)
+        canvas?.drawCircle(
+            density!! * SIZE / 2, density!! * SIZE / 2,
+            density!!.times(STROKE_RADIUS), strokePaint
+        )
 
         // draw content
-        if (mCountable) {
-            if (mCheckedNum != UNCHECKED) {
+        if (countable) {
+            if (checkedNum != UNCHECKED) {
                 initBackgroundPaint()
-                canvas?.drawCircle(mDensity!! * SIZE / 2, mDensity!! * SIZE / 2,
-                        mDensity!!.times(BG_RADIUS), mBackgroundPaint)
+                canvas?.drawCircle(
+                    density!! * SIZE / 2, density!! * SIZE / 2,
+                    density!!.times(BG_RADIUS), backgroundPaint
+                )
                 initTextPaint()
-                val text = mCheckedNum.toString()
-                val baseX = (canvas!!.width - mTextPaint!!.measureText(text)) / 2
-                val baseY = (canvas.height - mTextPaint!!.descent() - mTextPaint!!.ascent()) / 2
-                canvas.drawText(text, baseX, baseY, mTextPaint)
+                val text = checkedNum.toString()
+                val baseX = (width - textPaint!!.measureText(text)) / 2
+                val baseY = (height - textPaint!!.descent() - textPaint!!.ascent()) / 2
+                canvas?.drawText(text, baseX, baseY, textPaint)
             }
         } else {
-            if (mChecked) {
+            if (checked) {
                 initBackgroundPaint()
-                canvas!!.drawCircle(mDensity!! * SIZE / 2, mDensity!! * SIZE / 2,
-                        BG_RADIUS * mDensity!!, mBackgroundPaint)
-                mCheckDrawable!!.bounds = getCheckRect()
-                mCheckDrawable!!.draw(canvas)
+                canvas!!.drawCircle(
+                    density!! * SIZE / 2, density!! * SIZE / 2,
+                    BG_RADIUS * density!!, backgroundPaint
+                )
+                checkDrawable!!.bounds = getCheckRect()
+                checkDrawable!!.draw(canvas)
             }
         }
-        alpha = if (mEnable) 1.0f else 0.5f
+        alpha = if (enable) 1.0f else 0.5f
     }
 
-    private fun getCheckRect(): Rect? {
-        if (mCheckRect == null) {
-            val rectPadding = (mDensity!! * SIZE / 2 - CONTENT_SIZE * mDensity!! / 2).toInt()
-            mCheckRect = Rect(rectPadding, rectPadding, (SIZE * mDensity!! - rectPadding).toInt(), (SIZE * mDensity!! - rectPadding).toInt())
+    private fun getCheckRect(): Rect {
+        if (checkRect == null) {
+            val rectPadding = (density!! * SIZE / 2 - CONTENT_SIZE * density!! / 2).toInt()
+            checkRect = Rect(
+                rectPadding, rectPadding,
+                (SIZE * density!! - rectPadding).toInt(),
+                (SIZE * density!! - rectPadding).toInt()
+            )
         }
-        return mCheckRect
+        return checkRect!!
     }
 
     private fun initTextPaint() {
-        if (mTextPaint == null) {
-            mTextPaint = TextPaint()
-            mTextPaint!!.isAntiAlias = true
-            mTextPaint!!.color = Color.WHITE
-            mTextPaint!!.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
-            mTextPaint!!.textSize = 12.0f * mDensity!!
+        if (textPaint == null) {
+            textPaint = TextPaint()
+            textPaint!!.isAntiAlias = true
+            textPaint!!.color = Color.WHITE
+            textPaint!!.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+            textPaint!!.textSize = 12.0f * density!!
         }
     }
 
     private fun initBackgroundPaint() {
-        if (mBackgroundPaint == null) {
-            mBackgroundPaint = Paint()
-            mBackgroundPaint!!.isAntiAlias = true
-            mBackgroundPaint!!.style = Paint.Style.FILL
-            val ta: TypedArray = context!!.theme!!.obtainStyledAttributes(intArrayOf(R.attr.item_checkCircle_backgroundColor))
-            val defaultColor = ResourcesCompat.getColor(context!!.resources, R.color.item_checkCircle_backgroundColor, context!!.theme)
+        if (backgroundPaint == null) {
+            backgroundPaint = Paint()
+            backgroundPaint!!.isAntiAlias = true
+            backgroundPaint!!.style = Paint.Style.FILL
+            val ta: TypedArray =
+                context!!.theme!!.obtainStyledAttributes(intArrayOf(R.attr.item_checkCircle_backgroundColor))
+            val defaultColor = ResourcesCompat.getColor(
+                context!!.resources,
+                R.color.item_checkCircle_backgroundColor,
+                context!!.theme
+            )
             val color = ta.getColor(0, defaultColor)
             ta.recycle()
-            mBackgroundPaint!!.color = color
+            backgroundPaint!!.color = color
         }
     }
 
     private fun initShadowPaint() {
-        if (mShadowPaint == null) {
-            mShadowPaint = Paint()
-            mShadowPaint!!.isAntiAlias = true
+        if (shadowPaint == null) {
+            shadowPaint = Paint()
+            shadowPaint!!.isAntiAlias = true
             val outerRadius: Float = STROKE_RADIUS + STROKE_WIDTH / 2
             val innerRadius = outerRadius - STROKE_WIDTH
             val gradientRadius = outerRadius + SHADOW_WIDTH
@@ -182,10 +210,12 @@ class CheckView : View {
 
             val shadow = ContextCompat.getColor(context, R.color.shadow)
             val shadowHint = ContextCompat.getColor(context, R.color.shadow_hint)
-            mShadowPaint!!.shader = (RadialGradient(mDensity!! * SIZE / 2, mDensity!! * SIZE / 2, mDensity!!.times(gradientRadius),
-                    intArrayOf(shadowHint, shadow, shadow, shadowHint),
-                    floatArrayOf(stop0, stop1, stop2, stop3),
-                    Shader.TileMode.CLAMP))
+            shadowPaint!!.shader = (RadialGradient(
+                density!! * SIZE / 2, density!! * SIZE / 2, density!!.times(gradientRadius),
+                intArrayOf(shadowHint, shadow, shadow, shadowHint),
+                floatArrayOf(stop0, stop1, stop2, stop3),
+                Shader.TileMode.CLAMP
+            ))
         }
     }
 }

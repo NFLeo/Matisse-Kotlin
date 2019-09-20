@@ -16,19 +16,21 @@ class CheckRadioView : AppCompatImageView {
     private var mSelectedColor: Int = 0
     private var mUnSelectUdColor: Int = 0
 
-    constructor(context: Context) : this(context, null)
 
+    constructor(context: Context) : this(context, null)
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
         init()
     }
 
     private fun init() {
-        val ta: TypedArray = context!!.theme!!.obtainStyledAttributes(intArrayOf(R.attr.item_checkRadio))
+        val ta: TypedArray =
+            context!!.theme!!.obtainStyledAttributes(intArrayOf(R.attr.item_checkRadio))
         mSelectedColor = ResourcesCompat.getColor(resources, R.color.item_checkRadio, context.theme)
         mSelectedColor = ta.getColor(0, mSelectedColor)
         ta.recycle()
 
-        mUnSelectUdColor = ResourcesCompat.getColor(resources, R.color.check_original_radio_disable, context.theme)
+        mUnSelectUdColor =
+            ResourcesCompat.getColor(resources, R.color.check_original_radio_disable, context.theme)
         setChecked(false)
     }
 

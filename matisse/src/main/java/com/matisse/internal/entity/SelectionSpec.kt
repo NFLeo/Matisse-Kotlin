@@ -106,32 +106,18 @@ class SelectionSpec {
         isDarkStatus = false
     }
 
-    fun openCrop(): Boolean {
-        return isCrop && maxSelectable == 1
-    }
+    fun openCrop() = isCrop && maxSelectable == 1
 
-    fun isSupportCrop(item: Item?): Boolean {
-        return item != null && item.isImage() && !item.isGif()
-    }
+    fun isSupportCrop(item: Item?) = item != null && item.isImage() && !item.isGif()
 
-    fun onlyShowImages(): Boolean {
-        if (mimeTypeSet == null) {
-            return false
-        }
-        return showSingleMediaType && MimeTypeManager.ofImage().containsAll(mimeTypeSet!!)
-    }
+    fun onlyShowImages() = if (mimeTypeSet != null)
+        showSingleMediaType && MimeTypeManager.ofImage().containsAll(mimeTypeSet!!) else false
 
-    fun onlyShowVideos(): Boolean {
-        if (mimeTypeSet == null) {
-            return false
-        }
+    fun onlyShowVideos() = if (mimeTypeSet != null)
+        showSingleMediaType && MimeTypeManager.ofVideo().containsAll(mimeTypeSet!!) else false
 
-        return showSingleMediaType && MimeTypeManager.ofVideo().containsAll(mimeTypeSet!!)
-    }
-
-    fun singleSelectionModeEnabled(): Boolean {
-        return !countable && (maxSelectable == 1 || maxImageSelectable == 1 && maxVideoSelectable == 1)
-    }
+    fun singleSelectionModeEnabled() =
+        !countable && (maxSelectable == 1 || maxImageSelectable == 1 && maxVideoSelectable == 1)
 
     fun needOrientationRestriction() = orientation != ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
 }

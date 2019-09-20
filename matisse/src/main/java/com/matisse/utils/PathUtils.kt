@@ -29,7 +29,8 @@ object PathUtils {
             } else if (isDownloadsDocument(uri)) {
                 val id = DocumentsContract.getDocumentId(uri)
                 val contentUri = ContentUris.withAppendedId(
-                        Uri.parse("content://downloads/public_downloads"), java.lang.Long.valueOf(id))
+                    Uri.parse("content://downloads/public_downloads"), java.lang.Long.valueOf(id)
+                )
 
                 return getDataColumn(context, contentUri, null, null)
             } else if (isMediaDocument(uri)) {
@@ -68,15 +69,17 @@ object PathUtils {
      * @param selectionArgs (Optional) Selection arguments used in the query.
      * @return The value of the _data column, which is typically a file path.
      */
-    fun getDataColumn(context: Context, uri: Uri?, selection: String?,
-                      selectionArgs: Array<String>?): String? {
+    private fun getDataColumn(
+        context: Context, uri: Uri?, selection: String?, selectionArgs: Array<String>?
+    ): String? {
 
         var cursor: Cursor? = null
         val column = "_data"
         val projection = arrayOf(column)
 
         try {
-            cursor = context.contentResolver.query(uri!!, projection, selection, selectionArgs, null)
+            cursor =
+                context.contentResolver.query(uri!!, projection, selection, selectionArgs, null)
             if (cursor != null && cursor.moveToFirst()) {
                 val columnIndex = cursor.getColumnIndexOrThrow(column)
                 return cursor.getString(columnIndex)
@@ -91,7 +94,7 @@ object PathUtils {
      * @param uri The Uri to check.
      * @return Whether the Uri authority is ExternalStorageProvider.
      */
-    fun isExternalStorageDocument(uri: Uri): Boolean {
+    private fun isExternalStorageDocument(uri: Uri): Boolean {
         return "com.android.externalstorage.documents" == uri.authority
     }
 
@@ -99,7 +102,7 @@ object PathUtils {
      * @param uri The Uri to check.
      * @return Whether the Uri authority is DownloadsProvider.
      */
-    fun isDownloadsDocument(uri: Uri): Boolean {
+    private fun isDownloadsDocument(uri: Uri): Boolean {
         return "com.android.providers.downloads.documents" == uri.authority
     }
 
@@ -107,7 +110,7 @@ object PathUtils {
      * @param uri The Uri to check.
      * @return Whether the Uri authority is MediaProvider.
      */
-    fun isMediaDocument(uri: Uri): Boolean {
+    private fun isMediaDocument(uri: Uri): Boolean {
         return "com.android.providers.media.documents" == uri.authority
     }
 }

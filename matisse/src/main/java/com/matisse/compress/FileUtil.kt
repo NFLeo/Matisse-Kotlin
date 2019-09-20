@@ -1,18 +1,11 @@
 package com.matisse.compress
 
 import android.content.Context
-import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.util.Log
-
 import java.io.File
-import java.io.FileNotFoundException
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.InputStream
-import java.io.OutputStream
 
 /**
  * 文件工具类
@@ -21,7 +14,6 @@ import java.io.OutputStream
  * Email: liushilin520@foxmail.com
  * Date: 2017-03-08  9:03
  */
-
 object FileUtil {
 
     const val FILES_PATH = "CompressHelper"
@@ -32,9 +24,7 @@ object FileUtil {
      * @param filePath 文件路径
      * @return 文件
      */
-    fun getFileByPath(filePath: String): File? {
-        return File(filePath)
-    }
+    fun getFileByPath(filePath: String) = File(filePath)
 
     /**
      * 判断文件是否存在
@@ -42,9 +32,7 @@ object FileUtil {
      * @param filePath 文件路径
      * @return `true`: 存在<br></br>`false`: 不存在
      */
-    fun isFileExists(filePath: String): Boolean {
-        return isFileExists(getFileByPath(filePath))
-    }
+    fun isFileExists(filePath: String) = isFileExists(getFileByPath(filePath))
 
     /**
      * 判断文件是否存在
@@ -52,9 +40,7 @@ object FileUtil {
      * @param file 文件
      * @return `true`: 存在<br></br>`false`: 不存在
      */
-    fun isFileExists(file: File?): Boolean {
-        return file != null && file.exists()
-    }
+    private fun isFileExists(file: File?) = file != null && file.exists()
 
     /**
      * 判断是否是目录
@@ -62,9 +48,7 @@ object FileUtil {
      * @param dirPath 目录路径
      * @return `true`: 是<br></br>`false`: 否
      */
-    fun isDir(dirPath: String): Boolean {
-        return isDir(getFileByPath(dirPath))
-    }
+    fun isDir(dirPath: String) = isDir(getFileByPath(dirPath))
 
     /**
      * 判断是否是目录
@@ -72,9 +56,7 @@ object FileUtil {
      * @param file 文件
      * @return `true`: 是<br></br>`false`: 否
      */
-    fun isDir(file: File?): Boolean {
-        return isFileExists(file) && file!!.isDirectory
-    }
+    private fun isDir(file: File?) = isFileExists(file) && file!!.isDirectory
 
     /**
      * 判断是否是文件
@@ -82,9 +64,7 @@ object FileUtil {
      * @param filePath 文件路径
      * @return `true`: 是<br></br>`false`: 否
      */
-    fun isFile(filePath: String): Boolean {
-        return isFile(getFileByPath(filePath))
-    }
+    fun isFile(filePath: String) = isFile(getFileByPath(filePath))
 
     /**
      * 判断是否是文件
@@ -92,30 +72,7 @@ object FileUtil {
      * @param file 文件
      * @return `true`: 是<br></br>`false`: 否
      */
-    fun isFile(file: File?): Boolean {
-        return isFileExists(file) && file!!.isFile
-    }
-
-    /**
-     * 重命名文件
-     * @param file      文件
-     * @param newName   新名字
-     * @return          新文件
-     */
-    fun renameFile(file: File, newName: String): File {
-        val newFile = File(file.parent, newName)
-        if (newFile != file) {
-            if (newFile.exists()) {
-                if (newFile.delete()) {
-                    Log.d("FileUtil", "Delete old $newName file")
-                }
-            }
-            if (file.renameTo(newFile)) {
-                Log.d("FileUtil", "Rename file to $newName")
-            }
-        }
-        return newFile
-    }
+    private fun isFile(file: File?) = isFileExists(file) && file!!.isFile
 
     /**
      * 截取文件名称

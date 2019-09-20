@@ -51,7 +51,7 @@ dependencies {
     implementation "com.android.support.constraint:constraint-layout:1.1.3"
     implementation 'com.gyf.barlibrary:barlibrary:2.3.0'
 
-    implementation(name:'matisse-release-112', ext:'aar')
-//    implementation project(':matisse')
+//    implementation(name:'matisse-release-112', ext:'aar')
+    implementation project(':matisse')
 //    implementation 'com.nfleo:MatisseKotlin:1.0.0'
 }

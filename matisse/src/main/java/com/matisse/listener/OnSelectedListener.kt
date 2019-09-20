@@ -5,7 +5,6 @@ import android.net.Uri
 /**
  * Created by Lijianyou on 2018-09-07.
  * @author  Lijianyou
- *
  */
 interface OnSelectedListener {
     /**

@@ -16,13 +16,15 @@ import kotlinx.android.synthetic.main.view_media_grid_content.view.*
 
 class MediaGrid : SquareFrameLayout, View.OnClickListener {
 
-    private lateinit var mMedia: Item
-    private lateinit var mPreBindInfo: PreBindInfo
-    lateinit var mListener: OnMediaGridClickListener
+    private lateinit var media: Item
+    private lateinit var preBindInfo: PreBindInfo
+    lateinit var listener: OnMediaGridClickListener
 
     constructor(context: Context?) : this(context, null, 0)
     constructor(context: Context?, attrs: AttributeSet?) : this(context, attrs, 0)
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context, attrs, defStyleAttr
+    ) {
         LayoutInflater.from(context).inflate(R.layout.view_media_grid_content, this, true)
 
         media_thumbnail.setOnClickListener(this)
@@ -32,8 +34,10 @@ class MediaGrid : SquareFrameLayout, View.OnClickListener {
     override fun onClick(v: View?) {
 
         when (v) {
-            media_thumbnail -> mListener.onThumbnailClicked(media_thumbnail, mMedia, mPreBindInfo.mViewHolder)
-            check_view -> mListener.onCheckViewClicked(check_view, mMedia, mPreBindInfo.mViewHolder)
+            media_thumbnail -> listener.onThumbnailClicked(
+                media_thumbnail, media, preBindInfo.viewHolder
+            )
+            check_view -> listener.onCheckViewClicked(check_view, media, preBindInfo.viewHolder)
         }
     }
 
@@ -43,11 +47,11 @@ class MediaGrid : SquareFrameLayout, View.OnClickListener {
     }
 
     fun preBindMedia(info: PreBindInfo) {
-        mPreBindInfo = info
+        preBindInfo = info
     }
 
     fun bindMedia(item: Item) {
-        mMedia = item
+        media = item
         setGifTag()
         initCheckView()
         setImage()
@@ -55,11 +59,11 @@ class MediaGrid : SquareFrameLayout, View.OnClickListener {
     }
 
     private fun setGifTag() {
-        UIUtils.setViewVisible(mMedia.isGif(), gif)
+        UIUtils.setViewVisible(media.isGif(), gif)
     }
 
     private fun initCheckView() {
-        check_view.setCountable(mPreBindInfo.mCheckViewCountable)
+        check_view.setCountable(preBindInfo.checkViewCountable)
     }
 
     fun setCheckEnabled(enabled: Boolean) {
@@ -75,23 +79,30 @@ class MediaGrid : SquareFrameLayout, View.OnClickListener {
     }
 
     private fun setImage() {
-        if (mMedia.isGif()) {
-            SelectionSpec.getInstance().imageEngine?.loadGifThumbnail(context, mPreBindInfo.mResize,
-                    mPreBindInfo.mPlaceholder, media_thumbnail, mMedia.getContentUri())
+        if (media.isGif()) {
+            SelectionSpec.getInstance().imageEngine?.loadGifThumbnail(
+                context, preBindInfo.resize, preBindInfo.placeholder,
+                media_thumbnail, media.getContentUri()
+            )
         } else {
-            SelectionSpec.getInstance().imageEngine?.loadThumbnail(context, mPreBindInfo.mResize,
-                    mPreBindInfo.mPlaceholder, media_thumbnail, mMedia.getContentUri())
+            SelectionSpec.getInstance().imageEngine?.loadThumbnail(
+                context, preBindInfo.resize, preBindInfo.placeholder,
+                media_thumbnail, media.getContentUri()
+            )
         }
     }
 
     private fun setVideoDuration() {
-        if (mMedia.isVideo()) {
+        if (media.isVideo()) {
             UIUtils.setViewVisible(true, video_duration)
-            video_duration.text = DateUtils.formatElapsedTime(mMedia.duration / 1000)
+            video_duration.text = DateUtils.formatElapsedTime(media.duration / 1000)
         } else {
             UIUtils.setViewVisible(false, video_duration)
         }
     }
 
-    class PreBindInfo(var mResize: Int, var mPlaceholder: Drawable, var mCheckViewCountable: Boolean, var mViewHolder: RecyclerView.ViewHolder)
+    class PreBindInfo(
+        var resize: Int, var placeholder: Drawable,
+        var checkViewCountable: Boolean, var viewHolder: RecyclerView.ViewHolder
+    )
 }

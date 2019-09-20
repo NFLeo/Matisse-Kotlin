@@ -60,9 +60,11 @@ class CompressHelper(private val context: Context) {
      * @return      压缩后的文件
      */
     fun compressToFile(file: File): File {
-        return BitmapUtil.compressImage(context, Uri.fromFile(file), maxWidth, maxHeight,
-                compressFormat, bitmapConfig, quality, destinationDirectoryPath,
-                fileNamePrefix, fileName)
+        return BitmapUtil.compressImage(
+            context, Uri.fromFile(file), maxWidth, maxHeight,
+            compressFormat, bitmapConfig, quality, destinationDirectoryPath,
+            fileNamePrefix, fileName
+        )
     }
 
     /**
@@ -71,7 +73,9 @@ class CompressHelper(private val context: Context) {
      * @return      压缩后的Bitmap
      */
     fun compressToBitmap(file: File): Bitmap? {
-        return BitmapUtil.getScaledBitmap(context, Uri.fromFile(file), maxWidth, maxHeight, bitmapConfig)
+        return BitmapUtil.getScaledBitmap(
+            context, Uri.fromFile(file), maxWidth, maxHeight, bitmapConfig
+        )
     }
 
     /**
