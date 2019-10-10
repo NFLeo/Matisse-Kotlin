@@ -20,7 +20,7 @@ class FolderBottomSheet : BottomSheetDialogFragment() {
     private lateinit var recyclerView: RecyclerView
     var adapter: FolderMediaAdapter? = null
     var callback: BottomSheetCallback? = null
-    private var currentPosition: Int = 0
+    private var currentPosition = 0
 
     companion object {
         fun instance(context: Context, currentPos: Int, tag: String): FolderBottomSheet {

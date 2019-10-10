@@ -34,7 +34,7 @@ class AlbumLoader(context: Context, selection: String, selectionArgs: Array<out 
             "COUNT(*) AS $COLUMN_COUNT"
         )
 
-        private val SELECTION = "(" + MediaStore.Files.FileColumns.MEDIA_TYPE + "=? " +
+        private const val SELECTION = "(" + MediaStore.Files.FileColumns.MEDIA_TYPE + "=? " +
                 "OR " + MediaStore.Files.FileColumns.MEDIA_TYPE + "=?) " +
                 "AND " + MediaStore.MediaColumns.SIZE + ">0) GROUP BY (" + BUCKET_ID
 

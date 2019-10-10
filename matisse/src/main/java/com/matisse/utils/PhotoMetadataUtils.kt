@@ -53,7 +53,7 @@ object PhotoMetadataUtils {
         return uri.path
     }
 
-    fun isAcceptable(context: Context, item: Item): IncapableCause? {
+    fun isAcceptable(context: Context, item: Item?): IncapableCause? {
         if (!isSelectableType(context, item))
             return IncapableCause(context.getString(R.string.error_file_type))
 
@@ -65,21 +65,23 @@ object PhotoMetadataUtils {
         return null
     }
 
-    private fun isSelectableType(context: Context?, item: Item): Boolean {
+    private fun isSelectableType(context: Context?, item: Item?): Boolean {
         val mimeTypeSet = SelectionSpec.getInstance().mimeTypeSet
 
         if (context == null || mimeTypeSet == null) return false
 
         val resolver = context.contentResolver
         for (type in mimeTypeSet) {
-            if (MimeTypeManager.checkType(resolver, item.getContentUri(), type.getValue())) {
+            if (MimeTypeManager.checkType(resolver, item?.getContentUri(), type.getValue())) {
                 return true
             }
         }
         return false
     }
 
-    fun getBitmapBound(resolver: ContentResolver, uri: Uri): Point {
+    fun getBitmapBound(resolver: ContentResolver, uri: Uri?): Point {
+        if (uri == null) return Point(0, 0)
+
         var inputStream: InputStream? = null
         try {
             val options = BitmapFactory.Options()

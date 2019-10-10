@@ -5,16 +5,16 @@ import android.database.Cursor
 import android.os.Parcel
 import android.os.Parcelable
 import android.provider.MediaStore
-import com.matisse.loader.AlbumLoader
 import com.matisse.R
+import com.matisse.loader.AlbumLoader
 
 class Album() : Parcelable {
 
-    private var id: String = ""
-    private var coverPath: String = ""
-    private var displayName: String = ""
+    private var id = ""
+    private var coverPath = ""
+    private var displayName = ""
     private var count: Long = 0
-    private var isCheck: Boolean = false
+    private var isCheck = false
 
     constructor(parcel: Parcel) : this() {
         id = parcel.readString()
@@ -68,9 +68,7 @@ class Album() : Parcelable {
         parcel.writeByte(if (isCheck) 1 else 0)
     }
 
-    override fun describeContents(): Int {
-        return 0
-    }
+    override fun describeContents() = 0
 
     companion object CREATOR : Parcelable.Creator<Album> {
 

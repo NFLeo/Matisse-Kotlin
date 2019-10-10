@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.activity_media_preview.*
  */
 class AlbumPreviewActivity : BasePreviewActivity(), AlbumCallbacks {
 
-    private var collection: AlbumMediaCollection = AlbumMediaCollection()
+    private var collection = AlbumMediaCollection()
     private var isAlreadySetPosition = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,7 +32,7 @@ class AlbumPreviewActivity : BasePreviewActivity(), AlbumCallbacks {
         collection.load(album)
         val item = intent.getParcelableExtra<Item>(ConstValue.EXTRA_ITEM)
         check_view?.apply {
-            if (spec?.countable!!) {
+            if (spec?.countable == true) {
                 setCheckedNum(selectedCollection.checkedNumOf(item))
             } else {
                 setChecked(selectedCollection.isSelected(item))
@@ -52,9 +52,7 @@ class AlbumPreviewActivity : BasePreviewActivity(), AlbumCallbacks {
             items.add(Item.valueOf(cursor))
         }
 
-        if (items.isEmpty()) {
-            return
-        }
+        if (items.isEmpty()) return
         val adapter = pager?.adapter as PreviewPagerAdapter
         adapter.addAll(items)
         adapter.notifyDataSetChanged()

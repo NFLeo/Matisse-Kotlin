@@ -81,7 +81,6 @@ class SelectionCreator(
     /**
      * Theme for media selecting Activity.
      *
-     *
      * There are two built-in themes:
      * you can define a custom theme derived from the above ones or other themes.
      *

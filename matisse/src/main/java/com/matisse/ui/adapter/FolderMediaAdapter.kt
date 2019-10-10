@@ -14,13 +14,14 @@ import com.matisse.R
 import com.matisse.entity.Album
 import com.matisse.internal.entity.SelectionSpec
 import com.matisse.widget.CheckRadioView
+import kotlinx.android.extensions.LayoutContainer
 import java.io.File
 
 class FolderMediaAdapter(var context: Context, var mCurrentPosition: Int) :
     RecyclerViewCursorAdapter<FolderMediaAdapter.FolderViewHolder>(null) {
 
     var itemClickListener: OnItemClickListener? = null
-    private var placeholder: Drawable
+    private var placeholder: Drawable?
 
     init {
         val ta = context.theme.obtainStyledAttributes(intArrayOf(R.attr.item_placeholder))
@@ -32,8 +33,10 @@ class FolderMediaAdapter(var context: Context, var mCurrentPosition: Int) :
 
         val album = Album.valueOf(cursor)
 
-        holder.tvBucketName.text =
-            """${album.getDisplayName(holder.tvBucketName.context)}(${album.getCount()})"""
+        holder.tvBucketName.text = String.format(
+            context.getString(R.string.folder_count),
+            album.getDisplayName(holder.tvBucketName.context), album.getCount()
+        )
 
         if (cursor.position == mCurrentPosition) {
             holder.rbSelected.animate().scaleX(1f).scaleY(1f).start()
@@ -56,11 +59,10 @@ class FolderMediaAdapter(var context: Context, var mCurrentPosition: Int) :
 
     override fun getItemViewType(position: Int, cursor: Cursor) = 0
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FolderViewHolder =
-        FolderViewHolder(
-            parent,
-            LayoutInflater.from(parent.context).inflate(R.layout.item_album_folder, parent, false)
-        )
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = FolderViewHolder(
+        parent,
+        LayoutInflater.from(parent.context).inflate(R.layout.item_album_folder, parent, false)
+    )
 
     inner class FolderViewHolder(private val mParentView: ViewGroup, itemView: View) :
         RecyclerView.ViewHolder(itemView), View.OnClickListener {

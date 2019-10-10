@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.support.v7.app.AppCompatActivity
+import android.text.TextUtils
 import android.view.View
 import com.gyf.barlibrary.ImmersionBar
 import com.matisse.R
@@ -36,13 +37,13 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
 
     private var mediaStoreCompat: MediaStoreCompat? = null
     private var spec: SelectionSpec? = null
-    private var originalEnable: Boolean = false
-    private val albumCollection = AlbumCollection()
-    private val selectedCollection = SelectedItemCollection(this)
+    private var originalEnable = false
+    private lateinit var albumCollection: AlbumCollection
+    private lateinit var selectedCollection: SelectedItemCollection
 
     private var cursor: Cursor? = null
     private var bottomSheet: FolderBottomSheet? = null
-    private var lastFolderCheckedPosition: Int = 0
+    private var lastFolderCheckedPosition = 0
     private lateinit var allAlbum: Album
 
 
@@ -67,11 +68,14 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
     }
 
     private fun initConfigs(savedInstanceState: Bundle?) {
-        if (spec?.needOrientationRestriction()!!) {
+        if (spec?.needOrientationRestriction() == true) {
             requestedOrientation = spec?.orientation!!
         }
 
-        if (spec?.capture!!) {
+        albumCollection = AlbumCollection()
+        selectedCollection = SelectedItemCollection(this)
+
+        if (spec?.capture == true) {
             mediaStoreCompat = MediaStoreCompat(this)
             if (spec?.captureStrategy == null)
                 throw RuntimeException("Don't forget to set CaptureStrategy.")
@@ -178,8 +182,7 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
                 originalEnable =
                     data?.getBooleanExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, false) ?: false
                 val collectionType = resultBundle?.getInt(
-                    ConstValue.STATE_COLLECTION_TYPE,
-                    SelectedItemCollection.COLLECTION_UNDEFINED
+                    ConstValue.STATE_COLLECTION_TYPE, SelectedItemCollection.COLLECTION_UNDEFINED
                 )
                 if (data?.getBooleanExtra(ConstValue.EXTRA_RESULT_APPLY, false) == true) {
                     val result = Intent()
@@ -191,12 +194,8 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
                             selectedPaths.add(PathUtils.getPath(this, item.getContentUri())!!)
                         }
                     }
-                    result.putParcelableArrayListExtra(
-                        EXTRA_RESULT_SELECTION, selectedUris
-                    )
-                    result.putStringArrayListExtra(
-                        EXTRA_RESULT_SELECTION_PATH, selectedPaths
-                    )
+                    result.putParcelableArrayListExtra(EXTRA_RESULT_SELECTION, selectedUris)
+                    result.putStringArrayListExtra(EXTRA_RESULT_SELECTION_PATH, selectedPaths)
                     result.putExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, originalEnable)
                     setResult(Activity.RESULT_OK, result)
                     finish()
@@ -242,16 +241,16 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
                 finish()
             }
             ConstValue.REQUEST_CODE_CROP -> {
-                returnCropData(cropPath!!)
+                returnCropData(cropPath)
             }
         }
     }
 
-    private fun returnCropData(cropPath: String) {
+    private fun returnCropData(cropPath: String?) {
         val result = Intent()
         val selectedUris = ArrayList<Uri>()
         val selectedPaths = ArrayList<String>()
-        selectedPaths.add(cropPath)
+        selectedPaths.add(cropPath ?: "")
         result.putParcelableArrayListExtra(EXTRA_RESULT_SELECTION, selectedUris)
         result.putStringArrayListExtra(EXTRA_RESULT_SELECTION_PATH, selectedPaths)
         setResult(Activity.RESULT_OK, result)
@@ -261,7 +260,6 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
     override fun provideSelectedItemCollection() = selectedCollection
 
     override fun onMediaClick(album: Album?, item: Item, adapterPosition: Int) {
-
         val intent = Intent(this, AlbumPreviewActivity::class.java)
         intent.putExtra(ConstValue.EXTRA_ALBUM, album)
         intent.putExtra(ConstValue.EXTRA_ITEM, item)
@@ -273,13 +271,11 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
     override fun onClick(v: View?) {
         when (v) {
             button_back -> onBackPressed()
-
             button_preview -> {
                 SelectedPreviewActivity.instance(
                     this@MatisseActivity, selectedCollection.getDataWithBundle(), originalEnable
                 )
             }
-
             button_complete -> {
                 val selectedUris = selectedCollection.asListOfUri() as ArrayList<Uri>
                 val selectedPaths = selectedCollection.asListOfString() as ArrayList<String>
@@ -294,10 +290,10 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
                     return
                 }
 
-                val result = Intent()
-                result.putParcelableArrayListExtra(EXTRA_RESULT_SELECTION, selectedUris)
-                result.putStringArrayListExtra(EXTRA_RESULT_SELECTION_PATH, selectedPaths)
-                result.putExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, originalEnable)
+                val result =
+                    Intent().putParcelableArrayListExtra(EXTRA_RESULT_SELECTION, selectedUris)
+                        .putStringArrayListExtra(EXTRA_RESULT_SELECTION_PATH, selectedPaths)
+                        .putExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, originalEnable)
                 setResult(Activity.RESULT_OK, result)
                 finish()
             }
@@ -316,9 +312,8 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
                 originalEnable = !originalEnable
                 original.setChecked(originalEnable)
 
-                if (spec?.onCheckedListener != null) {
+                if (spec?.onCheckedListener != null)
                     spec?.onCheckedListener!!.onCheck(originalEnable)
-                }
             }
 
             button_apply -> {

@@ -33,7 +33,7 @@ class GlideEngine : ImageEngine {
     override fun init(context: Context) {
     }
 
-    override fun loadThumbnail(context: Context, resize: Int, placeholder: Drawable, imageView: ImageView, uri: Uri) {
+    override fun loadThumbnail(context: Context, resize: Int, placeholder: Drawable?, imageView: ImageView, uri: Uri) {
         Glide.with(context)
                 .asBitmap()  // some .jpeg files are actually gif
                 .load(uri)
@@ -43,7 +43,7 @@ class GlideEngine : ImageEngine {
                 .into(imageView)
     }
 
-    override fun loadGifThumbnail(context: Context, resize: Int, placeholder: Drawable, imageView: ImageView, uri: Uri) {
+    override fun loadGifThumbnail(context: Context, resize: Int, placeholder: Drawable?, imageView: ImageView, uri: Uri) {
         Glide.with(context)
                 .asBitmap()
                 .load(uri)

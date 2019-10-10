@@ -14,8 +14,8 @@ class AlbumCollection : LoaderManager.LoaderCallbacks<Cursor> {
     private var context: WeakReference<Context>? = null
     private var loaderManager: LoaderManager? = null
     private var callbacks: AlbumCallbacks? = null
-    private var currentSelection: Int = 0
-    private var loadFinished: Boolean = false
+    private var currentSelection = 0
+    private var loadFinished = false
 
     companion object {
         const val LOADER_ID = 1
@@ -59,9 +59,7 @@ class AlbumCollection : LoaderManager.LoaderCallbacks<Cursor> {
 
     fun onDestroy() {
         loaderManager?.destroyLoader(LOADER_ID)
-        if (callbacks != null) {
-            callbacks = null
-        }
+        if (callbacks != null) callbacks = null
     }
 
     fun loadAlbums() {

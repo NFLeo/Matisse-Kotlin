@@ -10,6 +10,8 @@
     <string name="button_back">Back</string>
     <string name="button_null">""</string>
     <string name="button_complete">Complete</string>
+    <string name="folder_count">%1$d(%2$d)</string>
+    <string name="picture_size">%1$d M</string>
 
     <string name="photo_grid_capture">Camera</string>
     <string name="empty_text">No media yet</string>

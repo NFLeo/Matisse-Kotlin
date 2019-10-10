@@ -14,12 +14,9 @@ class IncapableCause {
         const val NONE = 0x02
 
         fun handleCause(context: Context, cause: IncapableCause?) {
-            if (cause == null)
-                return
+            if (cause == null) return
 
             when (cause.mForm) {
-                NONE -> {
-                }
                 DIALOG -> {
                     val incapableDialog =
                         IncapableDialog.newInstance(cause.mTitle!!, cause.mMessage!!)
@@ -29,6 +26,8 @@ class IncapableCause {
                     )
                 }
                 TOAST -> Toast.makeText(context, cause.mMessage, Toast.LENGTH_SHORT).show()
+                NONE -> {
+                }
                 else -> Toast.makeText(context, cause.mMessage, Toast.LENGTH_SHORT).show()
             }
         }

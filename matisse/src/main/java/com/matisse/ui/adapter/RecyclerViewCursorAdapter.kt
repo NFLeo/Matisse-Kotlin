@@ -58,7 +58,6 @@ abstract class RecyclerViewCursorAdapter<VH : RecyclerView.ViewHolder>(c: Cursor
     fun swapCursor(newCursor: Cursor?) {
         if (newCursor == cursor) return
 
-
         if (newCursor == null) {
             notifyItemRangeRemoved(0, itemCount)
             cursor = null

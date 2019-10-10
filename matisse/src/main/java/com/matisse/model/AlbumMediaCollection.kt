@@ -30,9 +30,7 @@ class AlbumMediaCollection : LoaderManager.LoaderCallbacks<Cursor> {
 
     fun onDestroy() {
         loaderManager?.destroyLoader(LOADER_ID)
-        if (callbacks != null) {
-            callbacks = null
-        }
+        if (callbacks != null) callbacks = null
     }
 
     fun load(target: Album) {
@@ -57,17 +55,13 @@ class AlbumMediaCollection : LoaderManager.LoaderCallbacks<Cursor> {
     }
 
     override fun onLoadFinished(loader: Loader<Cursor>, data: Cursor?) {
-        if (context?.get() == null) {
-            return
-        }
+        if (context?.get() == null) return
 
         callbacks?.onAlbumLoad(data!!)
     }
 
     override fun onLoaderReset(loader: Loader<Cursor>) {
-        if (context?.get() == null) {
-            return
-        }
+        if (context?.get() == null) return
 
         callbacks?.onAlbumReset()
     }

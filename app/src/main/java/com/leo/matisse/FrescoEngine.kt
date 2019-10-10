@@ -21,7 +21,7 @@ import com.matisse.engine.ImageEngine
  */
 class FrescoEngine : ImageEngine {
 
-    override fun loadThumbnail(context: Context, resize: Int, placeholder: Drawable, imageView: ImageView, uri: Uri) {
+    override fun loadThumbnail(context: Context, resize: Int, placeholder: Drawable?, imageView: ImageView, uri: Uri) {
         var hierarchy: GenericDraweeHierarchy? = null
         val hierarchyBuilder = GenericDraweeHierarchyBuilder.newInstance(imageView.context.resources)
         var draweeHolder: DraweeHolder<*>? = imageView.getTag(R.id.fresco_drawee) as DraweeHolder<*>?
@@ -59,7 +59,7 @@ class FrescoEngine : ImageEngine {
         imageView.setImageDrawable(draweeHolder?.topLevelDrawable)
     }
 
-    override fun loadGifThumbnail(context: Context, resize: Int, placeholder: Drawable, imageView: ImageView, uri: Uri) {
+    override fun loadGifThumbnail(context: Context, resize: Int, placeholder: Drawable?, imageView: ImageView, uri: Uri) {
     }
 
     override fun loadImage(context: Context, resizeX: Int, resizeY: Int, imageView: ImageView, uri: Uri) {

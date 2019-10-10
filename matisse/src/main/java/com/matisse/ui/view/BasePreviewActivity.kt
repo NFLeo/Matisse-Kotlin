@@ -30,7 +30,7 @@ import kotlinx.android.synthetic.main.include_view_bottom.*
 open class BasePreviewActivity : AppCompatActivity(),
     View.OnClickListener, ViewPager.OnPageChangeListener {
 
-    val selectedCollection = SelectedItemCollection(this)
+    lateinit var selectedCollection: SelectedItemCollection
     var spec: SelectionSpec? = null
     var adapter: PreviewPagerAdapter? = null
 
@@ -60,6 +60,7 @@ open class BasePreviewActivity : AppCompatActivity(),
             requestedOrientation = spec!!.orientation
         }
 
+        selectedCollection = SelectedItemCollection(this)
         originalEnable = if (savedInstanceState == null) {
             selectedCollection.onCreate(intent.getBundleExtra(ConstValue.EXTRA_DEFAULT_BUNDLE))
             intent.getBooleanExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, false)
@@ -78,7 +79,6 @@ open class BasePreviewActivity : AppCompatActivity(),
 
         check_view.setCountable(spec!!.countable)
         check_view.setOnClickListener(this)
-
         original_layout.setOnClickListener(this)
 
         updateApplyButton()
@@ -204,7 +204,9 @@ open class BasePreviewActivity : AppCompatActivity(),
             tv_size.apply {
                 if (isGif()) {
                     visibility = View.VISIBLE
-                    text = "${PhotoMetadataUtils.getSizeInMB(size)} M"
+                    text = String.format(
+                        getString(R.string.picture_size), PhotoMetadataUtils.getSizeInMB(size)
+                    )
                 } else {
                     visibility = View.GONE
                 }
@@ -258,24 +260,21 @@ open class BasePreviewActivity : AppCompatActivity(),
                 originalEnable = !originalEnable
                 original?.setChecked(originalEnable)
 
-                if (spec?.onCheckedListener != null) {
-                    spec?.onCheckedListener!!.onCheck(originalEnable)
-                }
+                spec?.onCheckedListener?.onCheck(originalEnable)
             }
 
             check_view -> {
-                val item = adapter?.getMediaItem(pager!!.currentItem)
-                if (selectedCollection.isSelected(item!!)) {
+                val item = adapter?.getMediaItem(pager.currentItem)
+                if (selectedCollection.isSelected(item)) {
                     selectedCollection.remove(item)
-                    if (spec!!.countable) {
+                    if (spec?.countable == true) {
                         check_view.setCheckedNum(CheckView.UNCHECKED)
                     } else {
                         check_view.setChecked(false)
                     }
                 } else {
-                    if (spec?.maxImageSelectable!! <= 1) {
+                    if (spec?.maxImageSelectable!! <= 1)
                         selectedCollection.removeAll()
-                    }
 
                     if (assertAddSelection(item)) {
                         selectedCollection.add(item)
@@ -290,8 +289,7 @@ open class BasePreviewActivity : AppCompatActivity(),
                 updateApplyButton()
 
                 spec?.onSelectedListener?.onSelected(
-                    selectedCollection.asListOfUri(),
-                    selectedCollection.asListOfString()
+                    selectedCollection.asListOfUri(), selectedCollection.asListOfString()
                 )
             }
         }
@@ -302,16 +300,14 @@ open class BasePreviewActivity : AppCompatActivity(),
         if (resultCode != Activity.RESULT_OK) return
 
         if (requestCode == ConstValue.REQUEST_CODE_CROP) {
-
             val resultPath = data?.getStringExtra(ConstValue.EXTRA_RESULT_BUNDLE)
-            val result = Intent()
-            result.putExtra(ConstValue.EXTRA_RESULT_BUNDLE, resultPath)
+            val result = Intent().putExtra(ConstValue.EXTRA_RESULT_BUNDLE, resultPath)
             setResult(Activity.RESULT_OK, result)
             finish()
         }
     }
 
-    private fun assertAddSelection(item: Item): Boolean {
+    private fun assertAddSelection(item: Item?): Boolean {
         val cause = selectedCollection.isAcceptable(item)
         IncapableCause.handleCause(this, cause)
         return cause == null

@@ -76,8 +76,7 @@ class AlbumMediaLoader(
                         + " AND " + MediaStore.MediaColumns.SIZE + ">0")
 
         private fun getSelectionAlbumArgsForSingleMediaType(
-            mediaType: Int,
-            albumId: String
+            mediaType: Int, albumId: String
         ): Array<String> {
             return arrayOf(mediaType.toString(), albumId)
         }
@@ -113,15 +112,13 @@ class AlbumMediaLoader(
                     SelectionSpec.getInstance().onlyShowImages() -> {
                         selection = SELECTION_ALBUM_FOR_SINGLE_MEDIA_TYPE
                         selectionArgs = getSelectionAlbumArgsForSingleMediaType(
-                            MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE,
-                            album.getId()
+                            MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE, album.getId()
                         )
                     }
                     SelectionSpec.getInstance().onlyShowVideos() -> {
                         selection = SELECTION_ALBUM_FOR_SINGLE_MEDIA_TYPE
                         selectionArgs = getSelectionAlbumArgsForSingleMediaType(
-                            MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO,
-                            album.getId()
+                            MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO, album.getId()
                         )
                     }
                     else -> {

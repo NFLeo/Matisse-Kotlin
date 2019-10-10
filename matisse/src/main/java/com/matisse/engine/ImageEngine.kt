@@ -22,7 +22,7 @@ interface ImageEngine {
      * @param uri Uri of the loaded image
      */
     fun loadThumbnail(
-        context: Context, resize: Int, placeholder: Drawable,
+        context: Context, resize: Int, placeholder: Drawable?,
         imageView: ImageView, uri: Uri
     )
 
@@ -36,7 +36,7 @@ interface ImageEngine {
      * @param uri Uri of the loaded image
      */
     fun loadGifThumbnail(
-        context: Context, resize: Int, placeholder: Drawable,
+        context: Context, resize: Int, placeholder: Drawable?,
         imageView: ImageView, uri: Uri
     )
 

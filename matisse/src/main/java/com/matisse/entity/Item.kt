@@ -29,12 +29,12 @@ class Item(var id: Long, var mimeType: String, var size: Long = 0, var duration:
         )
     }
 
-
     @IgnoredOnParcel
     private var uri: Uri
 
+
     init {
-        val contentUri: Uri = when {
+        val contentUri = when {
             isImage() -> MediaStore.Images.Media.EXTERNAL_CONTENT_URI
             isVideo() -> MediaStore.Video.Media.EXTERNAL_CONTENT_URI
             else -> MediaStore.Files.getContentUri("external")
@@ -42,25 +42,17 @@ class Item(var id: Long, var mimeType: String, var size: Long = 0, var duration:
         uri = ContentUris.withAppendedId(contentUri, id)
     }
 
-    fun isImage(): Boolean {
-        return mimeType == MimeType.JPEG.getKey()
-                || mimeType == MimeType.PNG.getKey()
-                || mimeType == MimeType.GIF.getKey()
-                || mimeType == MimeType.BMP.getKey()
-                || mimeType == MimeType.WEBP.getKey()
-    }
+    fun isImage() = mimeType == MimeType.JPEG.getKey() || mimeType == MimeType.PNG.getKey()
+            || mimeType == MimeType.GIF.getKey() || mimeType == MimeType.BMP.getKey()
+            || mimeType == MimeType.WEBP.getKey()
 
     fun isGif() = mimeType == MimeType.GIF.getKey()
 
     fun isVideo() = mimeType == MimeType.MPEG.getKey()
-            || mimeType == MimeType.MP4.getKey()
-            || mimeType == MimeType.QUICKTIME.getKey()
-            || mimeType == MimeType.THREEGPP.getKey()
-            || mimeType == MimeType.THREEGPP2.getKey()
-            || mimeType == MimeType.MKV.getKey()
-            || mimeType == MimeType.WEBM.getKey()
-            || mimeType == MimeType.TS.getKey()
-            || mimeType == MimeType.AVI.getKey()
+            || mimeType == MimeType.MP4.getKey() || mimeType == MimeType.QUICKTIME.getKey()
+            || mimeType == MimeType.THREEGPP.getKey() || mimeType == MimeType.THREEGPP2.getKey()
+            || mimeType == MimeType.MKV.getKey() || mimeType == MimeType.WEBM.getKey()
+            || mimeType == MimeType.TS.getKey() || mimeType == MimeType.AVI.getKey()
 
     fun getContentUri() = uri
 

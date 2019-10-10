@@ -13,8 +13,8 @@ class CheckRadioView : AppCompatImageView {
 
     private var mDrawable: Drawable? = null
 
-    private var mSelectedColor: Int = 0
-    private var mUnSelectUdColor: Int = 0
+    private var mSelectedColor = 0
+    private var mUnSelectUdColor = 0
 
 
     constructor(context: Context) : this(context, null)

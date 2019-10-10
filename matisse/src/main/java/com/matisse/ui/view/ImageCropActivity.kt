@@ -25,9 +25,9 @@ class ImageCropActivity : AppCompatActivity(), View.OnClickListener,
     CropImageView.OnBitmapSaveCompleteListener {
 
     private var bitmap: Bitmap? = null
-    private var isSaveRectangle: Boolean = false
-    private var outputX: Int = 0
-    private var outputY: Int = 0
+    private var isSaveRectangle = false
+    private var outputX = 0
+    private var outputY = 0
     private lateinit var spec: SelectionSpec
     private lateinit var imagePath: String
 
@@ -119,9 +119,7 @@ class ImageCropActivity : AppCompatActivity(), View.OnClickListener,
     }
 
     override fun onBitmapSaveError(file: File) {
-        val incapableDialog = IncapableDialog.newInstance(
-            "", getString(R.string.error_crop)
-        )
+        val incapableDialog = IncapableDialog.newInstance("", getString(R.string.error_crop))
         incapableDialog.show(supportFragmentManager, IncapableDialog::class.java.name)
     }
 
@@ -150,7 +148,7 @@ class ImageCropActivity : AppCompatActivity(), View.OnClickListener,
             ImmersionBar.with(this).destroy()
         }
         cv_crop_image.setOnBitmapSaveCompleteListener(null)
-        if (null != bitmap && !bitmap?.isRecycled!!) {
+        if (null != bitmap && bitmap?.isRecycled == false) {
             bitmap?.recycle()
             bitmap = null
         }

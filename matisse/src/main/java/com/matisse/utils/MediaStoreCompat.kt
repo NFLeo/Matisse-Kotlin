@@ -84,9 +84,7 @@ class MediaStoreCompat {
     }
 
     private fun createImageFile(): File? {
-        val timeStamp = SimpleDateFormat(
-            "yyyyMMdd_HHmmss", Locale.getDefault()
-        ).format(Date())
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val imageFileName = String.format("JPEG_%s.jpg", timeStamp)
         val storageDir: File
         if (captureStrategy?.isPublic!!) {

@@ -15,9 +15,8 @@ import com.matisse.utils.PathUtils
 import com.matisse.utils.PhotoMetadataUtils
 import java.util.LinkedHashSet
 
-class SelectedItemCollection(context: Context) {
+class SelectedItemCollection(private var context: Context) {
 
-    private var context: Context = context
     private lateinit var items: LinkedHashSet<Item>
     private var collectionType = COLLECTION_UNDEFINED
 
@@ -66,10 +65,12 @@ class SelectedItemCollection(context: Context) {
         return bundle
     }
 
-    fun add(item: Item): Boolean {
+    fun add(item: Item?): Boolean {
         if (typeConflict(item)) {
             throw IllegalArgumentException("Can't select images and videos at the same time.")
         }
+        if (item == null) return false
+
         val added = items.add(item)
         if (added) {
             when (collectionType) {
@@ -91,11 +92,11 @@ class SelectedItemCollection(context: Context) {
         return added
     }
 
-    fun remove(item: Item): Boolean {
+    fun remove(item: Item?): Boolean {
+        if (item == null) return false
         val removed = items.remove(item)
-        if (removed) {
-            resetType()
-        }
+        if (removed) resetType()
+
         return removed
     }
 
@@ -108,18 +109,13 @@ class SelectedItemCollection(context: Context) {
         if (items.size == 0) {
             collectionType = COLLECTION_UNDEFINED
         } else {
-            if (collectionType == COLLECTION_MIXED) {
-                refineCollectionType()
-            }
+            if (collectionType == COLLECTION_MIXED) refineCollectionType()
         }
     }
 
     fun overwrite(items: java.util.ArrayList<Item>, collectionType: Int) {
-        this.collectionType = if (items.size == 0) {
-            COLLECTION_UNDEFINED
-        } else {
-            collectionType
-        }
+        this.collectionType = if (items.size == 0) COLLECTION_UNDEFINED else collectionType
+
         this.items.clear()
         this.items.addAll(items)
     }
@@ -138,15 +134,13 @@ class SelectedItemCollection(context: Context) {
         val paths = ArrayList<String>()
         items.forEach {
             val path = PathUtils.getPath(context, it.getContentUri())
-            if (path != null) {
-                paths.add(path)
-            }
+            if (path != null) paths.add(path)
         }
 
         return paths
     }
 
-    fun isAcceptable(item: Item): IncapableCause? {
+    fun isAcceptable(item: Item?): IncapableCause? {
         if (maxSelectableReached()) {
             val maxSelectable = currentMaxSelectable()
 
@@ -223,8 +217,8 @@ class SelectedItemCollection(context: Context) {
      * Determine whether there will be conflict media types. A user can only select images and videos at the same time
      * while [SelectionSpec.mediaTypeExclusive] is set to false.
      */
-    private fun typeConflict(item: Item) =
+    private fun typeConflict(item: Item?) =
         SelectionSpec.getInstance().mediaTypeExclusive
-                && (item.isImage() && (collectionType == COLLECTION_VIDEO || collectionType == COLLECTION_MIXED)
-                || item.isVideo() && (collectionType == COLLECTION_IMAGE || collectionType == COLLECTION_MIXED))
+                && ((item?.isImage() == true && (collectionType == COLLECTION_VIDEO || collectionType == COLLECTION_MIXED))
+                || (item?.isVideo() == true && (collectionType == COLLECTION_IMAGE || collectionType == COLLECTION_MIXED)))
 }

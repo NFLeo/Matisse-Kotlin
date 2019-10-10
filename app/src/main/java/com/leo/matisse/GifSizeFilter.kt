@@ -34,14 +34,13 @@ class GifSizeFilter(private val mMinWidth: Int, private val mMinHeight: Int, pri
         }
     }
 
-    override fun filter(context: Context, item: Item): IncapableCause? {
+    override fun filter(context: Context, item: Item?): IncapableCause? {
         if (!needFiltering(context, item))
             return null
-        val size = PhotoMetadataUtils.getBitmapBound(context.contentResolver, item.getContentUri())
-        return if (size.x < mMinWidth || size.y < mMinHeight || item.size > mMaxSize) {
+        val size = PhotoMetadataUtils.getBitmapBound(context.contentResolver, item?.getContentUri())
+        return if (size.x < mMinWidth || size.y < mMinHeight || item?.size ?: 0 > mMaxSize) {
             IncapableCause(IncapableCause.DIALOG, context.getString(R.string.error_gif, mMinWidth,
                     PhotoMetadataUtils.getSizeInMB(mMaxSize.toLong()).toString()))
         } else null
     }
-
 }

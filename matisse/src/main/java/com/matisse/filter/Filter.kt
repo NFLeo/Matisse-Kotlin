@@ -32,13 +32,13 @@ abstract class Filter {
      *
      * @return null if selectable, {@link IncapableCause} if not selectable.
      */
-    abstract fun filter(context: Context, item: Item): IncapableCause?
+    abstract fun filter(context: Context, item: Item?): IncapableCause?
 
     // Whether an {@link Item} need filtering
-    open fun needFiltering(context: Context, item: Item): Boolean {
+    open fun needFiltering(context: Context, item: Item?): Boolean {
         constraintTypes().forEach {
             if (MimeTypeManager.checkType(
-                    context.contentResolver, item.getContentUri(), it.getValue()
+                    context.contentResolver, item?.getContentUri(), it.getValue()
                 )
             ) return true
         }

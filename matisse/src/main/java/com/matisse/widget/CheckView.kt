@@ -17,8 +17,8 @@ import com.matisse.R
 class CheckView : View {
 
     companion object {
-        const val UNCHECKED: Int = Integer.MIN_VALUE
-        private const val STROKE_WIDTH: Float = 3.0f
+        const val UNCHECKED = Integer.MIN_VALUE
+        private const val STROKE_WIDTH = 3.0f
         private const val SHADOW_WIDTH = 6.0f
         private const val SIZE = 40
         private const val STROKE_RADIUS = 11.5f
@@ -26,8 +26,8 @@ class CheckView : View {
         private const val CONTENT_SIZE = 16
     }
 
-    private var countable: Boolean = false
-    private var checked: Boolean = false
+    private var countable = false
+    private var checked = false
     private var checkedNum = 0
     private var strokePaint: Paint? = null
     private var backgroundPaint: Paint? = null
@@ -59,9 +59,7 @@ class CheckView : View {
         val ta: TypedArray =
             context?.theme?.obtainStyledAttributes(intArrayOf(R.attr.item_checkCircle_borderColor))!!
         val defaultColor = ResourcesCompat.getColor(
-            context.resources,
-            R.color.item_checkCircle_borderColor,
-            context.theme
+            context.resources, R.color.item_checkCircle_borderColor, context.theme
         )
         val color = ta.getColor(0, defaultColor)
         ta.recycle()
@@ -73,7 +71,6 @@ class CheckView : View {
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-
         val sizeSpec = MeasureSpec.makeMeasureSpec((density!! * SIZE).toInt(), MeasureSpec.EXACTLY)
         super.onMeasure(sizeSpec, sizeSpec)
     }

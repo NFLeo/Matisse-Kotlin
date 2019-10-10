@@ -20,15 +20,14 @@ import com.matisse.widget.CheckView
 import com.matisse.widget.MediaGrid
 
 class AlbumMediaAdapter(
-    context: Context, selectedCollection: SelectedItemCollection, recyclerView: RecyclerView
+    context: Context, private var selectedCollection: SelectedItemCollection,
+    private var recyclerView: RecyclerView
 ) : RecyclerViewCursorAdapter<RecyclerView.ViewHolder>(null), MediaGrid.OnMediaGridClickListener {
 
-    private var selectedCollection: SelectedItemCollection = selectedCollection
-    private var placeholder: Drawable
+    private var placeholder: Drawable? = null
     private var selectionSpec: SelectionSpec = SelectionSpec.getInstance()
     var checkStateListener: CheckStateListener? = null
     var onMediaClickListener: OnMediaClickListener? = null
-    private var recyclerView = recyclerView
     private var imageResize = 0
 
     init {
@@ -49,9 +48,7 @@ class AlbumMediaAdapter(
                     .inflate(R.layout.item_photo_capture, parent, false)
                 val holder = CaptureViewHolder(v)
                 holder.itemView.setOnClickListener {
-                    if (it.context is OnPhotoCapture) {
-                        (it.context as OnPhotoCapture).capture()
-                    }
+                    if (it.context is OnPhotoCapture) (it.context as OnPhotoCapture).capture()
                 }
                 return holder
             }
@@ -64,19 +61,25 @@ class AlbumMediaAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, cursor: Cursor) {
-        if (holder is CaptureViewHolder) {
-            UIUtils.setTextDrawable(holder.itemView.context, holder.hint, R.attr.textColor_Camera)
-        } else if (holder is MediaViewHolder) {
-            val item = Item.valueOf(cursor)
-            holder.mediaGrid.preBindMedia(
-                MediaGrid.PreBindInfo(
-                    getImageResize(holder.mediaGrid.context),
-                    placeholder, selectionSpec.countable, holder
-                )
-            )
-            holder.mediaGrid.bindMedia(item)
-            holder.mediaGrid.listener = this
-            setCheckStatus(item, holder.mediaGrid)
+        holder.apply {
+            when (this) {
+                is CaptureViewHolder ->
+                    UIUtils.setTextDrawable(
+                        itemView.context, hint, R.attr.textColor_Camera
+                    )
+                is MediaViewHolder -> {
+                    val item = Item.valueOf(cursor)
+                    mediaGrid.preBindMedia(
+                        MediaGrid.PreBindInfo(
+                            getImageResize(mediaGrid.context), placeholder,
+                            selectionSpec.countable, holder
+                        )
+                    )
+                    mediaGrid.bindMedia(item)
+                    mediaGrid.listener = this@AlbumMediaAdapter
+                    setCheckStatus(item, mediaGrid)
+                }
+            }
         }
     }
 

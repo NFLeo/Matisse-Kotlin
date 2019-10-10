@@ -70,12 +70,12 @@ class CropImageView : AppCompatImageView {
     private var doubleClickPos = PointF()   // pointF of double click
     private var focusMidPoint = PointF()    // middle pointF of focus frame view
 
-    private var mode = NONE                 // init gesture mode
+    private var mode = NONE            // init gesture mode
     private var doubleClickTime = 0L        // next double click time
     private var rotation = 0.0              // angle of finger rotation(is`t integer multiple of 90)
     private var oldDist = 1F                // first distance of two fingers
     private var sumRotationLevel = 0        // angle of rotation (is integer multiple of 90)
-    private var maxScale = MAX_SCALE        // get max scale from different images
+    private var maxScale = MAX_SCALE // get max scale from different images
     private var isInitSize = false          // is init by onSizeChanged
     private var saving = false              // is saving
 
@@ -193,10 +193,8 @@ class CropImageView : AppCompatImageView {
 
     // calculate boundary scale rate
     private fun getScale(
-        bitmapWidth: Int, bitmapHeight: Int, minWidth: Int,
-        minHeight: Int, isMinScale: Boolean
+        bitmapWidth: Int, bitmapHeight: Int, minWidth: Int, minHeight: Int, isMinScale: Boolean
     ): Float {
-
         val scale: Float
         val scaleX = minWidth.toFloat() / bitmapWidth
         val scaleY = minHeight.toFloat() / bitmapHeight
@@ -241,7 +239,6 @@ class CropImageView : AppCompatImageView {
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (saving || null == drawable) return super.onTouchEvent(event)
 
-
         when (event?.action!! and MotionEvent.ACTION_MASK) {
             // one point press down
             MotionEvent.ACTION_DOWN -> {
@@ -254,7 +251,6 @@ class CropImageView : AppCompatImageView {
             // next point press down
             MotionEvent.ACTION_POINTER_DOWN -> {
                 if (event.actionIndex <= 1) {
-
                     pA.set(event.getX(0), event.getY(0))
                     pB.set(event.getX(1), event.getY(1))
                     midPoint.set((pA.x + pB.x) / 2, (pA.y + pB.y) / 2)

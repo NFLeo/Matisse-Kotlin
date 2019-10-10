@@ -20,37 +20,37 @@ import java.io.File
  */
 class SelectionSpec {
     var mimeTypeSet: Set<MimeType>? = null
-    var mediaTypeExclusive: Boolean = false
-    var showSingleMediaType: Boolean = false
+    var mediaTypeExclusive = false
+    var showSingleMediaType = false
     var filters: List<Filter>? = null
-    var maxSelectable: Int = 0
-    var maxImageSelectable: Int = 0
-    var maxVideoSelectable: Int = 0
-    var thumbnailScale: Float = 0.5f
-    var countable: Boolean = false
-    var capture: Boolean = false
-    var gridExpectedSize: Int = 0
-    var spanCount: Int = 3
+    var maxSelectable = 0
+    var maxImageSelectable = 0
+    var maxVideoSelectable = 0
+    var thumbnailScale = 0.5f
+    var countable = false
+    var capture = false
+    var gridExpectedSize = 0
+    var spanCount = 3
     var captureStrategy: CaptureStrategy? = null
     @StyleRes
-    var themeId: Int = 0
-    var orientation: Int = 0
-    var originalable: Boolean = false
-    var originalMaxSize: Int = 0
+    var themeId = 0
+    var orientation = 0
+    var originalable = false
+    var originalMaxSize = 0
     var imageEngine: ImageEngine? = null
     var onSelectedListener: OnSelectedListener? = null
     var onCheckedListener: OnCheckedListener? = null
 
-    var isCrop: Boolean = false                     // 裁剪
-    var isCropSaveRectangle: Boolean = false        // 裁剪后的图片是否是矩形，否则跟随裁剪框的形状，只适用于圆形裁剪
-    var cropOutPutX: Int = 300                      // 裁剪保存宽度
-    var cropOutPutY: Int = 300                      // 裁剪保存高度
-    var cropFocusWidth: Int = 0                     // 焦点框的宽度
-    var cropFocusHeight: Int = 0                    // 焦点框的高度
+    var isCrop = false                              // 裁剪
+    var isCropSaveRectangle = false                 // 裁剪后的图片是否是矩形，否则跟随裁剪框的形状，只适用于圆形裁剪
+    var cropOutPutX = 300                           // 裁剪保存宽度
+    var cropOutPutY = 300                           // 裁剪保存高度
+    var cropFocusWidth = 0                          // 焦点框的宽度
+    var cropFocusHeight = 0                         // 焦点框的高度
     var cropStyle = CropImageView.Style.RECTANGLE   // 裁剪框的形状
     var cropCacheFolder: File? = null               // 裁剪后文件保存路径
 
-    var hasInited: Boolean = false
+    var hasInited = false
 
     var isDarkStatus: Boolean = false
 

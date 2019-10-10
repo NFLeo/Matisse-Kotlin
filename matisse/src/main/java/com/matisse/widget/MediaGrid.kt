@@ -102,7 +102,7 @@ class MediaGrid : SquareFrameLayout, View.OnClickListener {
     }
 
     class PreBindInfo(
-        var resize: Int, var placeholder: Drawable,
+        var resize: Int, var placeholder: Drawable?,
         var checkViewCountable: Boolean, var viewHolder: RecyclerView.ViewHolder
     )
 }
