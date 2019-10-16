@@ -18,7 +18,7 @@ publish {
     userOrg = 'nfleo'//bintray.com用户名
     groupId = 'com.nfleo'//jcenter上的路径
     artifactId = 'MatisseKotlin'//项目名称
-    publishVersion = '1.1.5'//版本号
+    publishVersion = '1.1.8'//版本号
     desc = 'this is for MatisseKotlin'
     website = 'https://github.com/NFLeo/Matisse-Kotlin'
 }
