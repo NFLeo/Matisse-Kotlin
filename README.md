@@ -91,6 +91,8 @@ So if you are targeting Android 6.0+, you need to handle runtime permission requ
 | Media theme                    | Preview theme                       |
 |:------------------------------:|:---------------------------------:|
 |![](image/media_theme_describe.png) | ![](image/preview_theme_describe.png) |
+
+
 使用套路与原项目一致，只是多增加了一些参数，另外定制时需配置所提供的所有参数。
 使用主题时可直接使用Matisse.Default， 或者在自己项目中另写style继承自Matisse.Default，如下
 ```
