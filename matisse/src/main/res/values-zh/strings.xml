@@ -24,10 +24,10 @@
     <string name="button_ok">我知道了</string>
     <string name="button_original">原图</string>
     <string name="button_sure_default">确定</string>
-    <string name="button_sure">确定(%1$d)</string>
+    <string name="button_sure">确定</string>
     <string name="button_complete">完成</string>
     <string name="button_null">""</string>
-    <string name="folder_count">%1$d(%2$d)</string>
+    <string name="folder_count">%1$s(%2$d)</string>
     <string name="picture_size">%1$d M</string>
 
     <string name="photo_grid_capture">拍一张</string>

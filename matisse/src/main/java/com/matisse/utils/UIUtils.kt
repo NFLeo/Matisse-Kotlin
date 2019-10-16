@@ -11,6 +11,7 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
+import com.matisse.R
 import com.matisse.entity.IncapableCause
 import com.matisse.widget.IncapableDialog
 import kotlin.math.roundToInt
@@ -69,6 +70,17 @@ object UIUtils {
         }
 
         textView.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3])
+    }
+
+    /**
+     * 根据attr获取外部文字资源
+     */
+    fun getAttrString(context: Context, attr: Int, defaultRes:Int = R.string.button_null): Int {
+        val ta = context.theme.obtainStyledAttributes(intArrayOf(attr)) ?: return defaultRes
+        val stringRes = ta.getResourceId(0, 0)
+        ta.recycle()
+
+        return stringRes
     }
 
     /**

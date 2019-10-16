@@ -1,5 +1,6 @@
 package com.matisse.ui.view
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -19,6 +20,7 @@ import com.matisse.ui.adapter.PreviewPagerAdapter
 import com.matisse.utils.PathUtils
 import com.matisse.utils.PhotoMetadataUtils
 import com.matisse.utils.Platform
+import com.matisse.utils.UIUtils
 import com.matisse.widget.CheckView
 import com.matisse.widget.IncapableDialog
 import kotlinx.android.synthetic.main.activity_media_preview.*
@@ -69,7 +71,12 @@ open class BasePreviewActivity : AppCompatActivity(),
             savedInstanceState.getBoolean(ConstValue.CHECK_STATE)
         }
 
-        button_preview.text = getString(R.string.button_back)
+        button_preview.setText(
+            UIUtils.getAttrString(
+                this@BasePreviewActivity, R.attr.Preview_Back_text, R.string.button_back
+            )
+        )
+
         button_preview.setOnClickListener(this)
         button_apply.setOnClickListener(this)
 
@@ -118,36 +125,54 @@ open class BasePreviewActivity : AppCompatActivity(),
         setResult(Activity.RESULT_OK, intent)
     }
 
+    @SuppressLint("SetTextI18n")
     private fun updateApplyButton() {
         val selectedCount = selectedCollection.count()
 
         button_apply.apply {
             when (selectedCount) {
                 0 -> {
-                    text = getString(R.string.button_sure_default)
+                    text = getString(
+                        UIUtils.getAttrString(
+                            this@BasePreviewActivity,
+                            R.attr.Preview_Confirm_text, R.string.button_sure_default
+                        )
+                    )
                     isEnabled = false
                 }
                 1 -> {
                     isEnabled = true
 
-                    text = if (spec!!.singleSelectionModeEnabled()) {
+                    text = if (spec?.singleSelectionModeEnabled() == true) {
                         getString(R.string.button_sure_default)
                     } else {
-                        getString(R.string.button_sure, selectedCount)
+                        "${getString(
+                            UIUtils.getAttrString(
+                                this@BasePreviewActivity,
+                                R.attr.Preview_Confirm_text,
+                                R.string.button_sure_default
+                            )
+                        )}($selectedCount)"
                     }
                 }
                 else -> {
                     isEnabled = true
-                    text = getString(R.string.button_sure, selectedCount)
+                    text = "${getString(
+                        UIUtils.getAttrString(
+                            this@BasePreviewActivity,
+                            R.attr.Preview_Confirm_text,
+                            R.string.button_sure_default
+                        )
+                    )}($selectedCount)"
                 }
             }
         }
 
         if (spec!!.originalable) {
-            original_layout?.visibility = View.VISIBLE
+            UIUtils.setViewVisible(true, original_layout)
             updateOriginalState()
         } else {
-            original_layout?.visibility = View.GONE
+            UIUtils.setViewVisible(false, original_layout)
         }
     }
 

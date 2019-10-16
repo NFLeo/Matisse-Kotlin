@@ -6,20 +6,23 @@
     android:layout_width="match_parent"
     android:layout_height="?attr/bottomToolbar.height"
     android:background="?attr/bottomToolbar.bg"
-    android:elevation="4dp">
+    android:elevation="4dp"
+    tools:layout_height="45dp">
 
     <TextView
         android:id="@+id/button_preview"
-        android:layout_width="wrap_content"
+        style="@style/singleLineText"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="start"
         android:foreground="?selectableItemBackground"
+        android:gravity="start"
         android:padding="16dp"
-        android:text="@string/button_preview"
-        android:textColor="?attr/textColor.Preview"
-        android:textSize="?attr/textSize.Preview"
+        android:text="?attr/Media.Preview.text"
+        android:textColor="?attr/Media.Preview.textColor"
+        android:textSize="?attr/Media.Preview.textSize"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/original_layout"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
@@ -29,10 +32,9 @@
         android:layout_gravity="center"
         android:orientation="horizontal"
         android:padding="16dp"
-        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:showIn="@layout/activity_matisse">
 
@@ -44,44 +46,43 @@
             android:src="@drawable/ic_preview_radio_off" />
 
         <TextView
+            style="@style/singleLineText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:enabled="true"
-            android:paddingLeft="4dp"
-            android:paddingStart="4dp"
-            android:text="@string/button_original"
-            android:textColor="?attr/textColor.Original"
-            android:textSize="?attr/textSize.Original" />
+            android:padding="4dp"
+            android:text="?attr/Media.Original.text"
+            android:textColor="?attr/Media.Original.textColor"
+            android:textSize="?attr/Media.Original.textSize" />
+
+        <TextView
+            android:id="@+id/tv_size"
+            style="@style/singleLineText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/preview_bottom_size"
+            android:textSize="16sp"
+            android:visibility="gone"
+            tools:text="ff"
+            tools:visibility="visible" />
 
     </LinearLayout>
 
     <TextView
-        android:id="@+id/tv_size"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textColor="@color/preview_bottom_size"
-        android:textSize="16sp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/originalLayout"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="ff"
-        tools:visibility="visible" />
-
-    <TextView
         android:id="@+id/button_apply"
-        android:layout_width="wrap_content"
+        style="@style/singleLineText"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="end"
         android:foreground="?selectableItemBackground"
+        android:gravity="end"
         android:padding="16dp"
-        android:text="@string/button_apply"
-        android:textColor="?attr/textColor.Album"
-        android:textSize="?attr/textSize.Album"
+        android:text="?attr/Media.Album.text"
+        android:textColor="?attr/Media.Album.textColor"
+        android:textSize="?attr/Media.Album.textSize"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/original_layout"
         app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

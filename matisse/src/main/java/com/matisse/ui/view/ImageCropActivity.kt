@@ -63,9 +63,9 @@ class ImageCropActivity : AppCompatActivity(), View.OnClickListener,
         isSaveRectangle = spec.isCropSaveRectangle
 
         val cropFocusNormalWidth =
-            UIUtils.getScreenWidth(this) - UIUtils.dp2px(this, 50f).toInt()
+            UIUtils.getScreenWidth(this) - UIUtils.dp2px(this, 30f).toInt()
         val cropFocusNormalHeight =
-            UIUtils.getScreenHeight(this) - UIUtils.dp2px(this, 400f).toInt()
+            UIUtils.getScreenHeight(this) - UIUtils.dp2px(this, 200f).toInt()
 
         val cropWidth = if (spec.cropFocusWidth in 1 until cropFocusNormalWidth)
             spec.cropFocusWidth else cropFocusNormalWidth

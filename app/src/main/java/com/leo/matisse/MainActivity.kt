@@ -20,8 +20,6 @@ import com.matisse.listener.OnSelectedListener
 import com.matisse.utils.Platform
 import com.matisse.widget.CropImageView
 import com.tbruyelle.rxpermissions2.RxPermissions
-import io.reactivex.Observer
-import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_main.*
 import java.text.DecimalFormat
 import kotlin.math.log10
@@ -37,7 +35,6 @@ class MainActivity : AppCompatActivity() {
             RxPermissions(this@MainActivity)
                 .request(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA)
                 .subscribe {
-
                     if (!it) {
                         Toast.makeText(
                             this@MainActivity,
@@ -54,14 +51,14 @@ class MainActivity : AppCompatActivity() {
                         .isCrop(true)
                         .cropStyle(CropImageView.Style.CIRCLE)
                         .setStatusIsDark(false)
-                        .theme(R.style.Matisse_Dark)
+                        .theme(R.style.CustomMatisseStyle)
                         .captureStrategy(
                             CaptureStrategy(
                                 true,
                                 "${Platform.getPackageName(this@MainActivity)}.fileprovider"
                             )
                         )
-                        .maxSelectable(3)
+                        .maxSelectable(1)
                         .thumbnailScale(0.8f)
                         .gridExpectedSize(resources.getDimensionPixelSize(R.dimen.grid_expected_size))
                         .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
@@ -72,8 +69,6 @@ class MainActivity : AppCompatActivity() {
                                 Log.e("onSelected", "onSelected: pathList=$pathList")
                             }
                         })
-                        .originalEnable(false)
-                        .maxOriginalSize(10)
                         .setOnCheckedListener(object : OnCheckedListener {
                             override fun onCheck(isChecked: Boolean) {
                                 // DO SOMETHING IMMEDIATELY HERE

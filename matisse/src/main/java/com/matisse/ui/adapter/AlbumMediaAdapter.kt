@@ -65,7 +65,7 @@ class AlbumMediaAdapter(
             when (this) {
                 is CaptureViewHolder ->
                     UIUtils.setTextDrawable(
-                        itemView.context, hint, R.attr.textColor_Camera
+                        itemView.context, hint, R.attr.Media_Camera_textColor
                     )
                 is MediaViewHolder -> {
                     val item = Item.valueOf(cursor)

@@ -1,7 +1,9 @@
 package com.matisse.ui.view
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.database.Cursor
 import android.net.Uri
 import android.os.Build
@@ -52,7 +54,7 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
         setTheme(spec?.themeId!!)
         super.onCreate(savedInstanceState)
 
-        if (!spec?.hasInited!!) {
+        if (spec?.hasInited == false) {
             setResult(Activity.RESULT_CANCELED)
             finish()
             return
@@ -69,7 +71,7 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
 
     private fun initConfigs(savedInstanceState: Bundle?) {
         if (spec?.needOrientationRestriction() == true) {
-            requestedOrientation = spec?.orientation!!
+            requestedOrientation = spec?.orientation ?: ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         }
 
         albumCollection = AlbumCollection()
@@ -114,7 +116,7 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
     }
 
     private fun initListener() {
-        button_apply.setText(R.string.album_name_all)
+        button_apply.setText(UIUtils.getAttrString(this, R.attr.Media_Album_text))
         button_apply.setOnClickListener(this)
         button_preview.setOnClickListener(this)
         original_layout.setOnClickListener(this)
@@ -345,28 +347,42 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun updateBottomToolbar() {
-
         val selectedCount = selectedCollection.count()
         if (selectedCount == 0) {
             button_preview.isEnabled = false
             button_complete.isEnabled = false
-            button_complete.text = getString(R.string.button_complete)
+            button_complete.setText(
+                UIUtils.getAttrString(
+                    this@MatisseActivity, R.attr.Media_Sure_text, R.string.button_sure
+                )
+            )
         } else if (selectedCount == 1 && spec!!.singleSelectionModeEnabled()) {
             button_preview.isEnabled = true
-            button_complete.setText(R.string.button_complete)
+            button_complete.setText(
+                UIUtils.getAttrString(
+                    this@MatisseActivity, R.attr.Media_Sure_text, R.string.button_sure
+                )
+            )
             button_complete.isEnabled = true
         } else {
             button_preview.isEnabled = true
             button_complete.isEnabled = true
-            button_complete.text = getString(R.string.button_sure, selectedCount)
+            button_complete.text =
+                "${getString(
+                    UIUtils.getAttrString(
+                        this@MatisseActivity,
+                        R.attr.Media_Sure_text
+                    ), R.string.button_sure
+                )}($selectedCount)"
         }
 
         if (spec!!.originalable) {
-            original_layout.visibility = View.VISIBLE
+            UIUtils.setViewVisible(true, original_layout)
             updateOriginalState()
         } else {
-            original_layout.visibility = View.INVISIBLE
+            UIUtils.setViewVisible(false, original_layout)
         }
     }
 
