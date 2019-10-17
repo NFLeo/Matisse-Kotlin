@@ -1,11 +1,9 @@
-package com.matisse.ui.view
+package com.matisse.ui.activity
 
 import android.database.Cursor
-import android.os.Bundle
 import com.matisse.entity.Album
 import com.matisse.entity.ConstValue
 import com.matisse.entity.Item
-import com.matisse.internal.entity.SelectionSpec
 import com.matisse.model.AlbumCallbacks
 import com.matisse.model.AlbumMediaCollection
 import com.matisse.ui.adapter.PreviewPagerAdapter
@@ -19,20 +17,15 @@ class AlbumPreviewActivity : BasePreviewActivity(), AlbumCallbacks {
     private var collection = AlbumMediaCollection()
     private var isAlreadySetPosition = false
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        if (!SelectionSpec.getInstance().hasInited) {
-            setResult(RESULT_CANCELED)
-            finish()
-            return
-        }
+    override fun setViewData() {
+        super.setViewData()
 
         collection.onCreate(this, this)
         val album = intent.getParcelableExtra<Album>(ConstValue.EXTRA_ALBUM)
         collection.load(album)
         val item = intent.getParcelableExtra<Item>(ConstValue.EXTRA_ITEM)
         check_view?.apply {
-            if (spec?.countable == true) {
+            if (spec?.isCountable() == true) {
                 setCheckedNum(selectedCollection.checkedNumOf(item))
             } else {
                 setChecked(selectedCollection.isSelected(item))

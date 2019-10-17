@@ -1,17 +1,15 @@
-package com.matisse.ui.view
+package com.matisse.ui.activity
 
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.view.View
 import com.gyf.barlibrary.ImmersionBar
 import com.matisse.R
 import com.matisse.entity.ConstValue
-import com.matisse.internal.entity.SelectionSpec
 import com.matisse.utils.BitmapUtils
 import com.matisse.utils.Platform
 import com.matisse.utils.UIUtils
@@ -21,62 +19,61 @@ import kotlinx.android.synthetic.main.activity_crop.*
 import kotlinx.android.synthetic.main.include_view_navigation.*
 import java.io.File
 
-class ImageCropActivity : AppCompatActivity(), View.OnClickListener,
+/**
+ * desc：图片裁剪</br>
+ * time: 2018/9/17-14:16</br>
+ * author：Leo </br>
+ * since V 1.0.0 </br>
+ */
+class ImageCropActivity : BaseActivity(), View.OnClickListener,
     CropImageView.OnBitmapSaveCompleteListener {
 
     private var bitmap: Bitmap? = null
     private var isSaveRectangle = false
     private var outputX = 0
     private var outputY = 0
-    private lateinit var spec: SelectionSpec
     private lateinit var imagePath: String
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        spec = SelectionSpec.getInstance()
-        setTheme(spec.themeId)
-        super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.activity_crop)
+    override fun getResourceLayoutId() = R.layout.activity_crop
 
+    override fun configActivity() {
         if (Platform.isClassExists("com.gyf.barlibrary.ImmersionBar")) {
-            ImmersionBar.with(this).titleBar(toolbar)?.statusBarDarkFont(spec.isDarkStatus)?.init()
+            ImmersionBar.with(this).titleBar(toolbar)
+                ?.statusBarDarkFont(spec?.isDarkStatus == true)?.init()
         }
 
-        if (spec.needOrientationRestriction()) {
-            requestedOrientation = spec.orientation
+        if (spec?.needOrientationRestriction() == true) {
+            requestedOrientation = spec?.orientation ?: ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         }
+    }
 
+    override fun setViewData() {
         imagePath = intent.getStringExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH)
 
-        initView()
-        initCropFun()
-    }
+        spec?.apply {
+            outputX = cropOutPutX
+            outputY = cropOutPutY
+            isSaveRectangle = isCropSaveRectangle
 
-    private fun initView() {
-        button_complete.setOnClickListener(this)
-        button_back.setOnClickListener(this)
-    }
+            val cropFocusNormalWidth =
+                UIUtils.getScreenWidth(this@ImageCropActivity) - UIUtils.dp2px(
+                    this@ImageCropActivity, 30f
+                ).toInt()
+            val cropFocusNormalHeight =
+                UIUtils.getScreenHeight(this@ImageCropActivity) - UIUtils.dp2px(
+                    this@ImageCropActivity, 200f
+                ).toInt()
 
-    private fun initCropFun() {
-        outputX = spec.cropOutPutX
-        outputY = spec.cropOutPutY
-        isSaveRectangle = spec.isCropSaveRectangle
+            val cropWidth = if (cropFocusWidth in 1 until cropFocusNormalWidth)
+                cropFocusWidth else cropFocusNormalWidth
 
-        val cropFocusNormalWidth =
-            UIUtils.getScreenWidth(this) - UIUtils.dp2px(this, 30f).toInt()
-        val cropFocusNormalHeight =
-            UIUtils.getScreenHeight(this) - UIUtils.dp2px(this, 200f).toInt()
-
-        val cropWidth = if (spec.cropFocusWidth in 1 until cropFocusNormalWidth)
-            spec.cropFocusWidth else cropFocusNormalWidth
-
-        val cropHeight = if (spec.cropFocusHeight in 1 until cropFocusNormalHeight)
-            spec.cropFocusHeight else cropFocusNormalHeight
-
-        cv_crop_image.setFocusStyle(spec.cropStyle)
-        cv_crop_image.setFocusWidth(cropWidth)
-        cv_crop_image.setFocusHeight(cropHeight)
-        cv_crop_image.setOnBitmapSaveCompleteListener(this)
+            val cropHeight = if (cropFocusHeight in 1 until cropFocusNormalHeight)
+                cropFocusHeight else cropFocusNormalHeight
+            cv_crop_image.setFocusStyle(cropStyle)
+            cv_crop_image.setFocusWidth(cropWidth)
+            cv_crop_image.setFocusHeight(cropHeight)
+        }
 
         //缩放图片
         val options = BitmapFactory.Options()
@@ -93,6 +90,12 @@ class ImageCropActivity : AppCompatActivity(), View.OnClickListener,
             // 设置默认旋转角度
             cv_crop_image.setImageBitmap(rotateBitmap)
         }
+    }
+
+    override fun initListener() {
+        button_complete.setOnClickListener(this)
+        button_back.setOnClickListener(this)
+        cv_crop_image.setOnBitmapSaveCompleteListener(this)
     }
 
     private fun calculateInSampleSize(
@@ -136,17 +139,16 @@ class ImageCropActivity : AppCompatActivity(), View.OnClickListener,
     }
 
     private fun getCropCacheFolder(context: Context): File {
-        return if (spec.cropCacheFolder != null && spec.cropCacheFolder?.exists() == true && spec.cropCacheFolder?.isDirectory == true) {
-            spec.cropCacheFolder!!
+        return if (spec?.cropCacheFolder != null && spec?.cropCacheFolder?.exists() == true
+            && spec?.cropCacheFolder?.isDirectory == true
+        ) {
+            spec?.cropCacheFolder!!
         } else {
             File(context.cacheDir.toString() + "/Matisse/cropTemp/")
         }
     }
 
     override fun onDestroy() {
-        if (Platform.isClassExists("com.gyf.barlibrary.ImmersionBar")) {
-            ImmersionBar.with(this).destroy()
-        }
         cv_crop_image.setOnBitmapSaveCompleteListener(null)
         if (null != bitmap && bitmap?.isRecycled == false) {
             bitmap?.recycle()

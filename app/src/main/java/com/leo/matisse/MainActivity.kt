@@ -15,6 +15,7 @@ import com.matisse.compress.CompressHelper
 import com.matisse.compress.FileUtil
 import com.matisse.entity.CaptureStrategy
 import com.matisse.entity.ConstValue
+import com.matisse.listener.Consumer
 import com.matisse.listener.OnCheckedListener
 import com.matisse.listener.OnSelectedListener
 import com.matisse.utils.Platform
@@ -22,6 +23,7 @@ import com.matisse.widget.CropImageView
 import com.tbruyelle.rxpermissions2.RxPermissions
 import kotlinx.android.synthetic.main.activity_main.*
 import java.text.DecimalFormat
+import java.util.concurrent.Callable
 import kotlin.math.log10
 import kotlin.math.pow
 
@@ -45,12 +47,12 @@ class MainActivity : AppCompatActivity() {
                     }
                     Matisse.from(this@MainActivity)
                         .choose(MimeTypeManager.ofAll(), false)
-                        .countable(true)
+                        .countable(false)
                         .capture(true)
                         .showSingleMediaType(true)
                         .isCrop(true)
                         .cropStyle(CropImageView.Style.CIRCLE)
-                        .setStatusIsDark(false)
+                        .setStatusIsDark(true)
                         .theme(R.style.CustomMatisseStyle)
                         .captureStrategy(
                             CaptureStrategy(
@@ -69,6 +71,11 @@ class MainActivity : AppCompatActivity() {
                                 Log.e("onSelected", "onSelected: pathList=$pathList")
                             }
                         })
+                        .setNoticeConsumer(object : Consumer<String> {
+                            override fun accept(params: String) {
+                                showToast(params)
+                            }
+                        })
                         .setOnCheckedListener(object : OnCheckedListener {
                             override fun onCheck(isChecked: Boolean) {
                                 // DO SOMETHING IMMEDIATELY HERE
@@ -78,6 +85,63 @@ class MainActivity : AppCompatActivity() {
                         .forResult(ConstValue.REQUEST_CODE_CHOOSE)
                 }
         }
+
+        btn_media_multi.setOnClickListener {
+            RxPermissions(this@MainActivity)
+                .request(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA)
+                .subscribe {
+                    if (!it) {
+                        Toast.makeText(
+                            this@MainActivity,
+                            R.string.permission_request_denied,
+                            Toast.LENGTH_LONG
+                        ).show()
+                        return@subscribe
+                    }
+                    Matisse.from(this@MainActivity)
+                        .choose(MimeTypeManager.ofAll(), false)
+                        .countable(false)
+                        .capture(true)
+                        .showSingleMediaType(true)
+                        .isCrop(true)
+                        .cropStyle(CropImageView.Style.CIRCLE)
+                        .setStatusIsDark(false)
+                        .theme(R.style.CustomMatisseStyle)
+                        .captureStrategy(
+                            CaptureStrategy(
+                                true,
+                                "${Platform.getPackageName(this@MainActivity)}.fileprovider"
+                            )
+                        )
+                        .maxSelectable(5)
+                        .thumbnailScale(0.8f)
+                        .gridExpectedSize(resources.getDimensionPixelSize(R.dimen.grid_expected_size))
+                        .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+                        .imageEngine(Glide4Engine())
+                        .setOnSelectedListener(object : OnSelectedListener {
+                            override fun onSelected(uriList: List<Uri>, pathList: List<String>) {
+                                // DO SOMETHING IMMEDIATELY HERE
+                                Log.e("onSelected", "onSelected: pathList=$pathList")
+                            }
+                        })
+                        .setNoticeConsumer(object : Consumer<String> {
+                            override fun accept(params: String) {
+                                showToast(params)
+                            }
+                        })
+                        .setOnCheckedListener(object : OnCheckedListener {
+                            override fun onCheck(isChecked: Boolean) {
+                                // DO SOMETHING IMMEDIATELY HERE
+                                Log.e("isChecked", "onCheck: isChecked=$isChecked")
+                            }
+                        })
+                        .forResult(ConstValue.REQUEST_CODE_CHOOSE)
+                }
+        }
+    }
+
+    private fun showToast(value: String) {
+        Toast.makeText(this, value, Toast.LENGTH_SHORT).show()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

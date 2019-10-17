@@ -1,4 +1,4 @@
-package com.matisse.ui.view
+package com.matisse.ui.activity
 
 import android.app.Activity
 import android.content.Context
@@ -6,11 +6,16 @@ import android.content.Intent
 import android.os.Bundle
 import com.matisse.entity.ConstValue
 import com.matisse.entity.Item
-import com.matisse.internal.entity.SelectionSpec
 import kotlinx.android.synthetic.main.activity_media_preview.*
 
 /**
  * Created by liubo on 2018/9/11.
+ */
+/**
+ * desc：图片预览</br>
+ * time: 2019/9/11-14:17</br>
+ * author：Leo </br>
+ * since V 1.0.0 </br>
  */
 class SelectedPreviewActivity : BasePreviewActivity() {
 
@@ -23,19 +28,14 @@ class SelectedPreviewActivity : BasePreviewActivity() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        if (!SelectionSpec.getInstance().hasInited) {
-            setResult(Activity.RESULT_CANCELED)
-            finish()
-            return
-        }
+    override fun setViewData() {
+        super.setViewData()
         val bundle = intent.getBundleExtra(ConstValue.EXTRA_DEFAULT_BUNDLE)
         val selected = bundle.getParcelableArrayList<Item>(ConstValue.STATE_SELECTION)
         adapter?.addAll(selected)
         adapter?.notifyDataSetChanged()
         check_view?.apply {
-            if (spec!!.countable) {
+            if (spec?.isCountable() == true) {
                 setCheckedNum(1)
             } else {
                 setChecked(true)

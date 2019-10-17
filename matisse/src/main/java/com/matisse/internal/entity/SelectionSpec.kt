@@ -9,6 +9,7 @@ import com.matisse.engine.ImageEngine
 import com.matisse.entity.CaptureStrategy
 import com.matisse.entity.Item
 import com.matisse.filter.Filter
+import com.matisse.listener.Consumer
 import com.matisse.listener.OnCheckedListener
 import com.matisse.listener.OnSelectedListener
 import com.matisse.widget.CropImageView
@@ -33,7 +34,7 @@ class SelectionSpec {
     var spanCount = 3
     var captureStrategy: CaptureStrategy? = null
     @StyleRes
-    var themeId = 0
+    var themeId = R.style.Matisse_Default
     var orientation = 0
     var originalable = false
     var originalMaxSize = 0
@@ -53,6 +54,7 @@ class SelectionSpec {
     var hasInited = false
 
     var isDarkStatus: Boolean = false
+    var noticeConsumer: Consumer<String>? = null
 
     class InstanceHolder {
         companion object {
@@ -61,6 +63,8 @@ class SelectionSpec {
     }
 
     companion object {
+
+        const val SINGAL_CHOOSE = 0x1111
         fun getInstance() = InstanceHolder.INSTANCE
 
         fun getCleanInstance(): SelectionSpec {
@@ -104,9 +108,14 @@ class SelectionSpec {
         originalMaxSize = Integer.MAX_VALUE
 
         isDarkStatus = false
+        noticeConsumer = null
     }
 
-    fun openCrop() = isCrop && maxSelectable == 1
+    fun isCountable() = countable && !isSingleChoose()
+
+    fun isSingleChoose() = maxSelectable == 1
+
+    fun openCrop() = isCrop && isSingleChoose()
 
     fun isSupportCrop(item: Item?) = item != null && item.isImage() && !item.isGif()
 

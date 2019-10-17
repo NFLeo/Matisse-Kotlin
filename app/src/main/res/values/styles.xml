@@ -8,7 +8,7 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="CustomMatisseStyle" parent="Matisse.Dark">
+    <style name="CustomMatisseStyle" parent="Matisse.Default">
         <item name="Media.Back.text">@string/back</item>
         <item name="Media.Sure.text">@string/sure</item>
         <item name="Media.Preview.text">@string/preview</item>

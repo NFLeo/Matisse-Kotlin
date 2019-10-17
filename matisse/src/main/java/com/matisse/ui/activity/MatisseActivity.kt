@@ -1,4 +1,4 @@
-package com.matisse.ui.view
+package com.matisse.ui.activity
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -10,8 +10,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.support.v7.app.AppCompatActivity
-import android.text.TextUtils
 import android.view.View
 import com.gyf.barlibrary.ImmersionBar
 import com.matisse.R
@@ -26,6 +24,8 @@ import com.matisse.model.AlbumCollection
 import com.matisse.model.SelectedItemCollection
 import com.matisse.ui.adapter.AlbumMediaAdapter
 import com.matisse.ui.adapter.FolderMediaAdapter
+import com.matisse.ui.view.FolderBottomSheet
+import com.matisse.ui.view.MediaSelectionFragment
 import com.matisse.utils.*
 import com.matisse.widget.IncapableDialog
 import kotlinx.android.synthetic.main.activity_matisse.*
@@ -33,49 +33,36 @@ import kotlinx.android.synthetic.main.include_view_bottom.*
 import kotlinx.android.synthetic.main.include_view_navigation.*
 import java.util.*
 
-class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionProvider,
+/**
+ * desc：入口</br>
+ * time: 2019/9/11-14:17</br>
+ * author：Leo </br>
+ * since V 1.0.0 </br>
+ */
+class MatisseActivity : BaseActivity(),
+    MediaSelectionFragment.SelectionProvider,
     AlbumMediaAdapter.CheckStateListener, AlbumMediaAdapter.OnMediaClickListener,
     AlbumMediaAdapter.OnPhotoCapture, View.OnClickListener {
 
     private var mediaStoreCompat: MediaStoreCompat? = null
-    private var spec: SelectionSpec? = null
     private var originalEnable = false
-    private lateinit var albumCollection: AlbumCollection
+    private var albumCollection: AlbumCollection? = null
     private lateinit var selectedCollection: SelectedItemCollection
-
     private var cursor: Cursor? = null
     private var bottomSheet: FolderBottomSheet? = null
     private var lastFolderCheckedPosition = 0
     private lateinit var allAlbum: Album
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        spec = SelectionSpec.getInstance()
-        setTheme(spec?.themeId!!)
-        super.onCreate(savedInstanceState)
-
-        if (spec?.hasInited == false) {
-            setResult(Activity.RESULT_CANCELED)
-            finish()
-            return
-        }
-        setContentView(R.layout.activity_matisse)
-
+    override fun configActivity() {
         if (Platform.isClassExists("com.gyf.barlibrary.ImmersionBar")) {
             ImmersionBar.with(this).titleBar(toolbar)
                 ?.statusBarDarkFont(spec?.isDarkStatus == true)?.init()
         }
-        initConfigs(savedInstanceState)
-        initListener()
-    }
 
-    private fun initConfigs(savedInstanceState: Bundle?) {
         if (spec?.needOrientationRestriction() == true) {
             requestedOrientation = spec?.orientation ?: ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         }
-
-        albumCollection = AlbumCollection()
-        selectedCollection = SelectedItemCollection(this)
 
         if (spec?.capture == true) {
             mediaStoreCompat = MediaStoreCompat(this)
@@ -83,39 +70,22 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
                 throw RuntimeException("Don't forget to set CaptureStrategy.")
             mediaStoreCompat?.setCaptureStrategy(spec?.captureStrategy!!)
         }
+    }
 
-        selectedCollection.onCreate(savedInstanceState)
-        albumCollection.onCreate(this, object : AlbumCallbacks {
-            override fun onAlbumStart() {
-                // do nothing
-            }
+    override fun getResourceLayoutId() = R.layout.activity_matisse
 
-            override fun onAlbumLoad(cursor: Cursor) {
-                this@MatisseActivity.cursor = cursor
+    override fun setViewData() {
+        albumCollection = AlbumCollection()
+        selectedCollection = SelectedItemCollection(this)
+        selectedCollection.onCreate(instanceState)
+        albumCollection?.onCreate(this, albumCallbacks)
+        if (instanceState != null) albumCollection?.onRestoreInstanceState(instanceState!!)
 
-                Handler(Looper.getMainLooper()).post {
-                    if (cursor.moveToFirst()) {
-                        allAlbum = Album.valueOf(cursor)
-                        onAlbumSelected(allAlbum)
-                    }
-                }
-            }
-
-            override fun onAlbumReset() {
-                if (bottomSheet != null && bottomSheet?.adapter != null) {
-                    cursor = null
-                    bottomSheet?.adapter?.swapCursor(null)
-                }
-            }
-        })
-        if (savedInstanceState != null)
-            albumCollection.onRestoreInstanceState(savedInstanceState)
-
-        albumCollection.loadAlbums()
+        albumCollection?.loadAlbums()
         updateBottomToolbar()
     }
 
-    private fun initListener() {
+    override fun initListener() {
         button_apply.setText(UIUtils.getAttrString(this, R.attr.Media_Album_text))
         button_apply.setOnClickListener(this)
         button_preview.setOnClickListener(this)
@@ -126,17 +96,15 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
 
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
-        selectedCollection.onSaveInstanceState(outState!!)
-        albumCollection.onSaveInstanceState(outState)
-        outState.putBoolean(ConstValue.CHECK_STATE, originalEnable)
+        selectedCollection.onSaveInstanceState(outState)
+        albumCollection?.onSaveInstanceState(outState)
+        outState?.putBoolean(ConstValue.CHECK_STATE, originalEnable)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        if (Platform.isClassExists("com.gyf.barlibrary.ImmersionBar")) {
-            ImmersionBar.with(this).destroy()
-        }
-        albumCollection.onDestroy()
+
+        albumCollection?.onDestroy()
         spec?.onCheckedListener = null
         spec?.onSelectedListener = null
     }
@@ -148,17 +116,15 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
 
     override fun onUpdate() {
         updateBottomToolbar()
-        if (spec!!.onSelectedListener != null) {
-            spec!!.onSelectedListener?.onSelected(
+        if (spec?.onSelectedListener != null) {
+            spec?.onSelectedListener?.onSelected(
                 selectedCollection.asListOfUri(), selectedCollection.asListOfString()
             )
         }
     }
 
     override fun capture() {
-        if (mediaStoreCompat != null) {
-            mediaStoreCompat?.dispatchCaptureIntent(this, ConstValue.REQUEST_CODE_CAPTURE)
-        }
+        mediaStoreCompat?.dispatchCaptureIntent(this, ConstValue.REQUEST_CODE_CAPTURE)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -315,7 +281,7 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
                 original.setChecked(originalEnable)
 
                 if (spec?.onCheckedListener != null)
-                    spec?.onCheckedListener!!.onCheck(originalEnable)
+                    spec?.onCheckedListener?.onCheck(originalEnable)
             }
 
             button_apply -> {
@@ -328,7 +294,7 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
                     override fun onItemClick(cursor: Cursor, position: Int) {
                         lastFolderCheckedPosition = position
 
-                        albumCollection.setStateCurrentSelection(position)
+                        albumCollection?.setStateCurrentSelection(position)
                         cursor.moveToPosition(position)
                         val album = Album.valueOf(cursor)
 
@@ -358,7 +324,7 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
                     this@MatisseActivity, R.attr.Media_Sure_text, R.string.button_sure
                 )
             )
-        } else if (selectedCount == 1 && spec!!.singleSelectionModeEnabled()) {
+        } else if (selectedCount == 1 && spec?.singleSelectionModeEnabled() == true) {
             button_preview.isEnabled = true
             button_complete.setText(
                 UIUtils.getAttrString(
@@ -372,8 +338,7 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
             button_complete.text =
                 "${getString(
                     UIUtils.getAttrString(
-                        this@MatisseActivity,
-                        R.attr.Media_Sure_text
+                        this@MatisseActivity, R.attr.Media_Sure_text
                     ), R.string.button_sure
                 )}($selectedCount)"
         }
@@ -409,9 +374,7 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
 
             if (item.isImage()) {
                 val size = PhotoMetadataUtils.getSizeInMB(item.size)
-                if (size > spec!!.originalMaxSize) {
-                    count++
-                }
+                if (size > spec!!.originalMaxSize) count++
             }
         }
         return count
@@ -428,6 +391,30 @@ class MatisseActivity : AppCompatActivity(), MediaSelectionFragment.SelectionPro
             supportFragmentManager.beginTransaction()
                 .replace(container.id, fragment, MediaSelectionFragment::class.java.simpleName)
                 .commitAllowingStateLoss()
+        }
+    }
+
+    private var albumCallbacks = object : AlbumCallbacks {
+        override fun onAlbumStart() {
+            // do nothing
+        }
+
+        override fun onAlbumLoad(cursor: Cursor) {
+            this@MatisseActivity.cursor = cursor
+
+            Handler(Looper.getMainLooper()).post {
+                if (cursor.moveToFirst()) {
+                    allAlbum = Album.valueOf(cursor)
+                    onAlbumSelected(allAlbum)
+                }
+            }
+        }
+
+        override fun onAlbumReset() {
+            if (bottomSheet != null && bottomSheet?.adapter != null) {
+                cursor = null
+                bottomSheet?.adapter?.swapCursor(null)
+            }
         }
     }
 }

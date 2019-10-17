@@ -21,13 +21,15 @@ object UIUtils {
     fun handleCause(context: Context, cause: IncapableCause?) {
         if (cause == null) return
 
-        when (cause.mForm) {
+        cause.consumer?.accept(cause.message ?: "")
+
+        when (cause.form) {
             // do nothing.
             IncapableCause.NONE -> { /* do noting */
             }
             // Show description with dialog
             IncapableCause.DIALOG -> {
-                val incapableDialog = IncapableDialog.newInstance(cause.mTitle, cause.mMessage)
+                val incapableDialog = IncapableDialog.newInstance(cause.title, cause.message)
                 incapableDialog.show(
                     (context as FragmentActivity).supportFragmentManager,
                     IncapableDialog::class.java.name
@@ -35,7 +37,7 @@ object UIUtils {
             }
             // default is TOAST
             IncapableCause.TOAST -> Toast.makeText(
-                context, cause.mMessage, Toast.LENGTH_SHORT
+                context, cause.message, Toast.LENGTH_SHORT
             ).show()
         }
     }
@@ -75,9 +77,9 @@ object UIUtils {
     /**
      * 根据attr获取外部文字资源
      */
-    fun getAttrString(context: Context, attr: Int, defaultRes:Int = R.string.button_null): Int {
+    fun getAttrString(context: Context, attr: Int, defaultRes: Int = R.string.button_null): Int {
         val ta = context.theme.obtainStyledAttributes(intArrayOf(attr)) ?: return defaultRes
-        val stringRes = ta.getResourceId(0, 0)
+        val stringRes = ta.getResourceId(0, defaultRes)
         ta.recycle()
 
         return stringRes

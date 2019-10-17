@@ -1,11 +1,10 @@
-package com.matisse.ui.view
+package com.matisse.ui.activity
 
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.view.ViewPager
-import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.WindowManager
 import com.gyf.barlibrary.BarHide
@@ -14,9 +13,9 @@ import com.matisse.R
 import com.matisse.entity.ConstValue
 import com.matisse.entity.IncapableCause
 import com.matisse.entity.Item
-import com.matisse.internal.entity.SelectionSpec
 import com.matisse.model.SelectedItemCollection
 import com.matisse.ui.adapter.PreviewPagerAdapter
+import com.matisse.ui.view.PreviewItemFragment
 import com.matisse.utils.PathUtils
 import com.matisse.utils.PhotoMetadataUtils
 import com.matisse.utils.Platform
@@ -27,82 +26,74 @@ import kotlinx.android.synthetic.main.activity_media_preview.*
 import kotlinx.android.synthetic.main.include_view_bottom.*
 
 /**
- * Created by liubo on 2018/9/6.
+ * desc：BasePreviewActivity</br>
+ * time: 2018/9/6-11:15</br>
+ * author：liubo </br>
+ * since V 1.0.0 </br>
  */
-open class BasePreviewActivity : AppCompatActivity(),
-    View.OnClickListener, ViewPager.OnPageChangeListener {
+open class BasePreviewActivity : BaseActivity(), View.OnClickListener,
+    ViewPager.OnPageChangeListener {
 
     lateinit var selectedCollection: SelectedItemCollection
-    var spec: SelectionSpec? = null
     var adapter: PreviewPagerAdapter? = null
-
     var previousPos = -1
     var originalEnable = false
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        spec = SelectionSpec.getInstance()
-        setTheme(spec!!.themeId)
-        super.onCreate(savedInstanceState)
 
-        if (!spec!!.hasInited) {
-            setResult(Activity.RESULT_CANCELED)
-            finish()
-            return
-        }
-
+    override fun configActivity() {
         if (Platform.isClassExists("com.gyf.barlibrary.ImmersionBar")) {
             ImmersionBar.with(this).hideBar(BarHide.FLAG_HIDE_STATUS_BAR)?.init()
         }
 
-        setContentView(R.layout.activity_media_preview)
         if (Platform.hasKitKat19()) {
             window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
         }
-        if (spec!!.needOrientationRestriction()) {
+        if (spec?.needOrientationRestriction() == true) {
             requestedOrientation = spec!!.orientation
         }
 
         selectedCollection = SelectedItemCollection(this)
-        originalEnable = if (savedInstanceState == null) {
+        originalEnable = if (instanceState == null) {
             selectedCollection.onCreate(intent.getBundleExtra(ConstValue.EXTRA_DEFAULT_BUNDLE))
             intent.getBooleanExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, false)
         } else {
-            selectedCollection.onCreate(savedInstanceState)
-            savedInstanceState.getBoolean(ConstValue.CHECK_STATE)
+            selectedCollection.onCreate(instanceState)
+            instanceState!!.getBoolean(ConstValue.CHECK_STATE)
         }
+    }
 
+    override fun getResourceLayoutId() = R.layout.activity_media_preview
+
+    override fun setViewData() {
         button_preview.setText(
             UIUtils.getAttrString(
                 this@BasePreviewActivity, R.attr.Preview_Back_text, R.string.button_back
             )
         )
 
-        button_preview.setOnClickListener(this)
-        button_apply.setOnClickListener(this)
-
-        pager?.addOnPageChangeListener(this)
         adapter = PreviewPagerAdapter(supportFragmentManager, null)
         pager?.adapter = adapter
+        check_view.setCountable(spec?.isCountable() == true)
+        updateApplyButton()
+    }
 
-        check_view.setCountable(spec!!.countable)
+    override fun initListener() {
+        button_preview.setOnClickListener(this)
+        button_apply.setOnClickListener(this)
+        pager?.addOnPageChangeListener(this)
         check_view.setOnClickListener(this)
         original_layout.setOnClickListener(this)
-
-        updateApplyButton()
     }
 
     private fun countOverMaxSize(): Int {
         var count = 0
-        val selectedCount = selectedCollection.count()
-        for (i in 0 until selectedCount) {
-            val item: Item = selectedCollection.asList()[i]
-            if (item.isImage()) {
-                val size = PhotoMetadataUtils.getSizeInMB(item.size)
-                if (size > spec!!.originalMaxSize) {
-                    count++
-                }
+        selectedCollection.asList().forEach {
+            if (it.isImage()) {
+                val size = PhotoMetadataUtils.getSizeInMB(it.size)
+                if (size > spec?.originalMaxSize ?: 0) count++
             }
         }
+
         return count
     }
 
@@ -123,6 +114,8 @@ open class BasePreviewActivity : AppCompatActivity(),
         intent.putExtra(ConstValue.EXTRA_RESULT_APPLY, apply)
         intent.putExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, originalEnable)
         setResult(Activity.RESULT_OK, intent)
+
+        if (apply) finish()
     }
 
     @SuppressLint("SetTextI18n")
@@ -168,7 +161,7 @@ open class BasePreviewActivity : AppCompatActivity(),
             }
         }
 
-        if (spec!!.originalable) {
+        if (spec?.originalable == true) {
             UIUtils.setViewVisible(true, original_layout)
             updateOriginalState()
         } else {
@@ -204,7 +197,7 @@ open class BasePreviewActivity : AppCompatActivity(),
             if (previousPos != -1 && previousPos != position) {
                 (adapter.instantiateItem(pager!!, previousPos) as PreviewItemFragment).resetView()
                 val item = adapter.getMediaItem(position)
-                if (spec!!.countable) {
+                if (spec?.isCountable() == true) {
                     val checkedNum = selectedCollection.checkedNumOf(item)
                     setCheckedNum(checkedNum)
                     if (checkedNum > 0) {
@@ -228,20 +221,20 @@ open class BasePreviewActivity : AppCompatActivity(),
         item?.apply {
             tv_size.apply {
                 if (isGif()) {
-                    visibility = View.VISIBLE
+                    UIUtils.setViewVisible(true, this)
                     text = String.format(
                         getString(R.string.picture_size), PhotoMetadataUtils.getSizeInMB(size)
                     )
                 } else {
-                    visibility = View.GONE
+                    UIUtils.setViewVisible(false, this)
                 }
             }
 
             original_layout?.apply {
                 if (isVideo()) {
-                    visibility = View.GONE
-                } else if (spec!!.originalable) {
-                    visibility = View.VISIBLE
+                    UIUtils.setViewVisible(false, this)
+                } else if (spec?.originalable == true) {
+                    UIUtils.setViewVisible(true, this)
                 }
             }
         }
@@ -263,11 +256,9 @@ open class BasePreviewActivity : AppCompatActivity(),
                         startActivityForResult(intentCrop, ConstValue.REQUEST_CODE_CROP)
                     } else {
                         sendBackResult(true)
-                        finish()
                     }
                 } else {
                     sendBackResult(true)
-                    finish()
                 }
             }
 
@@ -292,7 +283,7 @@ open class BasePreviewActivity : AppCompatActivity(),
                 val item = adapter?.getMediaItem(pager.currentItem)
                 if (selectedCollection.isSelected(item)) {
                     selectedCollection.remove(item)
-                    if (spec?.countable == true) {
+                    if (spec?.isCountable() == true) {
                         check_view.setCheckedNum(CheckView.UNCHECKED)
                     } else {
                         check_view.setChecked(false)
@@ -303,7 +294,7 @@ open class BasePreviewActivity : AppCompatActivity(),
 
                     if (assertAddSelection(item)) {
                         selectedCollection.add(item)
-                        if (spec!!.countable) {
+                        if (spec?.isCountable() == true) {
                             check_view.setCheckedNum(selectedCollection.checkedNumOf(item))
                         } else {
                             check_view.setChecked(true)
@@ -336,12 +327,5 @@ open class BasePreviewActivity : AppCompatActivity(),
         val cause = selectedCollection.isAcceptable(item)
         IncapableCause.handleCause(this, cause)
         return cause == null
-    }
-
-    override fun onDestroy() {
-        if (Platform.isClassExists("com.gyf.barlibrary.ImmersionBar")) {
-            ImmersionBar.with(this).destroy()
-        }
-        super.onDestroy()
     }
 }

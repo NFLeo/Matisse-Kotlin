@@ -53,8 +53,8 @@ class AlbumCollection : LoaderManager.LoaderCallbacks<Cursor> {
         currentSelection = saveInstanceState.getInt(STATE_CURRENT_SELECTION)
     }
 
-    fun onSaveInstanceState(outState: Bundle) {
-        outState.putInt(STATE_CURRENT_SELECTION, currentSelection)
+    fun onSaveInstanceState(outState: Bundle?) {
+        outState?.putInt(STATE_CURRENT_SELECTION, currentSelection)
     }
 
     fun onDestroy() {

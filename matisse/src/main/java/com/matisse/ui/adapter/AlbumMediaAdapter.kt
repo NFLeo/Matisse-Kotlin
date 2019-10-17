@@ -29,11 +29,14 @@ class AlbumMediaAdapter(
     var checkStateListener: CheckStateListener? = null
     var onMediaClickListener: OnMediaClickListener? = null
     private var imageResize = 0
+    private var layoutInflater: LayoutInflater
 
     init {
         val ta = context.theme.obtainStyledAttributes(intArrayOf(R.attr.item_placeholder))
         placeholder = ta.getDrawable(0)
         ta.recycle()
+
+        layoutInflater = LayoutInflater.from(context)
     }
 
     companion object {
@@ -44,8 +47,7 @@ class AlbumMediaAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         when (viewType) {
             VIEW_TYPE_CAPTURE -> {
-                val v = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.item_photo_capture, parent, false)
+                val v = layoutInflater.inflate(R.layout.item_photo_capture, parent, false)
                 val holder = CaptureViewHolder(v)
                 holder.itemView.setOnClickListener {
                     if (it.context is OnPhotoCapture) (it.context as OnPhotoCapture).capture()
@@ -53,8 +55,7 @@ class AlbumMediaAdapter(
                 return holder
             }
             else -> {
-                val v = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.item_media_grid, parent, false)
+                val v = layoutInflater.inflate(R.layout.item_media_grid, parent, false)
                 return MediaViewHolder(v)
             }
         }
@@ -64,15 +65,13 @@ class AlbumMediaAdapter(
         holder.apply {
             when (this) {
                 is CaptureViewHolder ->
-                    UIUtils.setTextDrawable(
-                        itemView.context, hint, R.attr.Media_Camera_textColor
-                    )
+                    UIUtils.setTextDrawable(itemView.context, hint, R.attr.Media_Camera_textColor)
                 is MediaViewHolder -> {
                     val item = Item.valueOf(cursor)
                     mediaGrid.preBindMedia(
                         MediaGrid.PreBindInfo(
                             getImageResize(mediaGrid.context), placeholder,
-                            selectionSpec.countable, holder
+                            selectionSpec.isCountable(), holder
                         )
                     )
                     mediaGrid.bindMedia(item)
@@ -102,35 +101,20 @@ class AlbumMediaAdapter(
     }
 
     private fun setCheckStatus(item: Item, mediaGrid: MediaGrid) {
-        if (selectionSpec.countable) {
+        if (selectionSpec.isCountable()) {
+            // 单选不以数字方式显示
             val checkedNum = selectedCollection.checkedNumOf(item)
 
             if (checkedNum > 0) {
-                mediaGrid.setCheckEnabled(true)
                 mediaGrid.setCheckedNum(checkedNum)
             } else {
-                if (selectedCollection.maxSelectableReached()) {
-                    mediaGrid.setCheckEnabled(false)
-                    mediaGrid.setCheckedNum(CheckView.UNCHECKED)
-                } else {
-                    mediaGrid.setCheckEnabled(true)
-                    mediaGrid.setCheckedNum(checkedNum)
-                }
+                mediaGrid.setCheckedNum(
+                    if (selectedCollection.maxSelectableReached()) CheckView.UNCHECKED else checkedNum
+                )
             }
         } else {
             val selected = selectedCollection.isSelected(item)
-            if (selected) {
-                mediaGrid.setCheckEnabled(true)
-                mediaGrid.setChecked(true)
-            } else {
-                // single check mode can be reCheck again
-                if (selectedCollection.maxSelectableReached() && selectionSpec.maxSelectable != 1) {
-                    mediaGrid.setCheckEnabled(false)
-                } else {
-                    mediaGrid.setCheckEnabled(true)
-                }
-                mediaGrid.setChecked(false)
-            }
+            mediaGrid.setChecked(selected)
         }
     }
 
@@ -143,7 +127,7 @@ class AlbumMediaAdapter(
     override fun onCheckViewClicked(
         checkView: CheckView, item: Item, holder: RecyclerView.ViewHolder
     ) {
-        if (selectionSpec.countable) {
+        if (selectionSpec.isCountable()) {
             val checkedNum = selectedCollection.checkedNumOf(item)
             if (checkedNum == CheckView.UNCHECKED) {
                 if (assertAddSelection(holder.itemView.context, item)) {
@@ -159,7 +143,7 @@ class AlbumMediaAdapter(
                 selectedCollection.remove(item)
                 notifyCheckStateChanged()
             } else {
-                if (selectionSpec.maxSelectable <= 1) {
+                if (selectionSpec.isSingleChoose()) {
                     selectedCollection.removeAll()
                     if (!assertAddSelection(holder.itemView.context, item)) return
 
@@ -173,6 +157,13 @@ class AlbumMediaAdapter(
                 }
             }
         }
+    }
+
+    /**
+     * 单选
+     */
+    private fun singleCheckChanged() {
+        // TODO
     }
 
     private fun notifyCheckStateChanged() {

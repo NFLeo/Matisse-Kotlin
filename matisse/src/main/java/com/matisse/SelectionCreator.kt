@@ -27,9 +27,10 @@ import com.matisse.engine.ImageEngine
 import com.matisse.entity.CaptureStrategy
 import com.matisse.filter.Filter
 import com.matisse.internal.entity.SelectionSpec
+import com.matisse.listener.Consumer
 import com.matisse.listener.OnCheckedListener
 import com.matisse.listener.OnSelectedListener
-import com.matisse.ui.view.MatisseActivity
+import com.matisse.ui.activity.MatisseActivity
 import com.matisse.widget.CropImageView
 import java.io.File
 import java.util.*
@@ -367,9 +368,17 @@ class SelectionCreator(
      * @param isDark [Boolean]
      * @return [SelectionCreator] for fluent API.
      */
-    fun setStatusIsDark(isDark: Boolean): SelectionCreator {
+    fun setStatusIsDark(isDark: Boolean) = this.run {
         mSelectionSpec.isDarkStatus = isDark
-        return this
+        this
+    }
+
+    /**
+     * set notice type for matisse
+     */
+    fun setNoticeConsumer(noticeConsumer: Consumer<String>?) = this.run {
+        mSelectionSpec.noticeConsumer = noticeConsumer
+        this
     }
 
     /**

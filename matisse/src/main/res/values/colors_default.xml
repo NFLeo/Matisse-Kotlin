@@ -3,8 +3,8 @@
     <color name="primary">@color/white</color>
     <color name="primary_dark">@color/gray</color>
 
-    <color name="color_base">#FFF98F4D</color>
-    <color name="color_base_press">#77F98F4D</color>
+    <color name="color_base">#1523A7</color>
+    <color name="color_base_press">#771523A7</color>
 
     <color name="navigation_bg">@color/white</color>
     <color name="preview_bg">@color/black</color>
@@ -19,13 +19,13 @@
     <color name="text_camera">@color/color_hint_text</color>
     <color name="text_empty">@color/color_hint_text</color>
 
-    // 选择控件背景色
+    <!--选择控件背景色-->
     <color name="item_checkCircle_backgroundColor">@color/selector_base_text</color>
-    // 选择控件边框颜色
+    <!--选择控件边框颜色-->
     <color name="item_checkCircle_borderColor">@color/selector_white_text</color>
-    // 选择控件文字状态文字颜色
+    <!--选择控件文字状态文字颜色-->
 
-    // 选择控件背景色
+    <!--选择控件背景色-->
     <color name="item_checkRadio">@color/selector_base_text</color>
     <color name="check_original_radio_disable">#808080</color>
 </resources>

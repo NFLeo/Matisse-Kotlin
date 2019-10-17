@@ -97,7 +97,7 @@ So if you are targeting Android 6.0+, you need to handle runtime permission requ
 使用主题时可直接使用Matisse.Default， 或者在自己项目中另写style继承自Matisse.Default，如下
 ```
 app/style.xml
-    <style name="CustomMatisseStyle" parent="Matisse.Dark">
+    <style name="CustomMatisseStyle" parent="Matisse.Default">
         <item name="Media.Back.text">@string/back</item>
         <item name="Media.Sure.text">@string/sure</item>
         <item name="Media.Preview.text">@string/preview</item>

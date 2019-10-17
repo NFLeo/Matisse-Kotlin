@@ -66,10 +66,6 @@ class MediaGrid : SquareFrameLayout, View.OnClickListener {
         check_view.setCountable(preBindInfo.checkViewCountable)
     }
 
-    fun setCheckEnabled(enabled: Boolean) {
-        check_view.isEnabled = enabled
-    }
-
     fun setCheckedNum(checkedNum: Int) {
         check_view.setCheckedNum(checkedNum)
     }
