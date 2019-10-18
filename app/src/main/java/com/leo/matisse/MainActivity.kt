@@ -46,12 +46,12 @@ class MainActivity : AppCompatActivity() {
                         return@subscribe
                     }
                     Matisse.from(this@MainActivity)
-                        .choose(MimeTypeManager.ofAll(), false)
+                        .choose(MimeTypeManager.ofAll())
                         .countable(true)
                         .capture(true)
                         .isCrop(true)
                         .cropStyle(CropImageView.Style.CIRCLE)
-                        .maxSelectablePerMediaType(4, 2)
+                        .maxSelectable(3)
                         .setStatusIsDark(true)
                         .theme(R.style.CustomMatisseStyle)
                         .captureStrategy(
@@ -98,7 +98,7 @@ class MainActivity : AppCompatActivity() {
                         return@subscribe
                     }
                     Matisse.from(this@MainActivity)
-                        .choose(MimeTypeManager.ofAll(), false)
+                        .choose(MimeTypeManager.ofAll(), true)
                         .countable(false)
                         .capture(true)
                         .isCrop(true)
@@ -111,7 +111,7 @@ class MainActivity : AppCompatActivity() {
                                 "${Platform.getPackageName(this@MainActivity)}.fileprovider"
                             )
                         )
-                        .maxSelectable(5)
+                        .maxSelectable(1)
                         .thumbnailScale(0.8f)
                         .gridExpectedSize(resources.getDimensionPixelSize(R.dimen.grid_expected_size))
                         .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)

@@ -9,6 +9,44 @@ Matisse核心功能：[https://github.com/zhihu/Matisse](https://github.com/zhih
 
 图片压缩提供者：[https://github.com/nanchen2251](https://github.com/nanchen2251)
 
+# 版本更新记录
+2019-10-18 (1.2.0)
+1. 修复并支持图片与视频混合选择
+```
+设置选择单一类型媒体，示例如下
+SelectionCreator.choose(MimeTypeManager.ofAll())
+                .maxSelectable(3)
+或者
+SelectionCreator.choose(MimeTypeManager.ofAll(), true)
+                .maxSelectable(3)
+
+设置选择混合类型媒体，示例如下
+SelectionCreator.choose(MimeTypeManager.ofAll(), false)
+                .maxSelectablePerMediaType(4, 2)
+
+说明：
+mediaTypeExclusive true 单一媒体类型选择
+     读取maxSelectable属性作为最大值
+mediaTypeExclusive false
+     读取maxImageSelectable和maxVideoSelectable属性分别作为最大值
+```
+2. 修改单/多选逻辑
+	* 单选支持重新选定，不支持计数方式
+	* 多选不支持重新选定，选满外部给出提示方式，支持计数与选中方式
+3. 提示方式外部实现
+```
+SelectionCreator.setNoticeConsumer(object : Consumer<String> {
+                            override fun accept(params: String) {
+                                // 提示方式。 可使用与自己项目相同样式的Toast或其他
+                                showToast(params)
+                            }
+                        })
+```
+
+2019-10-16
+1. 完善主题扩展，并提供图片说明
+
+
 # Matisse
 本项目为知乎原项目kotlin改写版本（2018/9月版本），由于项目纯图片选择库与[Matisse](https://github.com/zhihu/Matisse)UI风格有较大差异，为方便个人使用顺手便对[Matisse](https://github.com/zhihu/Matisse)进行Kotlin翻译，主要对原项目进行部分UI层面改写、已发现bug的修改、新功能添加。
 *主要修改内容为：*
@@ -28,8 +66,8 @@ Matisse核心功能：[https://github.com/zhihu/Matisse](https://github.com/zhih
 关于打包报错问题：
 
 使用：
-1. gradle中添加 implementation 'com.nfleo:MatisseKotlin:1.1.1'
-2. AnidroidManifest.xml中添加以下代码
+1. gradle中添加 implementation 'com.nfleo:MatisseKotlin:1.2.0'
+2. AndroidManifest.xml中添加以下代码
 
         <activity android:name="com.matisse.ui.view.MatisseActivity" />
 
@@ -43,10 +81,15 @@ Matisse核心功能：[https://github.com/zhihu/Matisse](https://github.com/zhih
                 android:resource="@xml/file_paths_public"/>
         </provider>
 
-3. 为适配7.0，,项目manifest的privider标签下 paths文件中添加
+3. 6.0+需处理权限
+The library requires two permissions:
+    - `android.permission.READ_EXTERNAL_STORAGE`
+    - `android.permission.WRITE_EXTERNAL_STORAGE`
+
+4. 为适配7.0，,项目manifest的privider标签下 paths文件中添加
     <external-path  name="my_images" path="Pictures"/>
 
-4. 项目gradle中添加
+5. 项目gradle中添加
 
 // 具体版本需自行配置
 ext {
@@ -73,17 +116,6 @@ ext {
 |![](image/screenshot_circlecrop.jpg) | ![](image/screenshot_squarecrop.jpg) |
 
 
-## How do I use Matisse?
-```
-com.nfleo:MatisseKotlin:1.1.8
-```
-#### Permission 添加权限申请
-The library requires two permissions:
-- `android.permission.READ_EXTERNAL_STORAGE`
-- `android.permission.WRITE_EXTERNAL_STORAGE`
-
-So if you are targeting Android 6.0+, you need to handle runtime permission request before next step.
-
 #### Simple usage snippet
 ------
 
@@ -94,7 +126,7 @@ So if you are targeting Android 6.0+, you need to handle runtime permission requ
 
 
 使用套路与原项目一致，只是多增加了一些参数，另外定制时需配置所提供的所有参数。
-使用主题时可直接使用Matisse.Default， 或者在自己项目中另写style继承自Matisse.Default，如下
+使用主题时可直接使用Matisse.Default， 或者在自己项目中另写style继承自Matisse.Default，修改自己所需属性，如下
 ```
 app/style.xml
     <style name="CustomMatisseStyle" parent="Matisse.Default">

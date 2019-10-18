@@ -23,7 +23,7 @@ class SelectionSpec {
     var mimeTypeSet: Set<MimeType>? = null
     var mediaTypeExclusive = false                      // 设置单种/多种媒体资源选择 默认支持多种
     var filters: List<Filter>? = null
-    var maxSelectable = 0
+    var maxSelectable = 1
     var maxImageSelectable = 0
     var maxVideoSelectable = 0
     var thumbnailScale = 0.5f
@@ -120,6 +120,10 @@ class SelectionSpec {
     fun openCrop() = isCrop && isSingleChoose()
 
     fun isSupportCrop(item: Item?) = item != null && item.isImage() && !item.isGif()
+
+    // 是否单一资源选择方式
+    fun isMediaTypeExclusive() =
+        mediaTypeExclusive && (maxImageSelectable + maxVideoSelectable == 0)
 
     fun onlyShowImages() =
         if (mimeTypeSet != null) MimeTypeManager.ofImage().containsAll(mimeTypeSet!!) else false

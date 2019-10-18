@@ -95,11 +95,16 @@ class SelectionCreator(
 
     /**
      * Maximum selectable count.
-     *
+     * mediaTypeExclusive true
+     *      use maxSelectable
+     * mediaTypeExclusive false
+     *      use maxImageSelectable and maxVideoSelectable
      * @param maxSelectable Maximum selectable count. Default value is 1.
      * @return [SelectionCreator] for fluent API.
      */
     fun maxSelectable(maxSelectable: Int): SelectionCreator {
+        if (!mSelectionSpec.mediaTypeExclusive)
+            throw IllegalArgumentException("maxSelectable must be set when mediaTypeExclusive is true")
         if (maxSelectable < 1)
             throw IllegalArgumentException("maxSelectable must be greater than or equal to one")
         if (mSelectionSpec.maxImageSelectable > 0 || mSelectionSpec.maxVideoSelectable > 0)

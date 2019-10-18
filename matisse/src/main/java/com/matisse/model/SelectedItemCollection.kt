@@ -60,7 +60,7 @@ class SelectedItemCollection(private var context: Context) {
      * 根据混合选择模式，初始化图片与视频集合
      */
     private fun initImageOrVideoItems() {
-        if (spec.mediaTypeExclusive) return
+        if (spec.isMediaTypeExclusive()) return
         items.forEach {
             addImageOrVideoItem(it)
         }
@@ -138,7 +138,7 @@ class SelectedItemCollection(private var context: Context) {
     }
 
     private fun currentMaxSelectableTips(item: Item?): Int {
-        if (!spec.mediaTypeExclusive) {
+        if (!spec.isMediaTypeExclusive()) {
             if (item?.isImage() == true) {
                 return R.string.error_over_count_of_image
             } else if (item?.isVideo() == true) {
@@ -150,7 +150,7 @@ class SelectedItemCollection(private var context: Context) {
     }
 
     fun maxSelectableReached(item: Item?): Boolean {
-        if (!spec.mediaTypeExclusive) {
+        if (!spec.isMediaTypeExclusive()) {
             if (item?.isImage() == true) {
                 return spec.maxImageSelectable == imageItems?.size
             } else if (item?.isVideo() == true) {
@@ -162,7 +162,7 @@ class SelectedItemCollection(private var context: Context) {
 
     // depends
     private fun currentMaxSelectable(item: Item?): Int {
-        if (!spec.mediaTypeExclusive) {
+        if (!spec.isMediaTypeExclusive()) {
             if (item?.isImage() == true) {
                 return spec.maxImageSelectable
             } else if (item?.isVideo() == true) {
@@ -209,7 +209,7 @@ class SelectedItemCollection(private var context: Context) {
      * while [SelectionSpec.mediaTypeExclusive] is set to false.
      */
     private fun typeConflict(item: Item?) =
-        spec.mediaTypeExclusive
+        spec.isMediaTypeExclusive()
                 && ((item?.isImage() == true && (collectionType == COLLECTION_VIDEO || collectionType == COLLECTION_MIXED))
                 || (item?.isVideo() == true && (collectionType == COLLECTION_IMAGE || collectionType == COLLECTION_MIXED)))
 
@@ -232,7 +232,9 @@ class SelectedItemCollection(private var context: Context) {
                 }
 
                 COLLECTION_IMAGE, COLLECTION_VIDEO -> {
-                    if (item.isVideo() || item.isImage()) {
+                    if ((item.isImage() && collectionType == COLLECTION_VIDEO)
+                        || item.isVideo() && collectionType == COLLECTION_IMAGE
+                    ) {
                         collectionType = COLLECTION_MIXED
                     }
                 }
