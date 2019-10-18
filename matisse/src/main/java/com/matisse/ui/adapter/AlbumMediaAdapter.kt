@@ -109,7 +109,7 @@ class AlbumMediaAdapter(
                 mediaGrid.setCheckedNum(checkedNum)
             } else {
                 mediaGrid.setCheckedNum(
-                    if (selectedCollection.maxSelectableReached()) CheckView.UNCHECKED else checkedNum
+                    if (selectedCollection.maxSelectableReached(item)) CheckView.UNCHECKED else checkedNum
                 )
             }
         } else {

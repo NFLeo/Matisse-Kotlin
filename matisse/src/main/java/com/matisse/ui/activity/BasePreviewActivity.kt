@@ -41,15 +41,13 @@ open class BasePreviewActivity : BaseActivity(), View.OnClickListener,
 
 
     override fun configActivity() {
+        super.configActivity()
         if (Platform.isClassExists("com.gyf.barlibrary.ImmersionBar")) {
             ImmersionBar.with(this).hideBar(BarHide.FLAG_HIDE_STATUS_BAR)?.init()
         }
 
         if (Platform.hasKitKat19()) {
             window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-        }
-        if (spec?.needOrientationRestriction() == true) {
-            requestedOrientation = spec!!.orientation
         }
 
         selectedCollection = SelectedItemCollection(this)
@@ -65,11 +63,7 @@ open class BasePreviewActivity : BaseActivity(), View.OnClickListener,
     override fun getResourceLayoutId() = R.layout.activity_media_preview
 
     override fun setViewData() {
-        button_preview.setText(
-            UIUtils.getAttrString(
-                this@BasePreviewActivity, R.attr.Preview_Back_text, R.string.button_back
-            )
-        )
+        button_preview.setText(getAttrString(R.attr.Preview_Back_text, R.string.button_back))
 
         adapter = PreviewPagerAdapter(supportFragmentManager, null)
         pager?.adapter = adapter
@@ -80,9 +74,9 @@ open class BasePreviewActivity : BaseActivity(), View.OnClickListener,
     override fun initListener() {
         button_preview.setOnClickListener(this)
         button_apply.setOnClickListener(this)
-        pager?.addOnPageChangeListener(this)
         check_view.setOnClickListener(this)
         original_layout.setOnClickListener(this)
+        pager?.addOnPageChangeListener(this)
     }
 
     private fun countOverMaxSize(): Int {
@@ -126,10 +120,7 @@ open class BasePreviewActivity : BaseActivity(), View.OnClickListener,
             when (selectedCount) {
                 0 -> {
                     text = getString(
-                        UIUtils.getAttrString(
-                            this@BasePreviewActivity,
-                            R.attr.Preview_Confirm_text, R.string.button_sure_default
-                        )
+                        getAttrString(R.attr.Preview_Confirm_text, R.string.button_sure_default)
                     )
                     isEnabled = false
                 }
@@ -140,22 +131,14 @@ open class BasePreviewActivity : BaseActivity(), View.OnClickListener,
                         getString(R.string.button_sure_default)
                     } else {
                         "${getString(
-                            UIUtils.getAttrString(
-                                this@BasePreviewActivity,
-                                R.attr.Preview_Confirm_text,
-                                R.string.button_sure_default
-                            )
+                            getAttrString(R.attr.Preview_Confirm_text, R.string.button_sure_default)
                         )}($selectedCount)"
                     }
                 }
                 else -> {
                     isEnabled = true
                     text = "${getString(
-                        UIUtils.getAttrString(
-                            this@BasePreviewActivity,
-                            R.attr.Preview_Confirm_text,
-                            R.string.button_sure_default
-                        )
+                        getAttrString(R.attr.Preview_Confirm_text, R.string.button_sure_default)
                     )}($selectedCount)"
                 }
             }
@@ -174,8 +157,7 @@ open class BasePreviewActivity : BaseActivity(), View.OnClickListener,
         if (countOverMaxSize() > 0) {
             if (originalEnable) {
                 val incapableDialog = IncapableDialog.newInstance(
-                    "",
-                    getString(R.string.error_over_original_size, spec!!.originalMaxSize)
+                    "", getString(R.string.error_over_original_size, spec!!.originalMaxSize)
                 )
                 incapableDialog.show(supportFragmentManager, IncapableDialog::class.java.name)
                 original?.setChecked(false)
@@ -195,7 +177,7 @@ open class BasePreviewActivity : BaseActivity(), View.OnClickListener,
 
         check_view.apply {
             if (previousPos != -1 && previousPos != position) {
-                (adapter.instantiateItem(pager!!, previousPos) as PreviewItemFragment).resetView()
+                (adapter.instantiateItem(pager, previousPos) as PreviewItemFragment).resetView()
                 val item = adapter.getMediaItem(position)
                 if (spec?.isCountable() == true) {
                     val checkedNum = selectedCollection.checkedNumOf(item)
@@ -203,12 +185,12 @@ open class BasePreviewActivity : BaseActivity(), View.OnClickListener,
                     if (checkedNum > 0) {
                         setEnable(true)
                     } else {
-                        setEnable(!selectedCollection.maxSelectableReached())
+                        setEnable(!selectedCollection.maxSelectableReached(item))
                     }
                 } else {
                     val checked = selectedCollection.isSelected(item)
                     setChecked(checked)
-                    if (checked) setEnable(true) else setEnable(!selectedCollection.maxSelectableReached())
+                    if (checked) setEnable(true) else setEnable(!selectedCollection.maxSelectableReached(item))
                 }
                 updateSize(item)
             }
@@ -289,8 +271,8 @@ open class BasePreviewActivity : BaseActivity(), View.OnClickListener,
                         check_view.setChecked(false)
                     }
                 } else {
-                    if (spec?.maxImageSelectable!! <= 1)
-                        selectedCollection.removeAll()
+//                    if (spec?.maxImageSelectable ?: 0 <= 1)
+//                        selectedCollection.removeAll()
 
                     if (assertAddSelection(item)) {
                         selectedCollection.add(item)

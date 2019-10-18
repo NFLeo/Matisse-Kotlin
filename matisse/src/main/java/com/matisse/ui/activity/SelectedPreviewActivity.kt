@@ -12,7 +12,7 @@ import kotlinx.android.synthetic.main.activity_media_preview.*
  * Created by liubo on 2018/9/11.
  */
 /**
- * desc：图片预览</br>
+ * desc：图片选中预览</br>
  * time: 2019/9/11-14:17</br>
  * author：Leo </br>
  * since V 1.0.0 </br>

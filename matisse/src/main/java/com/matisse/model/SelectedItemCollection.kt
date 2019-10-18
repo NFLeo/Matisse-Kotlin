@@ -4,21 +4,31 @@ import android.content.Context
 import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import com.matisse.R
 import com.matisse.entity.ConstValue.STATE_COLLECTION_TYPE
 import com.matisse.entity.ConstValue.STATE_SELECTION
 import com.matisse.entity.IncapableCause
 import com.matisse.entity.Item
 import com.matisse.internal.entity.SelectionSpec
-import com.matisse.widget.CheckView
 import com.matisse.utils.PathUtils
 import com.matisse.utils.PhotoMetadataUtils
-import java.util.LinkedHashSet
+import com.matisse.widget.CheckView
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.List
+import kotlin.collections.contains
+import kotlin.collections.forEach
+import kotlin.collections.indexOf
+import kotlin.collections.linkedSetOf
 
 class SelectedItemCollection(private var context: Context) {
 
     private lateinit var items: LinkedHashSet<Item>
+    private var imageItems: LinkedHashSet<Item>? = null
+    private var videoItems: LinkedHashSet<Item>? = null
     private var collectionType = COLLECTION_UNDEFINED
+    private val spec: SelectionSpec = SelectionSpec.getInstance()
 
     companion object {
         /**
@@ -32,7 +42,7 @@ class SelectedItemCollection(private var context: Context) {
         /**
          * Collection only with videos
          */
-        const val COLLECTION_VIDEO = 0x01 shl 1
+        const val COLLECTION_VIDEO = 0x02
         /**
          * Collection with images and videos.
          */
@@ -45,7 +55,15 @@ class SelectedItemCollection(private var context: Context) {
         } else {
             val saved = bundle.getParcelableArrayList<Item>(STATE_SELECTION)
             items = LinkedHashSet(saved!!)
+            initImageOrVideoItems()
             collectionType = bundle.getInt(STATE_COLLECTION_TYPE, COLLECTION_UNDEFINED)
+        }
+    }
+
+    private fun initImageOrVideoItems() {
+        if (spec.mediaTypeExclusive) return
+        items.forEach {
+            addImageOrVideoItem(it)
         }
     }
 
@@ -72,6 +90,7 @@ class SelectedItemCollection(private var context: Context) {
         if (item == null) return false
 
         val added = items.add(item)
+        addImageOrVideoItem(item)
         if (added) {
             when (collectionType) {
                 COLLECTION_UNDEFINED -> {
@@ -89,19 +108,45 @@ class SelectedItemCollection(private var context: Context) {
                 }
             }
         }
+
+        Log.e("Leo", "collectionType = $collectionType")
         return added
+    }
+
+    private fun addImageOrVideoItem(item: Item) {
+        if (item.isImage()) {
+            if (imageItems == null)
+                imageItems = linkedSetOf()
+
+            imageItems?.add(item)
+        } else if (item.isVideo()) {
+            if (videoItems == null)
+                videoItems = linkedSetOf()
+
+            videoItems?.add(item)
+        }
+    }
+
+    private fun removeImageOrVideoItem(item: Item) {
+        if (item.isImage()) {
+            imageItems?.remove(item)
+        } else if (item.isVideo()) {
+            videoItems?.remove(item)
+        }
     }
 
     fun remove(item: Item?): Boolean {
         if (item == null) return false
         val removed = items.remove(item)
+        removeImageOrVideoItem(item)
         if (removed) resetType()
-
         return removed
     }
 
     fun removeAll() {
         items.clear()
+        imageItems?.clear()
+        videoItems?.clear()
         resetType()
     }
 
@@ -141,24 +186,15 @@ class SelectedItemCollection(private var context: Context) {
     }
 
     fun isAcceptable(item: Item?): IncapableCause? {
-        if (maxSelectableReached()) {
-            val maxSelectable = currentMaxSelectable()
+        if (maxSelectableReached(item)) {
+            val maxSelectable = currentMaxSelectable(item)
 
             val cause = try {
-                context.getString(
-                    R.string.error_over_count,
-                    maxSelectable
-                )
+                context.getString(R.string.error_over_count, maxSelectable)
             } catch (e: Resources.NotFoundException) {
-                context.getString(
-                    R.string.error_over_count,
-                    maxSelectable
-                )
+                context.getString(R.string.error_over_count, maxSelectable)
             } catch (e: NoClassDefFoundError) {
-                context.getString(
-                    R.string.error_over_count,
-                    maxSelectable
-                )
+                context.getString(R.string.error_over_count, maxSelectable)
             }
 
             return IncapableCause(cause)
@@ -169,17 +205,28 @@ class SelectedItemCollection(private var context: Context) {
         return PhotoMetadataUtils.isAcceptable(context, item)
     }
 
-    fun maxSelectableReached() = items.size == currentMaxSelectable()
+    fun maxSelectableReached(item: Item?): Boolean {
+        if (!spec.mediaTypeExclusive) {
+            if (item?.isImage() == true) {
+                return spec.maxImageSelectable == imageItems?.size
+            } else if (item?.isVideo() == true) {
+                return spec.maxVideoSelectable == videoItems?.size
+            }
+        }
+        return spec.maxSelectable == items.size
+    }
 
     // depends
-    private fun currentMaxSelectable(): Int {
-        val spec = SelectionSpec.getInstance()
-        return when {
-            spec.maxSelectable > 0 -> spec.maxSelectable
-            collectionType == COLLECTION_IMAGE -> spec.maxImageSelectable
-            collectionType == COLLECTION_VIDEO -> spec.maxVideoSelectable
-            else -> spec.maxSelectable
+    private fun currentMaxSelectable(item: Item?): Int {
+        if (!spec.mediaTypeExclusive) {
+            if (item?.isImage() == true) {
+                return spec.maxImageSelectable
+            } else if (item?.isVideo() == true) {
+                return spec.maxVideoSelectable
+            }
         }
+
+        return spec.maxSelectable
     }
 
     fun getCollectionType() = collectionType
@@ -218,7 +265,7 @@ class SelectedItemCollection(private var context: Context) {
      * while [SelectionSpec.mediaTypeExclusive] is set to false.
      */
     private fun typeConflict(item: Item?) =
-        SelectionSpec.getInstance().mediaTypeExclusive
+        spec.mediaTypeExclusive
                 && ((item?.isImage() == true && (collectionType == COLLECTION_VIDEO || collectionType == COLLECTION_MIXED))
                 || (item?.isVideo() == true && (collectionType == COLLECTION_IMAGE || collectionType == COLLECTION_MIXED)))
 }

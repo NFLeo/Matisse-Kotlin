@@ -19,7 +19,6 @@ class AlbumPreviewActivity : BasePreviewActivity(), AlbumCallbacks {
 
     override fun setViewData() {
         super.setViewData()
-
         collection.onCreate(this, this)
         val album = intent.getParcelableExtra<Album>(ConstValue.EXTRA_ALBUM)
         collection.load(album)

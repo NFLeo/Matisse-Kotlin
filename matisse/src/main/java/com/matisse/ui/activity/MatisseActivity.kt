@@ -55,13 +55,10 @@ class MatisseActivity : BaseActivity(),
 
 
     override fun configActivity() {
+        super.configActivity()
         if (Platform.isClassExists("com.gyf.barlibrary.ImmersionBar")) {
             ImmersionBar.with(this).titleBar(toolbar)
                 ?.statusBarDarkFont(spec?.isDarkStatus == true)?.init()
-        }
-
-        if (spec?.needOrientationRestriction() == true) {
-            requestedOrientation = spec?.orientation ?: ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         }
 
         if (spec?.capture == true) {
@@ -86,7 +83,7 @@ class MatisseActivity : BaseActivity(),
     }
 
     override fun initListener() {
-        button_apply.setText(UIUtils.getAttrString(this, R.attr.Media_Album_text))
+        button_apply.setText(getAttrString(R.attr.Media_Album_text, R.string.album_name_all))
         button_apply.setOnClickListener(this)
         button_preview.setOnClickListener(this)
         original_layout.setOnClickListener(this)
@@ -316,34 +313,25 @@ class MatisseActivity : BaseActivity(),
     @SuppressLint("SetTextI18n")
     private fun updateBottomToolbar() {
         val selectedCount = selectedCollection.count()
+        button_preview.isEnabled = true
+        button_complete.isEnabled = true
+
         if (selectedCount == 0) {
             button_preview.isEnabled = false
             button_complete.isEnabled = false
             button_complete.setText(
-                UIUtils.getAttrString(
-                    this@MatisseActivity, R.attr.Media_Sure_text, R.string.button_sure
-                )
+                getAttrString(R.attr.Media_Sure_text, R.string.button_sure)
             )
         } else if (selectedCount == 1 && spec?.singleSelectionModeEnabled() == true) {
-            button_preview.isEnabled = true
-            button_complete.setText(
-                UIUtils.getAttrString(
-                    this@MatisseActivity, R.attr.Media_Sure_text, R.string.button_sure
-                )
-            )
-            button_complete.isEnabled = true
+            button_complete.setText(getAttrString(R.attr.Media_Sure_text, R.string.button_sure))
         } else {
-            button_preview.isEnabled = true
-            button_complete.isEnabled = true
             button_complete.text =
                 "${getString(
-                    UIUtils.getAttrString(
-                        this@MatisseActivity, R.attr.Media_Sure_text
-                    ), R.string.button_sure
+                    getAttrString(R.attr.Media_Sure_text, R.string.button_sure)
                 )}($selectedCount)"
         }
 
-        if (spec!!.originalable) {
+        if (spec?.originalable == true) {
             UIUtils.setViewVisible(true, original_layout)
             updateOriginalState()
         } else {
@@ -352,15 +340,14 @@ class MatisseActivity : BaseActivity(),
     }
 
     private fun updateOriginalState() {
-        original!!.setChecked(originalEnable)
+        original.setChecked(originalEnable)
         if (countOverMaxSize() > 0) {
             if (originalEnable) {
                 val incapableDialog = IncapableDialog.newInstance(
-                    "",
-                    getString(R.string.error_over_original_size, spec!!.originalMaxSize)
+                    "", getString(R.string.error_over_original_size, spec!!.originalMaxSize)
                 )
                 incapableDialog.show(supportFragmentManager, IncapableDialog::class.java.name)
-                original!!.setChecked(false)
+                original.setChecked(false)
                 originalEnable = false
             }
         }
@@ -368,13 +355,10 @@ class MatisseActivity : BaseActivity(),
 
     private fun countOverMaxSize(): Int {
         var count = 0
-        val selectedCount = selectedCollection.count()
-        for (i in 0 until selectedCount) {
-            val item = selectedCollection.asList()[i]
-
-            if (item.isImage()) {
-                val size = PhotoMetadataUtils.getSizeInMB(item.size)
-                if (size > spec!!.originalMaxSize) count++
+        selectedCollection.asList().forEach {
+            if (it.isImage()) {
+                val size = PhotoMetadataUtils.getSizeInMB(it.size)
+                if (size > spec?.originalMaxSize ?: 0) count++
             }
         }
         return count

@@ -16,7 +16,10 @@ import it.sephiroth.android.library.imagezoom.ImageViewTouch
 import it.sephiroth.android.library.imagezoom.ImageViewTouchBase
 
 /**
- * Created by liubo on 2018/9/6.
+ * desc：预览界面真正载体</br>
+ * time: 2018/9/6-9:40</br>
+ * author：Leo </br>
+ * since V 1.8.0 </br>
  */
 class PreviewItemFragment : Fragment() {
 
@@ -70,9 +73,7 @@ class PreviewItemFragment : Fragment() {
     }
 
     fun resetView() {
-        if (view != null) {
-            val image: ImageViewTouch = view!!.findViewById(R.id.image_view);
-            image.resetMatrix()
-        }
+        val image: ImageViewTouch? = view?.findViewById(R.id.image_view)
+        image?.resetMatrix()
     }
 }

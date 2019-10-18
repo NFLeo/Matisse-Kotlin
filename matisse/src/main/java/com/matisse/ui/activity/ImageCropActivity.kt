@@ -38,13 +38,10 @@ class ImageCropActivity : BaseActivity(), View.OnClickListener,
     override fun getResourceLayoutId() = R.layout.activity_crop
 
     override fun configActivity() {
+        super.configActivity()
         if (Platform.isClassExists("com.gyf.barlibrary.ImmersionBar")) {
             ImmersionBar.with(this).titleBar(toolbar)
                 ?.statusBarDarkFont(spec?.isDarkStatus == true)?.init()
-        }
-
-        if (spec?.needOrientationRestriction() == true) {
-            requestedOrientation = spec?.orientation ?: ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         }
     }
 

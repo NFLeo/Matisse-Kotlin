@@ -34,6 +34,7 @@ import com.matisse.ui.activity.MatisseActivity
 import com.matisse.widget.CropImageView
 import java.io.File
 import java.util.*
+import kotlin.math.max
 
 /**
  * Fluent API for building media select specification.
@@ -64,19 +65,6 @@ class SelectionCreator(
         mSelectionSpec.mimeTypeSet = mimeTypes
         mSelectionSpec.mediaTypeExclusive = mediaTypeExclusive
         mSelectionSpec.orientation = SCREEN_ORIENTATION_UNSPECIFIED
-    }
-
-    /**
-     * Whether to show only one media type if choosing medias are only images or videos.
-     *
-     * @param showSingleMediaType whether to show only one media type, either images or videos.
-     * @return [SelectionCreator] for fluent API.
-     * @see SelectionSpec.onlyShowImages
-     * @see SelectionSpec.onlyShowVideos
-     */
-    fun showSingleMediaType(showSingleMediaType: Boolean): SelectionCreator {
-        mSelectionSpec.showSingleMediaType = showSingleMediaType
-        return this
     }
 
     /**
@@ -131,8 +119,10 @@ class SelectionCreator(
     fun maxSelectablePerMediaType(
         maxImageSelectable: Int, maxVideoSelectable: Int
     ): SelectionCreator {
-        if (maxImageSelectable < 1 || maxVideoSelectable < 1)
-            throw IllegalArgumentException("max selectable must be greater than or equal to one")
+        if (mSelectionSpec.mediaTypeExclusive || maxImageSelectable < 1 || maxVideoSelectable < 1)
+            throw IllegalArgumentException(
+                "mediaTypeExclusive must be false and max selectable must be greater than or equal to one"
+            )
         mSelectionSpec.maxSelectable = -1
         mSelectionSpec.maxImageSelectable = maxImageSelectable
         mSelectionSpec.maxVideoSelectable = maxVideoSelectable

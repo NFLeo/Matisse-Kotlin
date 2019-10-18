@@ -1,12 +1,14 @@
 package com.matisse.ui.activity
 
 import android.app.Activity
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.gyf.barlibrary.ImmersionBar
 import com.matisse.R
 import com.matisse.internal.entity.SelectionSpec
 import com.matisse.utils.Platform
+import com.matisse.utils.UIUtils
 
 abstract class BaseActivity : AppCompatActivity() {
 
@@ -41,6 +43,9 @@ abstract class BaseActivity : AppCompatActivity() {
      * 空实现，供外部重写
      */
     open fun configActivity() {
+        if (spec?.needOrientationRestriction() == true) {
+            requestedOrientation = spec?.orientation ?: ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        }
     }
 
     abstract fun getResourceLayoutId(): Int
@@ -59,4 +64,12 @@ abstract class BaseActivity : AppCompatActivity() {
             ImmersionBar.with(this).destroy()
         }
     }
+
+    /**
+     * 获取主题配置中的属性值
+     * @param attr 主题配置属性key
+     * @param defaultRes 默认值
+     */
+    fun getAttrString(attr: Int, defaultRes: Int) =
+        UIUtils.getAttrString(this, attr, defaultRes)
 }

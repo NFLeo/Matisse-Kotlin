@@ -34,7 +34,7 @@ class CheckView : View {
     private var textPaint: Paint? = null
     private var shadowPaint: Paint? = null
     private var checkDrawable: Drawable? = null
-    private var density = 0f
+    private var kdensity = 0f
     private var checkRect: Rect? = null
     private var enable = true
     private var halfDensitySize = 0f
@@ -48,14 +48,14 @@ class CheckView : View {
     }
 
     private fun initParams() {
-        density = context.resources?.displayMetrics?.density ?: 0f
-        halfDensitySize = density * SIZE / 2f
+        kdensity = context.resources?.displayMetrics?.density ?: 0f
+        halfDensitySize = kdensity * SIZE / 2f
 
         strokePaint = Paint().run {
             isAntiAlias = true
             style = Paint.Style.STROKE
             xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_OVER)
-            strokeWidth = STROKE_WIDTH * density
+            strokeWidth = STROKE_WIDTH * kdensity
             this
         }
 
@@ -74,7 +74,7 @@ class CheckView : View {
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val sizeSpec = MeasureSpec.makeMeasureSpec((density * SIZE).toInt(), MeasureSpec.EXACTLY)
+        val sizeSpec = MeasureSpec.makeMeasureSpec((kdensity * SIZE).toInt(), MeasureSpec.EXACTLY)
         super.onMeasure(sizeSpec, sizeSpec)
     }
 
@@ -120,14 +120,14 @@ class CheckView : View {
         shadowPaint?.apply {
             canvas?.drawCircle(
                 halfDensitySize, halfDensitySize,
-                density.times(STROKE_RADIUS + STROKE_WIDTH / 2 + SHADOW_WIDTH), this
+                kdensity.times(STROKE_RADIUS + STROKE_WIDTH / 2 + SHADOW_WIDTH), this
             )
         }
 
         // draw white stroke
         strokePaint?.apply {
             canvas?.drawCircle(
-                halfDensitySize, halfDensitySize, density.times(STROKE_RADIUS), this
+                halfDensitySize, halfDensitySize, kdensity.times(STROKE_RADIUS), this
             )
         }
 
@@ -137,7 +137,7 @@ class CheckView : View {
                 initBackgroundPaint()
                 backgroundPaint?.apply {
                     canvas?.drawCircle(
-                        halfDensitySize, halfDensitySize, density.times(BG_RADIUS), this
+                        halfDensitySize, halfDensitySize, kdensity.times(BG_RADIUS), this
                     )
                 }
                 initTextPaint()
@@ -153,7 +153,7 @@ class CheckView : View {
                 initBackgroundPaint()
                 backgroundPaint?.apply {
                     canvas?.drawCircle(
-                        halfDensitySize, halfDensitySize, BG_RADIUS * density, this
+                        halfDensitySize, halfDensitySize, BG_RADIUS * kdensity, this
                     )
                 }
                 if (canvas != null) {
@@ -167,10 +167,10 @@ class CheckView : View {
 
     private fun getCheckRect(): Rect {
         if (checkRect == null) {
-            val rectPadding = (halfDensitySize - CONTENT_SIZE * density / 2).toInt()
+            val rectPadding = (halfDensitySize - CONTENT_SIZE * kdensity / 2).toInt()
             checkRect = Rect(
                 rectPadding, rectPadding,
-                (SIZE * density - rectPadding).toInt(), (SIZE * density - rectPadding).toInt()
+                (SIZE * kdensity - rectPadding).toInt(), (SIZE * kdensity - rectPadding).toInt()
             )
         }
         return checkRect!!
@@ -182,7 +182,7 @@ class CheckView : View {
                 isAntiAlias = true
                 color = Color.WHITE
                 typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
-                textSize = 12.0f * density
+                textSize = 12.0f * kdensity
                 this
             }
         }
@@ -219,7 +219,7 @@ class CheckView : View {
             val shadow = ContextCompat.getColor(context, R.color.shadow)
             val shadowHint = ContextCompat.getColor(context, R.color.shadow_hint)
             shadowPaint?.shader = (RadialGradient(
-                halfDensitySize, halfDensitySize, density.times(gradientRadius),
+                halfDensitySize, halfDensitySize, kdensity.times(gradientRadius),
                 intArrayOf(shadowHint, shadow, shadow, shadowHint),
                 floatArrayOf(stop0, stop1, stop2, stop3), Shader.TileMode.CLAMP
             ))

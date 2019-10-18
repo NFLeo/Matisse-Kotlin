@@ -21,8 +21,7 @@ import java.io.File
  */
 class SelectionSpec {
     var mimeTypeSet: Set<MimeType>? = null
-    var mediaTypeExclusive = false
-    var showSingleMediaType = false
+    var mediaTypeExclusive = false                      // 设置单种/多种媒体资源选择 默认支持多种
     var filters: List<Filter>? = null
     var maxSelectable = 0
     var maxImageSelectable = 0
@@ -77,7 +76,6 @@ class SelectionSpec {
     private fun reset() {
         mimeTypeSet = null
         mediaTypeExclusive = true
-        showSingleMediaType = false
         themeId = R.style.Matisse_Default
         orientation = 0
         countable = false
@@ -111,22 +109,25 @@ class SelectionSpec {
         noticeConsumer = null
     }
 
+    // 是否可计数
     fun isCountable() = countable && !isSingleChoose()
 
-    fun isSingleChoose() = maxSelectable == 1
+    // 是否可单选
+    fun isSingleChoose() =
+        maxSelectable == 1 || (maxImageSelectable == 1 && maxVideoSelectable == 1)
 
+    // 是否可裁剪
     fun openCrop() = isCrop && isSingleChoose()
 
     fun isSupportCrop(item: Item?) = item != null && item.isImage() && !item.isGif()
 
-    fun onlyShowImages() = if (mimeTypeSet != null)
-        showSingleMediaType && MimeTypeManager.ofImage().containsAll(mimeTypeSet!!) else false
+    fun onlyShowImages() =
+        if (mimeTypeSet != null) MimeTypeManager.ofImage().containsAll(mimeTypeSet!!) else false
 
-    fun onlyShowVideos() = if (mimeTypeSet != null)
-        showSingleMediaType && MimeTypeManager.ofVideo().containsAll(mimeTypeSet!!) else false
+    fun onlyShowVideos() =
+        if (mimeTypeSet != null) MimeTypeManager.ofVideo().containsAll(mimeTypeSet!!) else false
 
-    fun singleSelectionModeEnabled() =
-        !countable && (maxSelectable == 1 || maxImageSelectable == 1 && maxVideoSelectable == 1)
+    fun singleSelectionModeEnabled() = !countable && isSingleChoose()
 
     fun needOrientationRestriction() = orientation != ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
 }
