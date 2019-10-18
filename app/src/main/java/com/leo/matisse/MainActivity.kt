@@ -23,7 +23,6 @@ import com.matisse.widget.CropImageView
 import com.tbruyelle.rxpermissions2.RxPermissions
 import kotlinx.android.synthetic.main.activity_main.*
 import java.text.DecimalFormat
-import java.util.concurrent.Callable
 import kotlin.math.log10
 import kotlin.math.pow
 

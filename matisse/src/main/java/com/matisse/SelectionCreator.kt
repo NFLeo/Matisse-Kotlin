@@ -34,7 +34,6 @@ import com.matisse.ui.activity.MatisseActivity
 import com.matisse.widget.CropImageView
 import java.io.File
 import java.util.*
-import kotlin.math.max
 
 /**
  * Fluent API for building media select specification.

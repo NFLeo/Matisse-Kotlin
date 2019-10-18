@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import com.matisse.R
 import com.matisse.entity.ConstValue.STATE_COLLECTION_TYPE
 import com.matisse.entity.ConstValue.STATE_SELECTION

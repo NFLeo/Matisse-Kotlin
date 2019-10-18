@@ -17,9 +17,9 @@ class Album() : Parcelable {
     private var isCheck = false
 
     constructor(parcel: Parcel) : this() {
-        id = parcel.readString()
-        coverPath = parcel.readString()
-        displayName = parcel.readString()
+        id = parcel.readString() ?: ""
+        coverPath = parcel.readString() ?: ""
+        displayName = parcel.readString() ?: ""
         count = parcel.readLong()
         isCheck = parcel.readByte() != 0.toByte()
     }

@@ -14,7 +14,6 @@ import com.matisse.R
 import com.matisse.entity.Album
 import com.matisse.internal.entity.SelectionSpec
 import com.matisse.widget.CheckRadioView
-import kotlinx.android.extensions.LayoutContainer
 import java.io.File
 
 class FolderMediaAdapter(var context: Context, var mCurrentPosition: Int) :

@@ -538,14 +538,14 @@ class CropImageView : AppCompatImageView {
         try {
             bitmap = Bitmap.createBitmap(bitmap, left, top, width, height)
             if (expectWidth != width || exceptHeight != height) {
-                bitmap = Bitmap.createScaledBitmap(bitmap, expectWidth, exceptHeight, true)
+                bitmap = Bitmap.createScaledBitmap(bitmap!!, expectWidth, exceptHeight, true)
                 if (style == Style.CIRCLE && !isSaveRectangle) {
                     val length = min(expectWidth, exceptHeight)
                     val radius = length / 2
                     val circleBitmap = Bitmap.createBitmap(length, length, Bitmap.Config.ARGB_8888)
                     val canvas = Canvas(circleBitmap)
                     val bitmapShader =
-                        BitmapShader(bitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP)
+                        BitmapShader(bitmap!!, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP)
                     val paint = Paint()
                     paint.shader = bitmapShader
                     canvas.drawCircle(expectWidth / 2f, exceptHeight / 2f, radius.toFloat(), paint)

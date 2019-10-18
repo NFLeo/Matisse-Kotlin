@@ -136,7 +136,7 @@ class MatisseActivity : BaseActivity(),
 
                 if (!cropPath.isNullOrEmpty()) {
                     // 裁剪带回数据，则认为图片经过裁剪流程
-                    returnCropData(cropPath!!)
+                    returnCropData(cropPath)
                     return
                 }
 

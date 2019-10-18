@@ -31,17 +31,19 @@ class SelectedPreviewActivity : BasePreviewActivity() {
     override fun setViewData() {
         super.setViewData()
         val bundle = intent.getBundleExtra(ConstValue.EXTRA_DEFAULT_BUNDLE)
-        val selected = bundle.getParcelableArrayList<Item>(ConstValue.STATE_SELECTION)
-        adapter?.addAll(selected)
-        adapter?.notifyDataSetChanged()
-        check_view?.apply {
-            if (spec?.isCountable() == true) {
-                setCheckedNum(1)
-            } else {
-                setChecked(true)
+        val selected = bundle?.getParcelableArrayList<Item>(ConstValue.STATE_SELECTION)
+        selected?.apply {
+            adapter?.addAll(this)
+            adapter?.notifyDataSetChanged()
+            check_view?.apply {
+                if (spec?.isCountable() == true) {
+                    setCheckedNum(1)
+                } else {
+                    setChecked(true)
+                }
             }
+            previousPos = 0
+            updateSize(this[0])
         }
-        previousPos = 0
-        updateSize(selected[0])
     }
 }
