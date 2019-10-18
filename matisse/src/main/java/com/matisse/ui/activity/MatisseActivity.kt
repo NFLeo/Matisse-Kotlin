@@ -3,7 +3,6 @@ package com.matisse.ui.activity
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import android.content.pm.ActivityInfo
 import android.database.Cursor
 import android.net.Uri
 import android.os.Build
@@ -148,24 +147,26 @@ class MatisseActivity : BaseActivity(),
                     data?.getBooleanExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, false) ?: false
                 val collectionType = resultBundle?.getInt(
                     ConstValue.STATE_COLLECTION_TYPE, SelectedItemCollection.COLLECTION_UNDEFINED
-                )
+                ) ?: SelectedItemCollection.COLLECTION_UNDEFINED
                 if (data?.getBooleanExtra(ConstValue.EXTRA_RESULT_APPLY, false) == true) {
-                    val result = Intent()
-                    val selectedUris = ArrayList<Uri>()
-                    val selectedPaths = ArrayList<String>()
-                    if (selected != null) {
-                        for (item in selected) {
-                            selectedUris.add(item.getContentUri())
-                            selectedPaths.add(PathUtils.getPath(this, item.getContentUri())!!)
-                        }
+                    // 从预览界面确认提交过来
+                    val selectedUris = arrayListOf<Uri>()
+                    val selectedPaths = arrayListOf<String>()
+                    selected?.forEach {
+                        selectedUris.add(it.getContentUri())
+                        selectedPaths.add(PathUtils.getPath(this, it.getContentUri()) ?: "")
                     }
-                    result.putParcelableArrayListExtra(EXTRA_RESULT_SELECTION, selectedUris)
-                    result.putStringArrayListExtra(EXTRA_RESULT_SELECTION_PATH, selectedPaths)
-                    result.putExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, originalEnable)
-                    setResult(Activity.RESULT_OK, result)
+
+                    Intent().run {
+                        putParcelableArrayListExtra(EXTRA_RESULT_SELECTION, selectedUris)
+                        putStringArrayListExtra(EXTRA_RESULT_SELECTION_PATH, selectedPaths)
+                        putExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, originalEnable)
+                        setResult(Activity.RESULT_OK, this)
+                    }
                     finish()
                 } else {
-                    selectedCollection.overwrite(selected!!, collectionType!!)
+                    // 从预览界面返回过来
+                    selectedCollection.overwrite(selected!!, collectionType)
                     val mediaSelectionFragment = supportFragmentManager.findFragmentByTag(
                         MediaSelectionFragment::class.java.simpleName
                     )
@@ -319,9 +320,7 @@ class MatisseActivity : BaseActivity(),
         if (selectedCount == 0) {
             button_preview.isEnabled = false
             button_complete.isEnabled = false
-            button_complete.setText(
-                getAttrString(R.attr.Media_Sure_text, R.string.button_sure)
-            )
+            button_complete.setText(getAttrString(R.attr.Media_Sure_text, R.string.button_sure))
         } else if (selectedCount == 1 && spec?.singleSelectionModeEnabled() == true) {
             button_complete.setText(getAttrString(R.attr.Media_Sure_text, R.string.button_sure))
         } else {

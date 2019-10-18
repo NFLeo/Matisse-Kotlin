@@ -33,6 +33,8 @@
     <string name="photo_grid_capture">拍一张</string>
     <string name="empty_text">还没有图片或视频</string>
     <string name="error_over_count">最多只能选择 %1$d 个文件</string>
+    <string name="error_over_count_of_image">最多只能选择 %1$d 个图片文件</string>
+    <string name="error_over_count_of_video">最多只能选择 %1$d 个视频文件</string>
     <string name="error_file_type">不支持的文件类型</string>
     <string name="error_type_conflict">不能同时选择图片和视频</string>
     <string name="error_no_video_activity">没有支持视频预览的应用</string>
