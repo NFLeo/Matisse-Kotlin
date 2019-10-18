@@ -70,7 +70,7 @@ abstract class BottomSheetDialogFragment : AppCompatDialogFragment() {
     }
 
     private fun initBackAction() {
-        dialog.setOnKeyListener { _, keyCode, event ->
+        dialog?.setOnKeyListener { _, keyCode, event ->
             if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
                 backAction()
             } else false
@@ -86,7 +86,7 @@ abstract class BottomSheetDialogFragment : AppCompatDialogFragment() {
     }
 
     private fun setBottomLayout() {
-        val win = dialog.window
+        val win = dialog?.window
         if (win != null) {
             win.setBackgroundDrawableResource(R.drawable.transparent)
             win.decorView.setPadding(0, 0, 0, 0)

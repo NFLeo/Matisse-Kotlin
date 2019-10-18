@@ -90,11 +90,11 @@ class MatisseActivity : BaseActivity(),
         button_back.setOnClickListener(this)
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         selectedCollection.onSaveInstanceState(outState)
         albumCollection?.onSaveInstanceState(outState)
-        outState?.putBoolean(ConstValue.CHECK_STATE, originalEnable)
+        outState.putBoolean(ConstValue.CHECK_STATE, originalEnable)
     }
 
     override fun onDestroy() {

@@ -11,7 +11,8 @@ Matisse核心功能：[https://github.com/zhihu/Matisse](https://github.com/zhih
 
 # 版本更新记录
 2019-10-18 (1.2.0)
-1. 修复并支持图片与视频混合选择
+1. 迁移到androidx
+2. 修复并支持图片与视频混合选择
 ```
 设置选择单一类型媒体，示例如下
 SelectionCreator.choose(MimeTypeManager.ofAll())
@@ -30,10 +31,10 @@ mediaTypeExclusive true 单一媒体类型选择
 mediaTypeExclusive false
      读取maxImageSelectable和maxVideoSelectable属性分别作为最大值
 ```
-2. 修改单/多选逻辑
+3. 修改单/多选逻辑
 	* 单选支持重新选定，不支持计数方式
 	* 多选不支持重新选定，选满外部给出提示方式，支持计数与选中方式
-3. 提示方式外部实现
+4. 提示方式外部实现
 ```
 SelectionCreator.setNoticeConsumer(object : Consumer<String> {
                             override fun accept(params: String) {
@@ -66,7 +67,7 @@ SelectionCreator.setNoticeConsumer(object : Consumer<String> {
 关于打包报错问题：
 
 使用：
-1. gradle中添加 implementation 'com.nfleo:MatisseKotlin:1.2.0'
+1. gradle中添加 implementation 'com.nfleo:MatisseKotlin:1.2.1'
 2. AndroidManifest.xml中添加以下代码
 
         <activity android:name="com.matisse.ui.view.MatisseActivity" />
@@ -91,19 +92,18 @@ The library requires two permissions:
 
 5. 项目gradle中添加
 
-// 具体版本需自行配置
+// 具体版本需自行配置(最外层build.gradle)
 ext {
-    compileSdkVersion = 27
+    compileSdkVersion = 28
 
     minSdkVersion = 19
-    targetSdkVersion = 27
+    targetSdkVersion = 28
 
-    versionCode = 110
-    versionName = "1.1.1"
-
-    support_library = '27.1.1'
+    appcompat = '1.1.0'
+    material = '1.0.0'
+    recyclerview = '1.0.0'
     glide = '4.7.1'
-    constraint = '1.1.3'
+    constraintlayout = '1.1.3'
 }
 ```
 
