@@ -20,9 +20,9 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.ActivityInfo.*
 import android.os.Build
-import android.support.annotation.IntDef
-import android.support.annotation.RequiresApi
-import android.support.annotation.StyleRes
+import androidx.annotation.IntDef
+import androidx.annotation.RequiresApi
+import androidx.annotation.StyleRes
 import com.matisse.engine.ImageEngine
 import com.matisse.entity.CaptureStrategy
 import com.matisse.filter.Filter

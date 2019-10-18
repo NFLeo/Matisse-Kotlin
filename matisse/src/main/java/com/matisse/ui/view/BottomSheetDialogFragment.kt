@@ -1,8 +1,8 @@
 package com.matisse.ui.view
 
 import android.os.Bundle
-import android.support.design.widget.BottomSheetBehavior
-import android.support.v7.app.AppCompatDialogFragment
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import androidx.appcompat.app.AppCompatDialogFragment
 import android.util.DisplayMetrics
 import android.view.*
 import android.widget.FrameLayout

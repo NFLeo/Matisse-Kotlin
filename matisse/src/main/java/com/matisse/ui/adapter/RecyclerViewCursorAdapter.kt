@@ -2,7 +2,7 @@ package com.matisse.ui.adapter
 
 import android.database.Cursor
 import android.provider.MediaStore
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 
 abstract class RecyclerViewCursorAdapter<VH : RecyclerView.ViewHolder>(c: Cursor?) :
     RecyclerView.Adapter<VH>() {

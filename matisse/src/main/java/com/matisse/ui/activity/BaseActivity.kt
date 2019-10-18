@@ -3,7 +3,7 @@ package com.matisse.ui.activity
 import android.app.Activity
 import android.content.pm.ActivityInfo
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.gyf.barlibrary.ImmersionBar
 import com.matisse.R
 import com.matisse.internal.entity.SelectionSpec

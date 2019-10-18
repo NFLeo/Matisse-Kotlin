@@ -3,7 +3,7 @@ package com.leo.matisse
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.support.v4.view.ViewCompat
+import androidx.core.view.ViewCompat
 import android.view.ViewGroup
 import android.widget.ImageView
 import com.facebook.drawee.backends.pipeline.Fresco

@@ -9,8 +9,8 @@ import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
-import android.support.v4.view.ViewCompat
-import android.support.v7.widget.AppCompatImageView
+import androidx.core.view.ViewCompat
+import androidx.appcompat.widget.AppCompatImageView
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.MotionEvent

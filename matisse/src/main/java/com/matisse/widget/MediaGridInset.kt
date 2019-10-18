@@ -1,7 +1,7 @@
 package com.matisse.widget
 
 import android.graphics.Rect
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 
 class MediaGridInset(
@@ -9,28 +9,23 @@ class MediaGridInset(
 ) : RecyclerView.ItemDecoration() {
 
     override fun getItemOffsets(
-        outRect: Rect?, view: View?, parent: RecyclerView?, state: RecyclerView.State?
+        outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State
     ) {
-        val position = parent?.getChildAdapterPosition(view) ?: 0
+        val position = parent.getChildAdapterPosition(view)
         val column = position % spanCount
 
-        outRect?.apply {
+        outRect.apply {
             if (includeEdge) {
                 left = spacing - column * spacing / spanCount
                 right = (column + 1) * spacing / spanCount
 
-                if (position < spanCount) {
-                    top = spacing
-                }
-
+                if (position < spanCount) top = spacing
                 bottom = spacing
             } else {
                 left = column * spacing / spanCount
                 right = spacing - (column + 1) * spacing / spanCount
 
-                if (position >= spanCount) {
-                    top = spacing
-                }
+                if (position >= spanCount) top = spacing
             }
         }
     }

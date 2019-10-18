@@ -3,7 +3,7 @@ package com.matisse.utils
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.PorterDuff
-import android.support.v4.app.FragmentActivity
+import androidx.fragment.app.FragmentActivity
 import android.util.DisplayMetrics
 import android.util.TypedValue
 import android.util.TypedValue.applyDimension
