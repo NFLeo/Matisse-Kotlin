@@ -69,11 +69,9 @@ SelectionCreator.setNoticeConsumer(object : Consumer<String> {
 使用：
 1. gradle中添加 implementation 'com.nfleo:MatisseKotlin:1.2.1'
 2. AndroidManifest.xml中添加以下代码
-
-        <activity android:name="com.matisse.ui.view.MatisseActivity" />
-
+* 注：注意provider androidx的差别
         <provider
-            android:name="android.support.v4.content.FileProvider"
+            android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
@@ -88,6 +86,7 @@ The library requires two permissions:
     - `android.permission.WRITE_EXTERNAL_STORAGE`
 
 4. 为适配7.0，,项目manifest的privider标签下 paths文件中添加
+    文件名称为file_paths_public（名字随意取，但需与AndroidManifest.xml中引用保持一致）
     <external-path  name="my_images" path="Pictures"/>
 
 5. 项目gradle中添加
