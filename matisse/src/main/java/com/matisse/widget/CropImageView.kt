@@ -236,6 +236,7 @@ class CropImageView : AppCompatImageView {
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (saving || null == drawable) return super.onTouchEvent(event)
 
