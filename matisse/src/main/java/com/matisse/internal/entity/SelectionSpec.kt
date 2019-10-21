@@ -22,7 +22,7 @@ import java.io.File
 class SelectionSpec {
     var mimeTypeSet: Set<MimeType>? = null
     var mediaTypeExclusive = false                      // 设置单种/多种媒体资源选择 默认支持多种
-    var filters: List<Filter>? = null
+    var filters: MutableList<Filter>? = null
     var maxSelectable = 1
     var maxImageSelectable = 0
     var maxVideoSelectable = 0
@@ -43,10 +43,8 @@ class SelectionSpec {
 
     var isCrop = false                              // 裁剪
     var isCropSaveRectangle = false                 // 裁剪后的图片是否是矩形，否则跟随裁剪框的形状，只适用于圆形裁剪
-    var cropOutPutX = 300                           // 裁剪保存宽度
-    var cropOutPutY = 300                           // 裁剪保存高度
-    var cropFocusWidth = 0                          // 焦点框的宽度
-    var cropFocusHeight = 0                         // 焦点框的高度
+    var cropFocusWidthPx = 0                        // 焦点框的宽度
+    var cropFocusHeightPx = 0                       // 焦点框的高度
     var cropStyle = CropImageView.Style.RECTANGLE   // 裁剪框的形状
     var cropCacheFolder: File? = null               // 裁剪后文件保存路径
 
@@ -63,7 +61,6 @@ class SelectionSpec {
 
     companion object {
 
-        const val SINGAL_CHOOSE = 0x1111
         fun getInstance() = InstanceHolder.INSTANCE
 
         fun getCleanInstance(): SelectionSpec {
@@ -95,10 +92,8 @@ class SelectionSpec {
         // crop
         isCrop = true
         isCropSaveRectangle = false
-        cropOutPutX = 300
-        cropOutPutY = 300
-        cropFocusWidth = 0
-        cropFocusHeight = 0
+        cropFocusWidthPx = 0
+        cropFocusHeightPx = 0
         cropStyle = CropImageView.Style.RECTANGLE
 
         // return original setting

@@ -48,10 +48,6 @@ class ImageCropActivity : BaseActivity(), View.OnClickListener,
         imagePath = intent.getStringExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH)
 
         spec?.apply {
-            outputX = cropOutPutX
-            outputY = cropOutPutY
-            isSaveRectangle = isCropSaveRectangle
-
             val cropFocusNormalWidth =
                 UIUtils.getScreenWidth(this@ImageCropActivity) - UIUtils.dp2px(
                     this@ImageCropActivity, 30f
@@ -61,11 +57,16 @@ class ImageCropActivity : BaseActivity(), View.OnClickListener,
                     this@ImageCropActivity, 200f
                 ).toInt()
 
-            val cropWidth = if (cropFocusWidth in 1 until cropFocusNormalWidth)
-                cropFocusWidth else cropFocusNormalWidth
+            val cropWidth = if (cropFocusWidthPx in 1 until cropFocusNormalWidth)
+                cropFocusWidthPx else cropFocusNormalWidth
 
-            val cropHeight = if (cropFocusHeight in 1 until cropFocusNormalHeight)
-                cropFocusHeight else cropFocusNormalHeight
+            val cropHeight = if (cropFocusHeightPx in 1 until cropFocusNormalHeight)
+                cropFocusHeightPx else cropFocusNormalHeight
+
+            outputX = cropWidth
+            outputY = cropHeight
+            isSaveRectangle = isCropSaveRectangle
+
             cv_crop_image.setFocusStyle(cropStyle)
             cv_crop_image.setFocusWidth(cropWidth)
             cv_crop_image.setFocusHeight(cropHeight)

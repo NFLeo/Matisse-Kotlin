@@ -1,19 +1,3 @@
-/*
- * Copyright (C) 2014 nohana, Inc.
- * Copyright 2017 Zhihu Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.matisse
 
 import android.app.Activity
@@ -43,9 +27,9 @@ import java.util.*
  * @param mimeTypes MIME type set to select.
  */
 class SelectionCreator(
-    private val mMatisse: Matisse, mimeTypes: Set<MimeType>, mediaTypeExclusive: Boolean
+    private val matisse: Matisse, mimeTypes: Set<MimeType>, mediaTypeExclusive: Boolean
 ) {
-    private val mSelectionSpec: SelectionSpec = SelectionSpec.getCleanInstance()
+    private val selectionSpec: SelectionSpec = SelectionSpec.getCleanInstance()
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     @IntDef(
@@ -61,9 +45,9 @@ class SelectionCreator(
     internal annotation class ScreenOrientation
 
     init {
-        mSelectionSpec.mimeTypeSet = mimeTypes
-        mSelectionSpec.mediaTypeExclusive = mediaTypeExclusive
-        mSelectionSpec.orientation = SCREEN_ORIENTATION_UNSPECIFIED
+        selectionSpec.mimeTypeSet = mimeTypes
+        selectionSpec.mediaTypeExclusive = mediaTypeExclusive
+        selectionSpec.orientation = SCREEN_ORIENTATION_UNSPECIFIED
     }
 
     /**
@@ -76,7 +60,7 @@ class SelectionCreator(
      * @return [SelectionCreator] for fluent API.
      */
     fun theme(@StyleRes themeId: Int): SelectionCreator {
-        mSelectionSpec.themeId = themeId
+        selectionSpec.themeId = themeId
         return this
     }
 
@@ -88,7 +72,7 @@ class SelectionCreator(
      * @return [SelectionCreator] for fluent API.
      */
     fun countable(countable: Boolean): SelectionCreator {
-        mSelectionSpec.countable = countable
+        selectionSpec.countable = countable
         return this
     }
 
@@ -102,13 +86,13 @@ class SelectionCreator(
      * @return [SelectionCreator] for fluent API.
      */
     fun maxSelectable(maxSelectable: Int): SelectionCreator {
-        if (!mSelectionSpec.mediaTypeExclusive)
+        if (!selectionSpec.mediaTypeExclusive)
             throw IllegalArgumentException("maxSelectable must be set when mediaTypeExclusive is true")
         if (maxSelectable < 1)
             throw IllegalArgumentException("maxSelectable must be greater than or equal to one")
-        if (mSelectionSpec.maxImageSelectable > 0 || mSelectionSpec.maxVideoSelectable > 0)
+        if (selectionSpec.maxImageSelectable > 0 || selectionSpec.maxVideoSelectable > 0)
             throw IllegalStateException("already set maxImageSelectable and maxVideoSelectable")
-        mSelectionSpec.maxSelectable = maxSelectable
+        selectionSpec.maxSelectable = maxSelectable
         return this
     }
 
@@ -123,13 +107,13 @@ class SelectionCreator(
     fun maxSelectablePerMediaType(
         maxImageSelectable: Int, maxVideoSelectable: Int
     ): SelectionCreator {
-        if (mSelectionSpec.mediaTypeExclusive || maxImageSelectable < 1 || maxVideoSelectable < 1)
+        if (selectionSpec.mediaTypeExclusive || maxImageSelectable < 1 || maxVideoSelectable < 1)
             throw IllegalArgumentException(
                 "mediaTypeExclusive must be false and max selectable must be greater than or equal to one"
             )
-        mSelectionSpec.maxSelectable = -1
-        mSelectionSpec.maxImageSelectable = maxImageSelectable
-        mSelectionSpec.maxVideoSelectable = maxVideoSelectable
+        selectionSpec.maxSelectable = -1
+        selectionSpec.maxImageSelectable = maxImageSelectable
+        selectionSpec.maxVideoSelectable = maxVideoSelectable
         return this
     }
 
@@ -140,10 +124,8 @@ class SelectionCreator(
      * @return [SelectionCreator] for fluent API.
      */
     fun addFilter(filter: Filter): SelectionCreator {
-        if (mSelectionSpec.filters == null) {
-            mSelectionSpec.filters = ArrayList()
-        }
-        (mSelectionSpec.filters!! as ArrayList).add(filter)
+        if (selectionSpec.filters == null) selectionSpec.filters = mutableListOf()
+        selectionSpec.filters?.add(filter)
         return this
     }
 
@@ -155,7 +137,7 @@ class SelectionCreator(
      * @return [SelectionCreator] for fluent API.
      */
     fun capture(enable: Boolean): SelectionCreator {
-        mSelectionSpec.capture = enable
+        selectionSpec.capture = enable
         return this
     }
 
@@ -166,7 +148,7 @@ class SelectionCreator(
      * @return [SelectionCreator] for fluent API.
      */
     fun originalEnable(enable: Boolean): SelectionCreator {
-        mSelectionSpec.originalable = enable
+        selectionSpec.originalable = enable
         return this
     }
 
@@ -177,19 +159,19 @@ class SelectionCreator(
      * @return [SelectionCreator] for fluent API.
      */
     fun maxOriginalSize(size: Int): SelectionCreator {
-        mSelectionSpec.originalMaxSize = size
+        selectionSpec.originalMaxSize = size
         return this
     }
 
     /**
      * Capture strategy provided for the location to save photos including internal and external
-     * storage and also a authority for [android.support.v4.content.FileProvider].
+     * storage and also a authority for [androidx.core.content.FileProvider].
      *
      * @param captureStrategy [CaptureStrategy], needed only when capturing is enabled.
      * @return [SelectionCreator] for fluent API.
      */
     fun captureStrategy(captureStrategy: CaptureStrategy): SelectionCreator {
-        mSelectionSpec.captureStrategy = captureStrategy
+        selectionSpec.captureStrategy = captureStrategy
         return this
     }
 
@@ -202,7 +184,7 @@ class SelectionCreator(
      * @see Activity.setRequestedOrientation
      */
     fun restrictOrientation(@ScreenOrientation orientation: Int): SelectionCreator {
-        mSelectionSpec.orientation = orientation
+        selectionSpec.orientation = orientation
         return this
     }
 
@@ -215,7 +197,7 @@ class SelectionCreator(
      */
     fun spanCount(spanCount: Int): SelectionCreator {
         if (spanCount < 1) throw IllegalArgumentException("spanCount cannot be less than 1")
-        mSelectionSpec.spanCount = spanCount
+        selectionSpec.spanCount = spanCount
         return this
     }
 
@@ -228,7 +210,7 @@ class SelectionCreator(
      * @return [SelectionCreator] for fluent API.
      */
     fun gridExpectedSize(size: Int): SelectionCreator {
-        mSelectionSpec.gridExpectedSize = size
+        selectionSpec.gridExpectedSize = size
         return this
     }
 
@@ -241,7 +223,7 @@ class SelectionCreator(
     fun thumbnailScale(scale: Float): SelectionCreator {
         if (scale <= 0f || scale > 1f)
             throw IllegalArgumentException("Thumbnail scale must be between (0.0, 1.0]")
-        mSelectionSpec.thumbnailScale = scale
+        selectionSpec.thumbnailScale = scale
         return this
     }
 
@@ -254,8 +236,8 @@ class SelectionCreator(
      * @return [SelectionCreator] for fluent API.
      */
     fun imageEngine(imageEngine: ImageEngine): SelectionCreator {
-        mSelectionSpec.imageEngine = imageEngine
-        mSelectionSpec.imageEngine?.init(mMatisse.activity?.applicationContext!!)
+        selectionSpec.imageEngine = imageEngine
+        selectionSpec.imageEngine?.init(matisse.activity?.applicationContext!!)
         return this
     }
 
@@ -266,7 +248,7 @@ class SelectionCreator(
      * @return [SelectionCreator] for fluent API.
      */
     fun isCrop(crop: Boolean): SelectionCreator {
-        mSelectionSpec.isCrop = crop
+        selectionSpec.isCrop = crop
         return this
     }
 
@@ -278,39 +260,26 @@ class SelectionCreator(
      * @return [SelectionCreator] for fluent API.
      */
     fun isCropSaveRectangle(cropSaveRectangle: Boolean): SelectionCreator {
-        mSelectionSpec.isCropSaveRectangle = cropSaveRectangle
-        return this
-    }
+        if (!selectionSpec.isCrop || selectionSpec.cropStyle == CropImageView.Style.RECTANGLE)
+            return this
 
-    /**
-     * width of crop image  px is required
-     */
-    fun cropOutPutX(cropOutPutX: Int): SelectionCreator {
-        mSelectionSpec.cropOutPutX = cropOutPutX
-        return this
-    }
-
-    /**
-     * height of crop image  px is required
-     */
-    fun cropOutPutY(cropOutPutY: Int): SelectionCreator {
-        mSelectionSpec.cropOutPutY = cropOutPutY
+        selectionSpec.isCropSaveRectangle = cropSaveRectangle
         return this
     }
 
     /**
      * width of cropFrame  px is required
      */
-    fun cropFocusWidth(cropFocusWidth: Int): SelectionCreator {
-        mSelectionSpec.cropFocusWidth = cropFocusWidth
+    fun cropFocusWidthPx(cropFocusWidth: Int): SelectionCreator {
+        selectionSpec.cropFocusWidthPx = cropFocusWidth
         return this
     }
 
     /**
      * height of cropFrame  px is required
      */
-    fun cropFocusHeight(cropFocusHeight: Int): SelectionCreator {
-        mSelectionSpec.cropFocusHeight = cropFocusHeight
+    fun cropFocusHeightPx(cropFocusHeight: Int): SelectionCreator {
+        selectionSpec.cropFocusHeightPx = cropFocusHeight
         return this
     }
 
@@ -319,7 +288,7 @@ class SelectionCreator(
      * default is CropImageView.Style.RECTANGLE
      */
     fun cropStyle(cropStyle: CropImageView.Style): SelectionCreator {
-        mSelectionSpec.cropStyle = cropStyle
+        selectionSpec.cropStyle = cropStyle
         return this
     }
 
@@ -327,7 +296,7 @@ class SelectionCreator(
      * provide file to save image after crop
      */
     fun cropCacheFolder(cropCacheFolder: File): SelectionCreator {
-        mSelectionSpec.cropCacheFolder = cropCacheFolder
+        selectionSpec.cropCacheFolder = cropCacheFolder
         return this
     }
 
@@ -341,7 +310,7 @@ class SelectionCreator(
      * @return [SelectionCreator] for fluent API.
      */
     fun setOnSelectedListener(listener: OnSelectedListener?): SelectionCreator {
-        mSelectionSpec.onSelectedListener = listener
+        selectionSpec.onSelectedListener = listener
         return this
     }
 
@@ -352,7 +321,7 @@ class SelectionCreator(
      * @return [SelectionCreator] for fluent API.
      */
     fun setOnCheckedListener(listener: OnCheckedListener?): SelectionCreator {
-        mSelectionSpec.onCheckedListener = listener
+        selectionSpec.onCheckedListener = listener
         return this
     }
 
@@ -363,7 +332,7 @@ class SelectionCreator(
      * @return [SelectionCreator] for fluent API.
      */
     fun setStatusIsDark(isDark: Boolean) = this.run {
-        mSelectionSpec.isDarkStatus = isDark
+        selectionSpec.isDarkStatus = isDark
         this
     }
 
@@ -371,7 +340,7 @@ class SelectionCreator(
      * set notice type for matisse
      */
     fun setNoticeConsumer(noticeConsumer: Consumer<String>?) = this.run {
-        mSelectionSpec.noticeConsumer = noticeConsumer
+        selectionSpec.noticeConsumer = noticeConsumer
         this
     }
 
@@ -381,16 +350,15 @@ class SelectionCreator(
      * @param requestCode Identity of the request Activity or Fragment.
      */
     fun forResult(requestCode: Int) {
-        val activity = mMatisse.activity ?: return
+        val activity = matisse.activity ?: return
 
         val intent = Intent(activity, MatisseActivity::class.java)
 
-        val fragment = mMatisse.fragment
+        val fragment = matisse.fragment
         if (fragment != null) {
             fragment.startActivityForResult(intent, requestCode)
         } else {
             activity.startActivityForResult(intent, requestCode)
         }
     }
-
 }

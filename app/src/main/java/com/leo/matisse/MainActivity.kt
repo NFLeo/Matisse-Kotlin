@@ -9,6 +9,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
+import com.bumptech.glide.Glide
 import com.matisse.Matisse
 import com.matisse.MimeTypeManager
 import com.matisse.compress.CompressHelper
@@ -19,6 +20,7 @@ import com.matisse.listener.Consumer
 import com.matisse.listener.OnCheckedListener
 import com.matisse.listener.OnSelectedListener
 import com.matisse.utils.Platform
+import com.matisse.utils.UIUtils
 import com.matisse.widget.CropImageView
 import com.tbruyelle.rxpermissions2.RxPermissions
 import kotlinx.android.synthetic.main.activity_main.*
@@ -49,7 +51,7 @@ class MainActivity : AppCompatActivity() {
                         .countable(true)
                         .capture(true)
                         .isCrop(true)
-                        .cropStyle(CropImageView.Style.CIRCLE)
+                        .cropStyle(CropImageView.Style.RECTANGLE)
                         .maxSelectable(3)
                         .setStatusIsDark(true)
                         .theme(R.style.CustomMatisseStyle)
@@ -101,7 +103,9 @@ class MainActivity : AppCompatActivity() {
                         .countable(false)
                         .capture(true)
                         .isCrop(true)
-                        .cropStyle(CropImageView.Style.CIRCLE)
+                        .cropStyle(CropImageView.Style.RECTANGLE)
+                        .cropFocusWidthPx(UIUtils.dp2px(this, 250f).toInt())
+                        .cropFocusHeightPx(UIUtils.dp2px(this, 500f).toInt())
                         .setStatusIsDark(false)
                         .theme(R.style.CustomMatisseStyle)
                         .captureStrategy(
@@ -160,9 +164,11 @@ class MainActivity : AppCompatActivity() {
                 string += it + "\n"
             }
 
+
             // 原文件
             val file = FileUtil.getFileByPath(Matisse.obtainPathResult(data)[0])
 
+            Glide.with(this).load(file).into(iv_image)
             // 压缩后的文件         （多个文件压缩可以循环压缩）
             val file1 = CompressHelper.getDefault(applicationContext)?.compressToFile(file)
             string += getReadableFileSize(file.length()) + " PK " +
