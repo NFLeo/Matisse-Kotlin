@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity() {
                     }
                     Matisse.from(this@MainActivity)
                         .choose(MimeTypeManager.ofAll())
-                        .countable(true)
+                        .countable(false)
                         .capture(true)
                         .isCrop(true)
                         .cropStyle(CropImageView.Style.RECTANGLE)

@@ -14,18 +14,21 @@ import kotlinx.android.parcel.Parcelize
  * Created by Leo on 2018/9/4 on 16:18.
  */
 @Parcelize
-class Item(var id: Long, var mimeType: String, var size: Long = 0, var duration: Long = 0) :
-    Parcelable {
+class Item(
+    var id: Long, private var mimeType: String, var size: Long = 0,
+    var duration: Long = 0, var positionInList: Int = -1
+) : Parcelable {
 
     companion object {
         const val ITEM_ID_CAPTURE: Long = -1
         const val ITEM_DISPLAY_NAME_CAPTURE = "Capture"
 
-        fun valueOf(cursor: Cursor) = Item(
+        fun valueOf(cursor: Cursor, positionInList: Int = -1) = Item(
             cursor.getLong(cursor.getColumnIndex(MediaStore.Files.FileColumns._ID)),
             cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE)),
             cursor.getLong(cursor.getColumnIndex(MediaStore.MediaColumns.SIZE)),
-            cursor.getLong(cursor.getColumnIndex("duration"))
+            cursor.getLong(cursor.getColumnIndex("duration")),
+            positionInList
         )
     }
 
@@ -58,13 +61,15 @@ class Item(var id: Long, var mimeType: String, var size: Long = 0, var duration:
 
     fun isCapture() = id == ITEM_ID_CAPTURE
 
+    fun positionInList() = positionInList
+
     override fun describeContents() = 0
 
     override fun equals(other: Any?): Boolean {
         if (other !is Item) return false
 
         val otherItem = other as Item?
-        return ((id == otherItem!!.id && (mimeType == otherItem.mimeType))
+        return ((id == otherItem?.id && (mimeType == otherItem.mimeType))
                 && (uri == otherItem.uri) && size == otherItem.size && duration == otherItem.duration)
     }
 

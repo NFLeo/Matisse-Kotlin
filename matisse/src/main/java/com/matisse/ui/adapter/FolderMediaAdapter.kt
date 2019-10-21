@@ -4,12 +4,12 @@ import android.content.Context
 import android.database.Cursor
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import com.matisse.R
 import com.matisse.entity.Album
 import com.matisse.internal.entity.SelectionSpec
@@ -28,7 +28,7 @@ class FolderMediaAdapter(var context: Context, var mCurrentPosition: Int) :
         ta.recycle()
     }
 
-    override fun onBindViewHolder(holder: FolderViewHolder, cursor: Cursor) {
+    override fun onBindViewHolder(holder: FolderViewHolder, cursor: Cursor, position: Int) {
 
         val album = Album.valueOf(cursor)
 
@@ -37,14 +37,7 @@ class FolderMediaAdapter(var context: Context, var mCurrentPosition: Int) :
             album.getDisplayName(holder.tvBucketName.context), album.getCount()
         )
 
-        if (cursor.position == mCurrentPosition) {
-            holder.rbSelected.animate().scaleX(1f).scaleY(1f).start()
-            holder.rbSelected.setChecked(true)
-        } else {
-            holder.rbSelected.scaleX = 0f
-            holder.rbSelected.scaleY = 0f
-            holder.rbSelected.setChecked(false)
-        }
+        setRbSelectChecked(holder.rbSelected, cursor.position == mCurrentPosition)
 
         // do not need to load animated Gif
         val mContext = holder.ivBucketCover.context
@@ -81,8 +74,7 @@ class FolderMediaAdapter(var context: Context, var mCurrentPosition: Int) :
 
             mCurrentPosition = layoutPosition
             setRadioDisChecked(mParentView)
-            rbSelected.animate().scaleX(1f).scaleY(1f).start()
-            rbSelected.setChecked(true)
+            setRbSelectChecked(rbSelected, true)
         }
 
         /**
@@ -96,10 +88,17 @@ class FolderMediaAdapter(var context: Context, var mCurrentPosition: Int) :
             for (i in 0 until parentView.childCount) {
                 val itemView = parentView.getChildAt(i)
                 val rbSelect: CheckRadioView = itemView.findViewById(R.id.rb_selected)
-                rbSelect.animate().scaleX(0f).scaleY(0f).start()
-                rbSelect.setChecked(false)
+                setRbSelectChecked(rbSelect, false)
             }
         }
+    }
+
+    private fun setRbSelectChecked(rbSelect: CheckRadioView?, checked: Boolean) {
+        if (rbSelect == null) return
+
+        rbSelect.scaleX = if (checked) 1f else 0f
+        rbSelect.scaleY = if (checked) 1f else 0f
+        rbSelect.setChecked(checked)
     }
 
     interface OnItemClickListener {

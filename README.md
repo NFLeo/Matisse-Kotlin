@@ -10,6 +10,10 @@ Matisse核心功能：[https://github.com/zhihu/Matisse](https://github.com/zhih
 图片压缩提供者：[https://github.com/nanchen2251](https://github.com/nanchen2251)
 
 # 版本更新记录
+2019-10-21 (1.2.2)
+1. 修复方形裁剪图片变形问题
+2. 优化单选/多选刷新问题
+
 2019-10-18 (1.2.0)
 1. 迁移到androidx
 2. 修复并支持图片与视频混合选择
@@ -67,7 +71,7 @@ SelectionCreator.setNoticeConsumer(object : Consumer<String> {
 关于打包报错问题：
 
 使用：
-1. gradle中添加 implementation 'com.nfleo:MatisseKotlin:1.2.1'
+1. gradle中添加 implementation 'com.nfleo:MatisseKotlin:1.2.2'
 2. AndroidManifest.xml中添加以下代码
 * 注：注意provider androidx的差别
         <provider

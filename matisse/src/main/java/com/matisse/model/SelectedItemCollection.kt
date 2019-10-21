@@ -180,6 +180,11 @@ class SelectedItemCollection(private var context: Context) {
 
     fun count() = items.size
 
+    /**
+     * 注：
+     * 此处取的是item在选中集合中的序号，
+     * 所以不需区分混合选择或单独选择
+     */
     fun checkedNumOf(item: Item?): Int {
         val index = ArrayList(items).indexOf(item)
         return if (index == -1) CheckView.UNCHECKED else index + 1

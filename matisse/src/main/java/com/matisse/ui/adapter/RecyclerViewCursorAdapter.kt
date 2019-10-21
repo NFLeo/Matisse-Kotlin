@@ -15,7 +15,7 @@ abstract class RecyclerViewCursorAdapter<VH : RecyclerView.ViewHolder>(c: Cursor
         swapCursor(c)
     }
 
-    abstract fun onBindViewHolder(holder: VH, cursor: Cursor)
+    abstract fun onBindViewHolder(holder: VH, cursor: Cursor, position: Int)
 
     override fun onBindViewHolder(holder: VH, position: Int) {
         if (!isDataValid(cursor)) {
@@ -26,7 +26,7 @@ abstract class RecyclerViewCursorAdapter<VH : RecyclerView.ViewHolder>(c: Cursor
             throw IllegalStateException("Could not move cursor to position $position when trying to bind view holder")
         }
 
-        onBindViewHolder(holder, cursor!!)
+        onBindViewHolder(holder, cursor!!, position)
     }
 
     override fun getItemViewType(position: Int): Int {
