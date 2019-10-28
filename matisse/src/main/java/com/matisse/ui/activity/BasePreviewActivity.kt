@@ -7,8 +7,6 @@ import android.os.Bundle
 import androidx.viewpager.widget.ViewPager
 import android.view.View
 import android.view.WindowManager
-import com.gyf.barlibrary.BarHide
-import com.gyf.barlibrary.ImmersionBar
 import com.matisse.R
 import com.matisse.entity.ConstValue
 import com.matisse.entity.IncapableCause
@@ -42,9 +40,7 @@ open class BasePreviewActivity : BaseActivity(), View.OnClickListener,
 
     override fun configActivity() {
         super.configActivity()
-        if (Platform.isClassExists("com.gyf.barlibrary.ImmersionBar")) {
-            ImmersionBar.with(this).hideBar(BarHide.FLAG_HIDE_STATUS_BAR)?.init()
-        }
+        spec?.statusBarFuture?.accept(this, null)
 
         if (Platform.hasKitKat19()) {
             window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)

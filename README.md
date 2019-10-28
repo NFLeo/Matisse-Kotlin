@@ -10,6 +10,27 @@ Matisse核心功能：[https://github.com/zhihu/Matisse](https://github.com/zhih
 图片压缩提供者：[https://github.com/nanchen2251](https://github.com/nanchen2251)
 
 # 版本更新记录
+2019-10-28 (持续更新 待发布)
+1. 支持相机拍照完成后多选
+2. 扩展提示方法，支持使用外部自定义弹窗
+3. 支持外部处理状态栏，去除项目中原[ImmersionBar]库
+```
+.setStatusBarFuture(object : MFunction<BaseActivity> {
+                override fun accept(params: BaseActivity, view: View?) {
+                    // 外部设置状态栏
+                    ImmersionBar.with(params)?.run {
+                        statusBarDarkFont(isDarkStatus)
+                        view?.apply { titleBar(this) }
+                        init()
+                    }
+
+                    // 外部可隐藏Matisse界面中的View
+                    view?.visibility = if (isDarkStatus) View.VISIBLE else View.GONE
+                }
+            })
+```
+4. 适配Android Q
+
 2019-10-21 (1.2.2)
 1. 修复方形裁剪图片变形问题
 2. 优化单选/多选刷新问题
@@ -40,12 +61,14 @@ mediaTypeExclusive false
 	* 多选不支持重新选定，选满外部给出提示方式，支持计数与选中方式
 4. 提示方式外部实现
 ```
-SelectionCreator.setNoticeConsumer(object : Consumer<String> {
-                            override fun accept(params: String) {
-                                // 提示方式。 可使用与自己项目相同样式的Toast或其他
-                                showToast(params)
-                            }
-                        })
+SelectionCreator.setNoticeConsumer(object : NoticeConsumer {
+                                 override fun accept(
+                                     context: Context, noticeType: Int, title: String, message: String
+                                 ) {
+                                     // 外部提示，可外部定义样式
+                                     showToast(context, noticeType, title, message)
+                                 }
+                             })
 ```
 
 2019-10-16
@@ -62,6 +85,7 @@ SelectionCreator.setNoticeConsumer(object : Consumer<String> {
 4. 图片选择后压缩，不失真条件下高比率压缩。
 5. 增加主题修改，基本可保证定制成与自身项目风格一致
 6. 支持设置状态栏颜色 需依赖[ImmersionBar](https://github.com/gyf-dev/ImmersionBar)
+    1.2.2之后版本去除内部ImmersionBar处理
 
 
 * 注：裁剪成功后只返回裁剪后图片的绝对路径，不返回Uri，需自行转换

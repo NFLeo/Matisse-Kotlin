@@ -6,11 +6,9 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.view.View
-import com.gyf.barlibrary.ImmersionBar
 import com.matisse.R
 import com.matisse.entity.ConstValue
 import com.matisse.utils.BitmapUtils
-import com.matisse.utils.Platform
 import com.matisse.utils.UIUtils
 import com.matisse.widget.CropImageView
 import com.matisse.widget.IncapableDialog
@@ -38,14 +36,11 @@ class ImageCropActivity : BaseActivity(), View.OnClickListener,
 
     override fun configActivity() {
         super.configActivity()
-        if (Platform.isClassExists("com.gyf.barlibrary.ImmersionBar")) {
-            ImmersionBar.with(this).titleBar(toolbar)
-                ?.statusBarDarkFont(spec?.isDarkStatus == true)?.init()
-        }
+        spec?.statusBarFuture?.accept(this, toolbar)
     }
 
     override fun setViewData() {
-        imagePath = intent.getStringExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH)
+        imagePath = intent.getStringExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH) ?: return
 
         spec?.apply {
             val cropFocusNormalWidth =

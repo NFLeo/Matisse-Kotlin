@@ -3,6 +3,7 @@ package com.leo.matisse
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
@@ -14,6 +15,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
+import com.gyf.barlibrary.ImmersionBar
 import com.matisse.Matisse
 import com.matisse.MimeType
 import com.matisse.MimeTypeManager
@@ -21,10 +23,14 @@ import com.matisse.compress.CompressHelper
 import com.matisse.compress.FileUtil
 import com.matisse.entity.CaptureStrategy
 import com.matisse.entity.ConstValue
-import com.matisse.listener.Consumer
+import com.matisse.entity.IncapableCause
+import com.matisse.listener.NoticeConsumer
+import com.matisse.listener.MFunction
+import com.matisse.ui.activity.BaseActivity
 import com.matisse.utils.PhotoMetadataUtils
 import com.matisse.utils.Platform
 import com.matisse.widget.CropImageView
+import com.matisse.widget.IncapableDialog
 import com.tbruyelle.rxpermissions2.RxPermissions
 import kotlinx.android.synthetic.main.activity_example.*
 
@@ -152,8 +158,16 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
         ev_span_2.addTextChangedListener(textChanged(ev_span_2))
     }
 
-    private fun showToast(value: String) {
-        Toast.makeText(this, value, Toast.LENGTH_SHORT).show()
+    private fun showToast(context: Context, noticeType: Int, title: String, message: String) {
+        if (noticeType == IncapableCause.TOAST) {
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        } else if (noticeType == IncapableCause.DIALOG) {
+            // 外部弹窗，可外部定义样式
+            val incapableDialog = IncapableDialog.newInstance(title, message)
+            incapableDialog.show(
+                (context as BaseActivity).supportFragmentManager, IncapableDialog::class.java.name
+            )
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -301,9 +315,25 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
             .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
             .imageEngine(Glide4Engine())
             .theme(R.style.CustomMatisseStyle)
-            .setNoticeConsumer(object : Consumer<String> {
-                override fun accept(params: String) {
-                    showToast(params)
+            .setNoticeConsumer(object : NoticeConsumer {
+                override fun accept(
+                    context: Context, noticeType: Int, title: String, message: String
+                ) {
+                    // 外部提示，可外部定义样式
+                    showToast(context, noticeType, title, message)
+                }
+            })
+            .setStatusBarFuture(object : MFunction<BaseActivity> {
+                override fun accept(params: BaseActivity, view: View?) {
+                    // 外部设置状态栏
+                    ImmersionBar.with(params)?.run {
+                        statusBarDarkFont(isDarkStatus)
+                        view?.apply { titleBar(this) }
+                        init()
+                    }
+
+                    // 外部可隐藏Matisse界面中的View
+                    view?.visibility = if (isDarkStatus) View.VISIBLE else View.GONE
                 }
             })
             .forResult(ConstValue.REQUEST_CODE_CHOOSE)

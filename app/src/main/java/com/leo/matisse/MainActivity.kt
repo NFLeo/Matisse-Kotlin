@@ -2,14 +2,14 @@ package com.leo.matisse
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
-import androidx.fragment.app.FragmentActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.matisse.Matisse
 import com.matisse.MimeTypeManager
@@ -17,15 +17,13 @@ import com.matisse.compress.CompressHelper
 import com.matisse.compress.FileUtil
 import com.matisse.entity.CaptureStrategy
 import com.matisse.entity.ConstValue
-import com.matisse.entity.IncapableCause
-import com.matisse.listener.Consumer
+import com.matisse.listener.NoticeConsumer
 import com.matisse.listener.OnCheckedListener
 import com.matisse.listener.OnSelectedListener
 import com.matisse.utils.PhotoMetadataUtils
 import com.matisse.utils.Platform
 import com.matisse.utils.UIUtils
 import com.matisse.widget.CropImageView
-import com.matisse.widget.IncapableDialog
 import com.tbruyelle.rxpermissions2.RxPermissions
 import kotlinx.android.synthetic.main.activity_main.*
 import java.text.DecimalFormat
@@ -70,9 +68,11 @@ class MainActivity : AppCompatActivity() {
                         .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
                         .imageEngine(Glide4Engine())
                         .theme(R.style.CustomMatisseStyle)
-                        .setNoticeConsumer(object : Consumer<String> {
-                            override fun accept(params: String) {
-                                showToast(params)
+                        .setNoticeConsumer(object : NoticeConsumer {
+                            override fun accept(
+                                context: Context, noticeType: Int, title: String, message: String
+                            ) {
+                                showToast(message)
                             }
                         })
                         .forResult(ConstValue.REQUEST_CODE_CHOOSE)
@@ -116,11 +116,6 @@ class MainActivity : AppCompatActivity() {
                             override fun onSelected(uriList: List<Uri>, pathList: List<String>) {
                                 // DO SOMETHING IMMEDIATELY HERE
                                 Log.e("onSelected", "onSelected: pathList=$pathList")
-                            }
-                        })
-                        .setNoticeConsumer(object : Consumer<String> {
-                            override fun accept(params: String) {
-                                showToast(params)
                             }
                         })
                         .setOnCheckedListener(object : OnCheckedListener {

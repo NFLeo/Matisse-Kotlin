@@ -11,9 +11,11 @@ import com.matisse.engine.ImageEngine
 import com.matisse.entity.CaptureStrategy
 import com.matisse.filter.Filter
 import com.matisse.internal.entity.SelectionSpec
-import com.matisse.listener.Consumer
+import com.matisse.listener.NoticeConsumer
+import com.matisse.listener.MFunction
 import com.matisse.listener.OnCheckedListener
 import com.matisse.listener.OnSelectedListener
+import com.matisse.ui.activity.BaseActivity
 import com.matisse.ui.activity.matisse.MatisseActivity
 import com.matisse.widget.CropImageView
 import java.io.File
@@ -344,8 +346,16 @@ class SelectionCreator(
     /**
      * set notice type for matisse
      */
-    fun setNoticeConsumer(noticeConsumer: Consumer<String>?) = this.run {
+    fun setNoticeConsumer(noticeConsumer: NoticeConsumer?) = this.run {
         selectionSpec.noticeConsumer = noticeConsumer
+        this
+    }
+
+    /**
+     * set Status Bar
+     */
+    fun setStatusBarFuture(statusBarFunction: MFunction<BaseActivity>?) = this.run {
+        selectionSpec.statusBarFuture = statusBarFunction
         this
     }
 

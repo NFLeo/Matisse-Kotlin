@@ -1,8 +1,10 @@
 package com.matisse.listener
 
-interface Consumer<T> {
+import android.view.View
+
+interface MFunction<T> {
     /**
      * Perform this method on the given parameters
      */
-    fun accept(params: T)
+    fun accept(params: T, view: View?)
 }

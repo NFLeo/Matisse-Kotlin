@@ -11,7 +11,6 @@ import android.os.Handler
 import android.os.Looper
 import android.os.Parcelable
 import android.view.View
-import com.gyf.barlibrary.ImmersionBar
 import com.matisse.R
 import com.matisse.entity.Album
 import com.matisse.entity.ConstValue
@@ -55,10 +54,7 @@ class MatisseActivity : BaseActivity(),
 
     override fun configActivity() {
         super.configActivity()
-        if (Platform.isClassExists("com.gyf.barlibrary.ImmersionBar")) {
-            ImmersionBar.with(this).titleBar(toolbar)
-                ?.statusBarDarkFont(spec?.isDarkStatus == true)?.init()
-        }
+        spec?.statusBarFuture?.accept(this, toolbar)
 
         if (spec?.capture == true) {
             mediaStoreCompat = MediaStoreCompat(this)

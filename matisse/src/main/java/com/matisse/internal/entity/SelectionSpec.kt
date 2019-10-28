@@ -9,9 +9,11 @@ import com.matisse.engine.ImageEngine
 import com.matisse.entity.CaptureStrategy
 import com.matisse.entity.Item
 import com.matisse.filter.Filter
-import com.matisse.listener.Consumer
+import com.matisse.listener.NoticeConsumer
+import com.matisse.listener.MFunction
 import com.matisse.listener.OnCheckedListener
 import com.matisse.listener.OnSelectedListener
+import com.matisse.ui.activity.BaseActivity
 import com.matisse.widget.CropImageView
 import java.io.File
 
@@ -51,7 +53,8 @@ class SelectionSpec {
     var hasInited = false
 
     var isDarkStatus: Boolean = false
-    var noticeConsumer: Consumer<String>? = null
+    var noticeConsumer: NoticeConsumer? = null
+    var statusBarFuture: MFunction<BaseActivity>? = null
 
     class InstanceHolder {
         companion object {
@@ -102,6 +105,7 @@ class SelectionSpec {
 
         isDarkStatus = false
         noticeConsumer = null
+        statusBarFuture = null
     }
 
     // 是否可计数

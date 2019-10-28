@@ -9,6 +9,7 @@ import android.util.TypedValue.applyDimension
 import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import com.matisse.R
 import com.matisse.entity.IncapableCause
@@ -18,8 +19,14 @@ import kotlin.math.roundToInt
 object UIUtils {
 
     fun handleCause(context: Context, cause: IncapableCause?) {
+        if (cause?.noticeConsumer != null) {
+            cause.noticeConsumer?.accept(
+                context, cause.form, cause.title ?: "", cause.message ?: ""
+            )
+            return
+        }
+
         when (cause?.form) {
-            // Show description with dialog
             IncapableCause.DIALOG -> {
                 val incapableDialog = IncapableDialog.newInstance(cause.title, cause.message)
                 incapableDialog.show(
@@ -27,7 +34,10 @@ object UIUtils {
                     IncapableDialog::class.java.name
                 )
             }
-            else -> cause?.consumer?.accept(cause.message ?: "")
+
+            IncapableCause.TOAST -> {
+                Toast.makeText(context, cause.message, Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
