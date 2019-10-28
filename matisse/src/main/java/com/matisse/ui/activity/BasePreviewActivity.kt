@@ -275,9 +275,6 @@ open class BasePreviewActivity : BaseActivity(), View.OnClickListener,
                         check_view.setChecked(false)
                     }
                 } else {
-//                    if (spec?.maxImageSelectable ?: 0 <= 1)
-//                        selectedCollection.removeAll()
-
                     if (assertAddSelection(item)) {
                         selectedCollection.add(item)
                         if (spec?.isCountable() == true) {

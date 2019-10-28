@@ -43,7 +43,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="15dp"
+        android:lineSpacingExtra="3dp"
         android:textColor="@color/color_title_text"
-        app:layout_constraintTop_toBottomOf="@+id/btn_media_store" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

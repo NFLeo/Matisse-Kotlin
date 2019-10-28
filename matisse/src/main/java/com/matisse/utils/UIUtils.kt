@@ -3,14 +3,13 @@ package com.matisse.utils
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.PorterDuff
-import androidx.fragment.app.FragmentActivity
 import android.util.DisplayMetrics
 import android.util.TypedValue
 import android.util.TypedValue.applyDimension
 import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
-import android.widget.Toast
+import androidx.fragment.app.FragmentActivity
 import com.matisse.R
 import com.matisse.entity.IncapableCause
 import com.matisse.widget.IncapableDialog
@@ -19,14 +18,7 @@ import kotlin.math.roundToInt
 object UIUtils {
 
     fun handleCause(context: Context, cause: IncapableCause?) {
-        if (cause == null) return
-
-        cause.consumer?.accept(cause.message ?: "")
-
-        when (cause.form) {
-            // do nothing.
-            IncapableCause.NONE -> { /* do noting */
-            }
+        when (cause?.form) {
             // Show description with dialog
             IncapableCause.DIALOG -> {
                 val incapableDialog = IncapableDialog.newInstance(cause.title, cause.message)
@@ -35,10 +27,7 @@ object UIUtils {
                     IncapableDialog::class.java.name
                 )
             }
-            // default is TOAST
-            IncapableCause.TOAST -> Toast.makeText(
-                context, cause.message, Toast.LENGTH_SHORT
-            ).show()
+            else -> cause?.consumer?.accept(cause.message ?: "")
         }
     }
 
@@ -93,9 +82,7 @@ object UIUtils {
      * @param view      targetView
      */
     fun setViewVisible(isVisible: Boolean, view: View?) {
-        if (view == null) {
-            return
-        }
+        if (view == null) return
         val visibleFlag = if (isVisible) View.VISIBLE else View.GONE
 
         if (view.visibility != visibleFlag) {
@@ -145,5 +132,11 @@ object UIUtils {
         val outMetrics = DisplayMetrics()// 创建了一张白纸
         windowManager.defaultDisplay.getMetrics(outMetrics)// 给白纸设置宽高
         return outMetrics.heightPixels
+    }
+
+    fun setOnClickListener(clickListener: View.OnClickListener, vararg view: View) {
+        view.forEach {
+            it.setOnClickListener(clickListener)
+        }
     }
 }

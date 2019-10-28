@@ -9,6 +9,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
+import androidx.fragment.app.FragmentActivity
 import com.bumptech.glide.Glide
 import com.matisse.Matisse
 import com.matisse.MimeTypeManager
@@ -16,12 +17,15 @@ import com.matisse.compress.CompressHelper
 import com.matisse.compress.FileUtil
 import com.matisse.entity.CaptureStrategy
 import com.matisse.entity.ConstValue
+import com.matisse.entity.IncapableCause
 import com.matisse.listener.Consumer
 import com.matisse.listener.OnCheckedListener
 import com.matisse.listener.OnSelectedListener
+import com.matisse.utils.PhotoMetadataUtils
 import com.matisse.utils.Platform
 import com.matisse.utils.UIUtils
 import com.matisse.widget.CropImageView
+import com.matisse.widget.IncapableDialog
 import com.tbruyelle.rxpermissions2.RxPermissions
 import kotlinx.android.synthetic.main.activity_main.*
 import java.text.DecimalFormat
@@ -32,7 +36,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_example)
 
         btn_media_store.setOnClickListener {
             RxPermissions(this@MainActivity)
@@ -40,9 +44,7 @@ class MainActivity : AppCompatActivity() {
                 .subscribe {
                     if (!it) {
                         Toast.makeText(
-                            this@MainActivity,
-                            R.string.permission_request_denied,
-                            Toast.LENGTH_LONG
+                            this@MainActivity, R.string.permission_request_denied, Toast.LENGTH_LONG
                         ).show()
                         return@subscribe
                     }
@@ -51,35 +53,26 @@ class MainActivity : AppCompatActivity() {
                         .countable(false)
                         .capture(true)
                         .isCrop(true)
-                        .cropStyle(CropImageView.Style.RECTANGLE)
-                        .maxSelectable(3)
+                        .cropStyle(CropImageView.Style.CIRCLE)
+                        .isCropSaveRectangle(true)
+                        .maxSelectable(1)
                         .setStatusIsDark(true)
                         .theme(R.style.CustomMatisseStyle)
                         .captureStrategy(
                             CaptureStrategy(
                                 true,
-                                "${Platform.getPackageName(this@MainActivity)}.fileprovider"
+                                "${Platform.getPackageName(this@MainActivity)}.fileprovider",
+                                "Leo"
                             )
                         )
                         .thumbnailScale(0.8f)
                         .gridExpectedSize(resources.getDimensionPixelSize(R.dimen.grid_expected_size))
                         .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
                         .imageEngine(Glide4Engine())
-                        .setOnSelectedListener(object : OnSelectedListener {
-                            override fun onSelected(uriList: List<Uri>, pathList: List<String>) {
-                                // DO SOMETHING IMMEDIATELY HERE
-                                Log.e("onSelected", "onSelected: pathList=$pathList")
-                            }
-                        })
+                        .theme(R.style.CustomMatisseStyle)
                         .setNoticeConsumer(object : Consumer<String> {
                             override fun accept(params: String) {
                                 showToast(params)
-                            }
-                        })
-                        .setOnCheckedListener(object : OnCheckedListener {
-                            override fun onCheck(isChecked: Boolean) {
-                                // DO SOMETHING IMMEDIATELY HERE
-                                Log.e("isChecked", "onCheck: isChecked=$isChecked")
                             }
                         })
                         .forResult(ConstValue.REQUEST_CODE_CHOOSE)
@@ -117,7 +110,7 @@ class MainActivity : AppCompatActivity() {
                         .maxSelectable(1)
                         .thumbnailScale(0.8f)
                         .gridExpectedSize(resources.getDimensionPixelSize(R.dimen.grid_expected_size))
-                        .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+                        .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
                         .imageEngine(Glide4Engine())
                         .setOnSelectedListener(object : OnSelectedListener {
                             override fun onSelected(uriList: List<Uri>, pathList: List<String>) {
@@ -171,8 +164,8 @@ class MainActivity : AppCompatActivity() {
             Glide.with(this).load(file).into(iv_image)
             // 压缩后的文件         （多个文件压缩可以循环压缩）
             val file1 = CompressHelper.getDefault(applicationContext)?.compressToFile(file)
-            string += getReadableFileSize(file.length()) + " PK " +
-                    getReadableFileSize(file1?.length() ?: 0)
+            string += PhotoMetadataUtils.getSizeInMB(file.length()).toString() + " PK " +
+                    PhotoMetadataUtils.getSizeInMB(file1?.length() ?: 0)
             string = "\n\n$string"
 
             text.text = "\n\n$string"

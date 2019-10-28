@@ -52,6 +52,9 @@ object PhotoMetadataUtils {
         return uri.path
     }
 
+    /**
+     * 遍历外部自定义过滤器
+     */
     fun isAcceptable(context: Context, item: Item?): IncapableCause? {
         if (!isSelectableType(context, item))
             return IncapableCause(context.getString(R.string.error_file_type))
@@ -78,6 +81,9 @@ object PhotoMetadataUtils {
         return false
     }
 
+    /**
+     * 获取资源的宽高尺寸
+     */
     fun getBitmapBound(resolver: ContentResolver, uri: Uri?): Point {
         if (uri == null) return Point(0, 0)
 

@@ -3,7 +3,6 @@ package com.matisse.entity
 import android.content.Context
 import androidx.annotation.IntDef
 import androidx.fragment.app.FragmentActivity
-import android.widget.Toast
 import com.matisse.internal.entity.SelectionSpec
 import com.matisse.listener.Consumer
 import com.matisse.widget.IncapableDialog
@@ -16,23 +15,15 @@ class IncapableCause {
         const val NONE = 0x0003
 
         fun handleCause(context: Context, cause: IncapableCause?) {
-            if (cause == null) return
-
-            cause.consumer?.accept(cause.message ?: "")
-
-            when (cause.form) {
+            when (cause?.form) {
                 DIALOG -> {
-                    val incapableDialog =
-                        IncapableDialog.newInstance(cause.title, cause.message)
+                    val incapableDialog = IncapableDialog.newInstance(cause.title, cause.message)
                     incapableDialog.show(
                         (context as FragmentActivity).supportFragmentManager,
                         IncapableDialog::class.java.name
                     )
                 }
-                TOAST -> Toast.makeText(context, cause.message, Toast.LENGTH_SHORT).show()
-                NONE -> {
-                }
-                else -> Toast.makeText(context, cause.message, Toast.LENGTH_SHORT).show()
+                else -> cause?.consumer?.accept(cause.message ?: "")
             }
         }
     }

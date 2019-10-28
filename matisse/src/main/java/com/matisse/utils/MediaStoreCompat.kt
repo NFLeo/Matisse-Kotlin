@@ -75,9 +75,9 @@ class MediaStoreCompat {
                 }
 
                 if (kFragment != null) {
-                    kFragment?.get()!!.startActivityForResult(captureIntent, requestCode)
+                    kFragment?.get()?.startActivityForResult(captureIntent, requestCode)
                 } else {
-                    kContext.get()!!.startActivityForResult(captureIntent, requestCode)
+                    kContext.get()?.startActivityForResult(captureIntent, requestCode)
                 }
             }
         }
@@ -87,13 +87,21 @@ class MediaStoreCompat {
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val imageFileName = String.format("JPEG_%s.jpg", timeStamp)
         val storageDir: File
-        if (captureStrategy?.isPublic!!) {
-            storageDir =
+        if (captureStrategy?.isPublic == true) {
+            storageDir = if (Platform.beforeAndroidTen())
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+            else kContext.get()?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!
+
             if (!storageDir.exists()) storageDir.mkdirs()
         } else {
             storageDir = kContext.get()?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!
         }
+
+        // TODO 2019/10/28 Leo 暂时不做
+//        if (captureStrategy?.isPublic == true && captureStrategy?.directory != null) {
+//            storageDir = File(storageDir, captureStrategy?.directory)
+//            if (!storageDir.exists()) storageDir.mkdirs()
+//        }
 
         // Avoid joining path components manually
         val tempFile = File(storageDir, imageFileName)

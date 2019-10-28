@@ -47,9 +47,6 @@ class AlbumMediaLoader(
                 MediaStore.Files.FileColumns.MEDIA_TYPE + "=?"
                         + " AND " + MediaStore.MediaColumns.SIZE + ">0")
 
-        private fun getSelectionArgsForSingleMediaType(mediaType: Int) =
-            arrayOf(mediaType.toString())
-
         // === params for ordinary album && showSingleMediaType: false ===
         private const val SELECTION_ALBUM = (
                 "(" + MediaStore.Files.FileColumns.MEDIA_TYPE + "=?"
@@ -70,16 +67,9 @@ class AlbumMediaLoader(
 
         // === params for ordinary album && showSingleMediaType: true ===
         private const val SELECTION_ALBUM_FOR_SINGLE_MEDIA_TYPE = (
-                MediaStore.Files.FileColumns.MEDIA_TYPE + "=?"
-                        + " AND "
-                        + " bucket_id=?"
-                        + " AND " + MediaStore.MediaColumns.SIZE + ">0")
+                MediaStore.Files.FileColumns.MEDIA_TYPE
+                        + "=? AND bucket_id=? AND " + MediaStore.MediaColumns.SIZE + ">0")
 
-        private fun getSelectionAlbumArgsForSingleMediaType(
-            mediaType: Int, albumId: String
-        ): Array<String> {
-            return arrayOf(mediaType.toString(), albumId)
-        }
         // ===============================================================
 
         private const val ORDER_BY = MediaStore.Images.Media.DATE_TAKEN + " DESC"
@@ -94,12 +84,12 @@ class AlbumMediaLoader(
                     SelectionSpec.getInstance().onlyShowImages() -> {
                         selection = SELECTION_ALL_FOR_SINGLE_MEDIA_TYPE
                         selectionArgs =
-                            getSelectionArgsForSingleMediaType(MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE)
+                            arrayOf(MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE.toString())
                     }
                     SelectionSpec.getInstance().onlyShowVideos() -> {
                         selection = SELECTION_ALL_FOR_SINGLE_MEDIA_TYPE
                         selectionArgs =
-                            getSelectionArgsForSingleMediaType(MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO)
+                            arrayOf(MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO.toString())
                     }
                     else -> {
                         selection = SELECTION_ALL
@@ -111,14 +101,14 @@ class AlbumMediaLoader(
                 when {
                     SelectionSpec.getInstance().onlyShowImages() -> {
                         selection = SELECTION_ALBUM_FOR_SINGLE_MEDIA_TYPE
-                        selectionArgs = getSelectionAlbumArgsForSingleMediaType(
-                            MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE, album.getId()
+                        selectionArgs = arrayOf(
+                            MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE.toString(), album.getId()
                         )
                     }
                     SelectionSpec.getInstance().onlyShowVideos() -> {
                         selection = SELECTION_ALBUM_FOR_SINGLE_MEDIA_TYPE
-                        selectionArgs = getSelectionAlbumArgsForSingleMediaType(
-                            MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO, album.getId()
+                        selectionArgs = arrayOf(
+                            MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO.toString(), album.getId()
                         )
                     }
                     else -> {

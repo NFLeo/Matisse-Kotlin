@@ -9,6 +9,6 @@
         <activity android:name=".ui.activity.ImageCropActivity" />
         <activity android:name=".ui.activity.SelectedPreviewActivity" />
         <activity android:name=".ui.activity.AlbumPreviewActivity" />
-        <activity android:name=".ui.activity.MatisseActivity" />
+        <activity android:name=".ui.activity.matisse.MatisseActivity" />
     </application>
 </manifest>

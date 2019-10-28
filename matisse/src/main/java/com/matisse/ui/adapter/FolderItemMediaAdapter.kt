@@ -4,6 +4,7 @@ import android.content.Context
 import android.database.Cursor
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.text.Layout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,13 +13,16 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.matisse.R
 import com.matisse.entity.Album
+import com.matisse.entity.Item
 import com.matisse.internal.entity.SelectionSpec
 import com.matisse.widget.CheckRadioView
 import java.io.File
 
-class FolderMediaAdapter(var context: Context, var mCurrentPosition: Int) :
-    RecyclerViewCursorAdapter<FolderMediaAdapter.FolderViewHolder>(null) {
+class FolderItemMediaAdapter(var context: Context, var mCurrentPosition: Int) :
+    RecyclerView.Adapter<FolderItemMediaAdapter.FolderViewHolder>() {
 
+    var albumList = arrayListOf<Album>()
+    private var inflater: LayoutInflater
     var itemClickListener: OnItemClickListener? = null
     private var placeholder: Drawable?
 
@@ -26,18 +30,20 @@ class FolderMediaAdapter(var context: Context, var mCurrentPosition: Int) :
         val ta = context.theme.obtainStyledAttributes(intArrayOf(R.attr.item_placeholder))
         placeholder = ta.getDrawable(0)
         ta.recycle()
+
+        inflater = LayoutInflater.from(context)
     }
 
-    override fun onBindViewHolder(holder: FolderViewHolder, cursor: Cursor, position: Int) {
+    override fun onBindViewHolder(holder: FolderViewHolder, position: Int) {
 
-        val album = Album.valueOf(cursor)
+        val album = albumList[position]
 
         holder.tvBucketName.text = String.format(
             context.getString(R.string.folder_count),
             album.getDisplayName(holder.tvBucketName.context), album.getCount()
         )
 
-        setRbSelectChecked(holder.rbSelected, cursor.position == mCurrentPosition)
+        setRbSelectChecked(holder.rbSelected, position == mCurrentPosition)
 
         // do not need to load animated Gif
         val mContext = holder.ivBucketCover.context
@@ -47,12 +53,17 @@ class FolderMediaAdapter(var context: Context, var mCurrentPosition: Int) :
         )
     }
 
-    override fun getItemViewType(position: Int, cursor: Cursor) = 0
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = FolderViewHolder(
-        parent,
-        LayoutInflater.from(parent.context).inflate(R.layout.item_album_folder, parent, false)
+        parent, inflater.inflate(R.layout.item_album_folder, parent, false)
     )
+
+    override fun getItemCount() = albumList.size
+
+    fun setListData(list: MutableList<Album>?) {
+        albumList.clear()
+        list?.apply { albumList.addAll(this) }
+        notifyDataSetChanged()
+    }
 
     inner class FolderViewHolder(private val mParentView: ViewGroup, itemView: View) :
         RecyclerView.ViewHolder(itemView), View.OnClickListener {
@@ -66,10 +77,7 @@ class FolderMediaAdapter(var context: Context, var mCurrentPosition: Int) :
         }
 
         override fun onClick(v: View) {
-            if (itemClickListener != null) {
-                itemClickListener!!.onItemClick(v, layoutPosition)
-            }
-
+            itemClickListener?.onItemClick(v, layoutPosition)
             mCurrentPosition = layoutPosition
             setRadioDisChecked(mParentView)
             setRbSelectChecked(rbSelected, true)

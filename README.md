@@ -19,14 +19,14 @@ Matisse核心功能：[https://github.com/zhihu/Matisse](https://github.com/zhih
 2. 修复并支持图片与视频混合选择
 ```
 设置选择单一类型媒体，示例如下
-SelectionCreator.choose(MimeTypeManager.ofAll())
+Matisse.choose(MimeTypeManager.ofAll())
                 .maxSelectable(3)
 或者
-SelectionCreator.choose(MimeTypeManager.ofAll(), true)
+Matisse.choose(MimeTypeManager.ofAll(), true)
                 .maxSelectable(3)
 
 设置选择混合类型媒体，示例如下
-SelectionCreator.choose(MimeTypeManager.ofAll(), false)
+Matisse.choose(MimeTypeManager.ofAll(), false)
                 .maxSelectablePerMediaType(4, 2)
 
 说明：

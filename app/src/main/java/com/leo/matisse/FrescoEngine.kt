@@ -21,10 +21,14 @@ import com.matisse.engine.ImageEngine
  */
 class FrescoEngine : ImageEngine {
 
-    override fun loadThumbnail(context: Context, resize: Int, placeholder: Drawable?, imageView: ImageView, uri: Uri) {
+    override fun loadThumbnail(
+        context: Context, resize: Int, placeholder: Drawable?, imageView: ImageView, uri: Uri?
+    ) {
         var hierarchy: GenericDraweeHierarchy? = null
-        val hierarchyBuilder = GenericDraweeHierarchyBuilder.newInstance(imageView.context.resources)
-        var draweeHolder: DraweeHolder<*>? = imageView.getTag(R.id.fresco_drawee) as DraweeHolder<*>?
+        val hierarchyBuilder =
+            GenericDraweeHierarchyBuilder.newInstance(imageView.context.resources)
+        var draweeHolder: DraweeHolder<*>? =
+            imageView.getTag(R.id.fresco_drawee) as DraweeHolder<*>?
 
         hierarchyBuilder.placeholderImage = placeholder
         hierarchyBuilder.failureImage = placeholder
@@ -33,7 +37,8 @@ class FrescoEngine : ImageEngine {
             hierarchy = hierarchyBuilder.build()
         }
 
-        val controllerBuilder = Fresco.newDraweeControllerBuilder().setUri(uri).setAutoPlayAnimations(true)
+        val controllerBuilder =
+            Fresco.newDraweeControllerBuilder().setUri(uri).setAutoPlayAnimations(true)
 
         val imageRequestBuilder = ImageRequestBuilder.newBuilderWithSource(uri)
         imageRequestBuilder.resizeOptions = ResizeOptions(resize, resize)
@@ -59,19 +64,26 @@ class FrescoEngine : ImageEngine {
         imageView.setImageDrawable(draweeHolder?.topLevelDrawable)
     }
 
-    override fun loadGifThumbnail(context: Context, resize: Int, placeholder: Drawable?, imageView: ImageView, uri: Uri) {
+    override fun loadGifThumbnail(
+        context: Context, resize: Int, placeholder: Drawable?, imageView: ImageView, uri: Uri?
+    ) {
     }
 
-    override fun loadImage(context: Context, resizeX: Int, resizeY: Int, imageView: ImageView, uri: Uri) {
+    override fun loadImage(
+        context: Context, resizeX: Int, resizeY: Int, imageView: ImageView, uri: Uri?
+    ) {
         var hierarchy: GenericDraweeHierarchy? = null
-        val hierarchyBuilder = GenericDraweeHierarchyBuilder.newInstance(imageView.context.resources)
-        var draweeHolder: DraweeHolder<*>? = imageView.getTag(R.id.fresco_drawee) as DraweeHolder<*>?
+        val hierarchyBuilder =
+            GenericDraweeHierarchyBuilder.newInstance(imageView.context.resources)
+        var draweeHolder: DraweeHolder<*>? =
+            imageView.getTag(R.id.fresco_drawee) as DraweeHolder<*>?
 
         if (hierarchy == null) {
             hierarchy = hierarchyBuilder.build()
         }
 
-        val controllerBuilder = Fresco.newDraweeControllerBuilder().setUri(uri).setAutoPlayAnimations(true)
+        val controllerBuilder =
+            Fresco.newDraweeControllerBuilder().setUri(uri).setAutoPlayAnimations(true)
 
         var params: ViewGroup.LayoutParams? = imageView.layoutParams
         if (params == null) {
@@ -110,7 +122,9 @@ class FrescoEngine : ImageEngine {
         imageView.setImageDrawable(draweeHolder?.topLevelDrawable)
     }
 
-    override fun loadGifImage(context: Context, resizeX: Int, resizeY: Int, imageView: ImageView, uri: Uri) {
+    override fun loadGifImage(
+        context: Context, resizeX: Int, resizeY: Int, imageView: ImageView, uri: Uri?
+    ) {
     }
 
     override fun cleanMemory(context: Context) {

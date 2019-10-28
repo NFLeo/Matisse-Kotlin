@@ -15,18 +15,25 @@ import java.util.*
 class MimeTypeManager {
 
     companion object {
-        fun ofAll() = EnumSet.allOf(MimeType::class.java)
+        fun ofAll(): EnumSet<MimeType> = EnumSet.allOf(MimeType::class.java)
 
-        fun of(type: MimeType, vararg rest: MimeType) = EnumSet.of(type, *rest)!!
+        fun of(type: MimeType, rest: Array<MimeType>): EnumSet<MimeType> = EnumSet.of(type, *rest)
 
-        fun ofImage() = EnumSet.of(
+        fun ofImage(): EnumSet<MimeType> = EnumSet.of(
             MimeType.JPEG, MimeType.PNG, MimeType.GIF, MimeType.BMP, MimeType.WEBP
-        )!!
+        )
 
-        fun ofVideo() = EnumSet.of(
+        fun ofVideo(): EnumSet<MimeType> = EnumSet.of(
             MimeType.MPEG, MimeType.MP4, MimeType.QUICKTIME, MimeType.THREEGPP, MimeType.THREEGPP2,
             MimeType.MKV, MimeType.WEBM, MimeType.TS, MimeType.AVI
-        )!!
+        )
+
+        fun isImage(mimeType: String?) = mimeType?.startsWith("image") ?: false
+
+        fun isVideo(mimeType: String?) = mimeType?.startsWith("video") ?: false
+
+        fun isGif(mimeType: String?) = if (mimeType == null) false
+        else mimeType == MimeType.GIF.toString()
 
         fun arraySetOf(vararg suffixes: String) = ArraySet(mutableListOf(*suffixes))
 
@@ -45,7 +52,7 @@ class MimeTypeManager {
                     // we only resolve the path for one time
                     path = PhotoMetadataUtils.getPath(resolver, uri)
                     if (!TextUtils.isEmpty(path)) {
-                        path = path!!.toLowerCase(Locale.US)
+                        path = path?.toLowerCase(Locale.US)
                     }
                     pathParsed = true
                 }

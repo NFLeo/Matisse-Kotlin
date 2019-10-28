@@ -1,0 +1,527 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="15dp">
+
+        <TextView
+            android:id="@+id/tv_show_resource"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:text="显示资源"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <RadioGroup
+            android:id="@+id/rg_show"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toEndOf="@+id/tv_show_resource"
+            app:layout_constraintTop_toTopOf="@+id/tv_show_resource">
+
+            <RadioButton
+                android:id="@+id/btnAll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="全部资源" />
+
+            <RadioButton
+                android:id="@+id/btnVideo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="仅视频" />
+
+            <RadioButton
+                android:id="@+id/btnImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="仅图片" />
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/tv_show_customize"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:text="自定义显示"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toStartOf="@+id/rg_show"
+            app:layout_constraintTop_toBottomOf="@+id/rg_show" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/view_show_customize"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_show_customize"
+            app:layout_constraintTop_toTopOf="@+id/tv_show_customize">
+
+            <CheckBox
+                android:id="@+id/chb_jpeg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="JPEG"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <CheckBox
+                android:id="@+id/chb_png"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="50dp"
+                android:text="PNG"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <CheckBox
+                android:id="@+id/chb_gif"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="GIF"
+                app:layout_constraintStart_toStartOf="@+id/chb_jpeg"
+                app:layout_constraintTop_toBottomOf="@+id/chb_jpeg" />
+
+            <CheckBox
+                android:id="@+id/chb_bmp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="BMP"
+                app:layout_constraintStart_toStartOf="@+id/chb_png"
+                app:layout_constraintTop_toBottomOf="@+id/chb_png" />
+
+            <CheckBox
+                android:id="@+id/chb_webp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="WEBP"
+                app:layout_constraintStart_toStartOf="@+id/chb_jpeg"
+                app:layout_constraintTop_toBottomOf="@+id/chb_gif" />
+
+            <CheckBox
+                android:id="@+id/chb_mpeg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="MPEG"
+                app:layout_constraintStart_toStartOf="@+id/chb_png"
+                app:layout_constraintTop_toBottomOf="@+id/chb_bmp" />
+
+            <CheckBox
+                android:id="@+id/chb_mp4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="MP4"
+                app:layout_constraintStart_toStartOf="@+id/chb_jpeg"
+                app:layout_constraintTop_toBottomOf="@+id/chb_webp" />
+
+            <CheckBox
+                android:id="@+id/chb_quick_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="QUICKTIME"
+                app:layout_constraintStart_toStartOf="@+id/chb_png"
+                app:layout_constraintTop_toBottomOf="@+id/chb_mpeg" />
+
+            <CheckBox
+                android:id="@+id/chb_threegpp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="GPP"
+                app:layout_constraintStart_toStartOf="@+id/chb_jpeg"
+                app:layout_constraintTop_toBottomOf="@+id/chb_mp4" />
+
+            <CheckBox
+                android:id="@+id/chb_threegpp2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="GPP2"
+                app:layout_constraintStart_toStartOf="@+id/chb_png"
+                app:layout_constraintTop_toBottomOf="@+id/chb_quick_time" />
+
+            <CheckBox
+                android:id="@+id/chb_mkv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="MKV"
+                app:layout_constraintStart_toStartOf="@+id/chb_jpeg"
+                app:layout_constraintTop_toBottomOf="@+id/chb_threegpp" />
+
+            <CheckBox
+                android:id="@+id/chb_webm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="WEBM"
+                app:layout_constraintStart_toStartOf="@+id/chb_png"
+                app:layout_constraintTop_toBottomOf="@+id/chb_threegpp2" />
+
+            <CheckBox
+                android:id="@+id/chb_ts"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TS"
+                app:layout_constraintStart_toStartOf="@+id/chb_jpeg"
+                app:layout_constraintTop_toBottomOf="@+id/chb_mkv" />
+
+            <CheckBox
+                android:id="@+id/chb_avi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="AVI"
+                app:layout_constraintStart_toStartOf="@+id/chb_png"
+                app:layout_constraintTop_toBottomOf="@+id/chb_webm" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/tv_media_exclusive"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:text="混合/单一\n是否可同时\n选择图片和\n视频"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view_show_customize" />
+
+        <RadioGroup
+            android:id="@+id/rg_media_exclusive"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="@+id/rg_show"
+            app:layout_constraintTop_toTopOf="@+id/tv_media_exclusive">
+
+            <RadioButton
+                android:id="@+id/btnMixed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="混合选择" />
+
+            <RadioButton
+                android:id="@+id/btnExclusive"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="单一选择" />
+
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/tv_choose_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="单/多选"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_media_exclusive" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switch_choose_type"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:checked="false"
+            android:textOff="多选"
+            android:textOn="单选"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_choose_type"
+            app:layout_constraintStart_toStartOf="@+id/rg_show"
+            app:layout_constraintTop_toTopOf="@+id/tv_choose_type"
+            app:showText="true" />
+
+        <TextView
+            android:id="@+id/tv_check_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="50dp"
+            android:text="是否计数"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_choose_type"
+            app:layout_constraintStart_toEndOf="@id/switch_choose_type"
+            app:layout_constraintTop_toTopOf="@+id/tv_choose_type" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switch_check_type"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_marginStart="10dp"
+            android:checked="false"
+            android:textOff="是"
+            android:textOn="否"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_check_type"
+            app:layout_constraintStart_toEndOf="@+id/tv_check_type"
+            app:layout_constraintTop_toTopOf="@+id/tv_check_type"
+            app:showText="true" />
+
+        <TextView
+            android:id="@+id/tv_capture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="开启拍照"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_choose_type" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switch_capture"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:checked="false"
+            android:textOff="关"
+            android:textOn="开"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_capture"
+            app:layout_constraintStart_toStartOf="@+id/rg_show"
+            app:layout_constraintTop_toTopOf="@+id/tv_capture"
+            app:showText="true" />
+
+        <TextView
+            android:id="@+id/tv_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="50dp"
+            android:text="状态栏字色"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_capture"
+            app:layout_constraintStart_toEndOf="@id/switch_choose_type"
+            app:layout_constraintTop_toTopOf="@+id/tv_capture" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switch_status"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_marginStart="10dp"
+            android:checked="false"
+            android:textOff="白"
+            android:textOn="黑"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_status"
+            app:layout_constraintStart_toEndOf="@+id/tv_status"
+            app:layout_constraintTop_toTopOf="@+id/tv_status"
+            app:showText="true" />
+
+        <TextView
+            android:id="@+id/tv_theme"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:paddingTop="5dp"
+            android:text="默认主题"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_capture" />
+
+        <RadioGroup
+            android:id="@+id/rg_theme"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="@+id/rg_show"
+            app:layout_constraintTop_toTopOf="@+id/tv_theme">
+
+            <RadioButton
+                android:id="@+id/btn_normal_theme"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="默认主题" />
+
+            <RadioButton
+                android:id="@+id/btn_customize_theme"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="自定义主题" />
+
+        </RadioGroup>
+
+        <EditText
+            android:id="@+id/ev_max_1"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="15dp"
+            android:hint="最大可选择数"
+            android:inputType="number"
+            android:textSize="14sp"
+            android:text="3"
+            app:layout_constraintEnd_toStartOf="@+id/ev_max_2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_theme" />
+
+        <EditText
+            android:id="@+id/ev_max_2"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:hint="视频最大选择数"
+            android:inputType="number"
+            android:textSize="14sp"
+            android:text="1"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ev_max_1"
+            app:layout_constraintTop_toTopOf="@+id/ev_max_1" />
+
+        <EditText
+            android:id="@+id/ev_span_1"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="5dp"
+            android:hint="列表列数"
+            android:inputType="number"
+            android:textSize="14sp"
+            android:text="3"
+            app:layout_constraintEnd_toStartOf="@+id/ev_span_2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ev_max_1" />
+
+        <EditText
+            android:id="@+id/ev_span_2"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:hint="列表项宽度"
+            android:textSize="14sp"
+            android:text="100"
+            android:visibility="gone"
+            android:inputType="numberDecimal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ev_span_1"
+            app:layout_constraintTop_toTopOf="@+id/ev_span_1" />
+
+        <TextView
+            android:id="@+id/tv_crop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:text="开启裁剪"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ev_span_1" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switch_crop"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:checked="false"
+            android:textOff="关"
+            android:textOn="开"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_crop"
+            app:layout_constraintStart_toStartOf="@+id/rg_show"
+            app:layout_constraintTop_toTopOf="@+id/tv_crop"
+            app:showText="true" />
+
+        <EditText
+            android:id="@+id/ev_crop_width"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="30dp"
+            android:hint="裁剪框宽"
+            android:inputType="number"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_crop"
+            app:layout_constraintEnd_toStartOf="@+id/ev_crop_height"
+            app:layout_constraintStart_toEndOf="@+id/switch_crop"
+            app:layout_constraintTop_toBottomOf="@+id/tv_theme"
+            app:layout_constraintTop_toTopOf="@+id/tv_crop" />
+
+        <EditText
+            android:id="@+id/ev_crop_height"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:hint="裁剪框高"
+            android:inputType="number"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ev_crop_width"
+            app:layout_constraintTop_toTopOf="@+id/ev_crop_width" />
+
+        <TextView
+            android:id="@+id/tv_crop_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="裁剪类型"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_crop" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switch_crop_type"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:checked="false"
+            android:textOff="方"
+            android:textOn="圆"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_crop_type"
+            app:layout_constraintStart_toStartOf="@+id/rg_show"
+            app:layout_constraintTop_toTopOf="@+id/tv_crop_type"
+            app:showText="true" />
+
+        <TextView
+            android:id="@+id/tv_rectangle_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="50dp"
+            android:text="方形保存"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_crop_type"
+            app:layout_constraintStart_toEndOf="@id/switch_crop_type"
+            app:layout_constraintTop_toTopOf="@+id/tv_crop_type" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switch_rectangle_save"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_marginStart="10dp"
+            android:checked="false"
+            android:textOff="否"
+            android:textOn="是"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_rectangle_save"
+            app:layout_constraintStart_toEndOf="@+id/tv_rectangle_save"
+            app:layout_constraintTop_toTopOf="@+id/tv_rectangle_save"
+            app:showText="true" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_open_matisse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="150dp"
+            android:text="打开相册"
+            app:layout_constraintEnd_toStartOf="@+id/btn_open_capture"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ev_span_1" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_open_capture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="打开相机"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_open_matisse"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/btn_open_matisse"
+            app:layout_constraintTop_toTopOf="@+id/btn_open_matisse" />
+
+        <ImageView
+            android:id="@+id/iv_image"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btn_open_matisse" />
+
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:lineSpacingExtra="3dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/iv_image"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:textColor="@color/color_title_text" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

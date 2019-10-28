@@ -539,7 +539,10 @@ class CropImageView : AppCompatImageView {
         try {
             bitmap = Bitmap.createBitmap(bitmap, left, top, width, height)
             if (expectWidth != width || exceptHeight != height) {
-                bitmap = Bitmap.createScaledBitmap(bitmap!!, expectWidth, exceptHeight, true)
+                val sizeWidth = formatBitmapSize(isSaveRectangle, expectWidth, exceptHeight, true)
+                val sizeHeight = formatBitmapSize(isSaveRectangle, expectWidth, exceptHeight, false)
+
+                bitmap = Bitmap.createScaledBitmap(bitmap!!, sizeWidth, sizeHeight, true)
                 if (style == Style.CIRCLE && !isSaveRectangle) {
                     val length = min(expectWidth, exceptHeight)
                     val radius = length / 2
@@ -558,6 +561,14 @@ class CropImageView : AppCompatImageView {
         }
 
         return bitmap
+    }
+
+    private fun formatBitmapSize(
+        isSaveRectangle: Boolean, expectWidth: Int, exceptHeight: Int, widthOrHeight: Boolean
+    ) = if (isSaveRectangle) {
+        min(expectWidth, exceptHeight)
+    } else {
+        if (widthOrHeight) expectWidth else exceptHeight
     }
 
     /**

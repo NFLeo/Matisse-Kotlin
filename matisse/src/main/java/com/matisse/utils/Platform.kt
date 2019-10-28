@@ -13,6 +13,8 @@ object Platform {
 
     fun hasKitO26() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
 
+    fun beforeAndroidTen() = Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
+
     fun getPackageName(context: Context?): String? {
         if (context == null) return ""
 

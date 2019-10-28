@@ -29,11 +29,11 @@ class AlbumCollection : LoaderManager.LoaderCallbacks<Cursor> {
     }
 
     override fun onLoadFinished(loader: Loader<Cursor>, data: Cursor?) {
-        if (context?.get() == null) return
+        if (context?.get() == null || data == null) return
 
         if (!loadFinished) {
             loadFinished = true
-            callbacks?.onAlbumLoad(data!!)
+            callbacks?.onAlbumLoad(data)
         }
     }
 
@@ -62,7 +62,9 @@ class AlbumCollection : LoaderManager.LoaderCallbacks<Cursor> {
         if (callbacks != null) callbacks = null
     }
 
+    @Synchronized
     fun loadAlbums() {
+        loadFinished = false
         loaderManager?.initLoader(LOADER_ID, null, this)
     }
 

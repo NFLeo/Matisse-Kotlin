@@ -1,24 +1,24 @@
 package com.matisse.ui.view
 
 import android.content.Context
-import android.database.Cursor
 import android.os.Bundle
-import androidx.fragment.app.FragmentActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.matisse.R
+import com.matisse.entity.Album
 import com.matisse.entity.ConstValue
-import com.matisse.ui.adapter.FolderMediaAdapter
+import com.matisse.ui.adapter.FolderItemMediaAdapter
 import com.matisse.utils.UIUtils
 
 class FolderBottomSheet : BottomSheetDialogFragment() {
 
     private var kParentView: View? = null
     private lateinit var recyclerView: RecyclerView
-    var adapter: FolderMediaAdapter? = null
+    var adapter: FolderItemMediaAdapter? = null
     var callback: BottomSheetCallback? = null
     private var currentPosition = 0
 
@@ -56,21 +56,26 @@ class FolderBottomSheet : BottomSheetDialogFragment() {
         recyclerView = kParentView?.findViewById(R.id.recyclerview)!!
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.setHasFixedSize(true)
-        adapter = FolderMediaAdapter(context!!, currentPosition)
-        recyclerView.adapter = adapter
+        adapter = FolderItemMediaAdapter(context!!, currentPosition).apply {
+            recyclerView.adapter = this
+            callback?.initData(this)
 
-        callback?.initData(adapter!!)
-
-        adapter?.itemClickListener = object : FolderMediaAdapter.OnItemClickListener {
-            override fun onItemClick(view: View, position: Int) {
-                dismiss()
-                callback?.onItemClick(adapter?.getCursor()!!, position)
+            itemClickListener = object : FolderItemMediaAdapter.OnItemClickListener {
+                override fun onItemClick(view: View, position: Int) {
+                    dismiss()
+                    callback?.onItemClick(albumList[position], position)
+                }
             }
         }
     }
 
     interface BottomSheetCallback {
-        fun initData(adapter: FolderMediaAdapter)
-        fun onItemClick(cursor: Cursor, position: Int)
+        fun initData(adapter: FolderItemMediaAdapter)
+        /**
+         * 点击回调
+         * @param album 当前选中的相册
+         * @param position 当前选中的位置
+         */
+        fun onItemClick(album: Album, position: Int)
     }
 }

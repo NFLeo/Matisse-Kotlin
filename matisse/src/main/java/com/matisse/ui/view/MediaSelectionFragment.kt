@@ -92,8 +92,8 @@ class MediaSelectionFragment : Fragment(), AlbumCallbacks, AlbumMediaAdapter.Che
         onMediaClickListener.onMediaClick(this.album, item, adapterPosition)
     }
 
-    override fun onUpdate() {
-        checkStateListener.onUpdate()
+    override fun onSelectUpdate() {
+        checkStateListener.onSelectUpdate()
     }
 
     override fun onAlbumStart() {

@@ -22,7 +22,7 @@ interface ImageEngine {
      */
     fun loadThumbnail(
         context: Context, resize: Int, placeholder: Drawable?,
-        imageView: ImageView, uri: Uri
+        imageView: ImageView, uri: Uri?
     )
 
     /**
@@ -36,7 +36,7 @@ interface ImageEngine {
      */
     fun loadGifThumbnail(
         context: Context, resize: Int, placeholder: Drawable?,
-        imageView: ImageView, uri: Uri
+        imageView: ImageView, uri: Uri?
     )
 
     /**
@@ -46,7 +46,7 @@ interface ImageEngine {
      * @param imageView ImageView widget
      * @param uri Uri of the loaded image
      */
-    fun loadImage(context: Context, resizeX: Int, resizeY: Int, imageView: ImageView, uri: Uri)
+    fun loadImage(context: Context, resizeX: Int, resizeY: Int, imageView: ImageView, uri: Uri?)
 
     /**
      * Load a gif image resource
@@ -57,7 +57,7 @@ interface ImageEngine {
      * @param imageView ImageView widget
      * @param uri Uri of the loaded image
      */
-    fun loadGifImage(context: Context, resizeX: Int, resizeY: Int, imageView: ImageView, uri: Uri)
+    fun loadGifImage(context: Context, resizeX: Int, resizeY: Int, imageView: ImageView, uri: Uri?)
 
     fun cleanMemory(context: Context)
 

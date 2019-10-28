@@ -138,9 +138,10 @@ object BitmapUtil {
         val scaleMatrix = Matrix()
         scaleMatrix.setScale(ratioX, ratioY, 0f, 0f)
 
-        val canvas = Canvas(scaledBitmap!!)
-        canvas.matrix = scaleMatrix
-        canvas.drawBitmap(bmp!!, 0f, 0f, Paint(Paint.FILTER_BITMAP_FLAG))
+        Canvas(scaledBitmap!!).apply {
+            setMatrix(scaleMatrix)
+            drawBitmap(bmp!!, 0f, 0f, Paint(Paint.FILTER_BITMAP_FLAG))
+        }
 
         // 采用 ExitInterface 设置图片旋转方向
         val exif: ExifInterface

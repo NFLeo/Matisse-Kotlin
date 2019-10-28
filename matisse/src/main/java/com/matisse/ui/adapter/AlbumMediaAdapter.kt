@@ -223,7 +223,7 @@ class AlbumMediaAdapter(
     }
 
     private fun notifyCheckStateChanged() {
-        checkStateListener?.onUpdate()
+        checkStateListener?.onSelectUpdate()
     }
 
     private fun addItem(item: Item): Boolean {
@@ -239,7 +239,7 @@ class AlbumMediaAdapter(
     }
 
     interface CheckStateListener {
-        fun onUpdate()
+        fun onSelectUpdate()
     }
 
     interface OnMediaClickListener {

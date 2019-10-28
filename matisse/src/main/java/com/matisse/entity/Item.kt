@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Parcelable
 import android.provider.MediaStore
 import com.matisse.MimeType
+import com.matisse.MimeTypeManager
 import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
 
@@ -23,6 +24,7 @@ class Item(
         const val ITEM_ID_CAPTURE: Long = -1
         const val ITEM_DISPLAY_NAME_CAPTURE = "Capture"
 
+        // * 注：资源文件size单位为字节byte
         fun valueOf(cursor: Cursor, positionInList: Int = -1) = Item(
             cursor.getLong(cursor.getColumnIndex(MediaStore.Files.FileColumns._ID)),
             cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE)),
@@ -45,23 +47,15 @@ class Item(
         uri = ContentUris.withAppendedId(contentUri, id)
     }
 
-    fun isImage() = mimeType == MimeType.JPEG.getKey() || mimeType == MimeType.PNG.getKey()
-            || mimeType == MimeType.GIF.getKey() || mimeType == MimeType.BMP.getKey()
-            || mimeType == MimeType.WEBP.getKey()
+    fun isImage() = MimeTypeManager.isImage(mimeType)
 
-    fun isGif() = mimeType == MimeType.GIF.getKey()
+    fun isGif() = MimeTypeManager.isGif(mimeType)
 
-    fun isVideo() = mimeType == MimeType.MPEG.getKey()
-            || mimeType == MimeType.MP4.getKey() || mimeType == MimeType.QUICKTIME.getKey()
-            || mimeType == MimeType.THREEGPP.getKey() || mimeType == MimeType.THREEGPP2.getKey()
-            || mimeType == MimeType.MKV.getKey() || mimeType == MimeType.WEBM.getKey()
-            || mimeType == MimeType.TS.getKey() || mimeType == MimeType.AVI.getKey()
+    fun isVideo() = MimeTypeManager.isVideo(mimeType)
 
     fun getContentUri() = uri
 
     fun isCapture() = id == ITEM_ID_CAPTURE
-
-    fun positionInList() = positionInList
 
     override fun describeContents() = 0
 
@@ -77,8 +71,8 @@ class Item(
         var result = 1
         result = 31 * result + mimeType.hashCode()
         result = 31 * result + uri.hashCode()
-        result = 31 * result + java.lang.Long.valueOf(size).hashCode()
-        result = 31 * result + java.lang.Long.valueOf(duration).hashCode()
+        result = 31 * result + size.toString().hashCode()
+        result = 31 * result + duration.toString().hashCode()
         return result
     }
 }

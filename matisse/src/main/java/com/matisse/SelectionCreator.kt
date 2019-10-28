@@ -14,10 +14,9 @@ import com.matisse.internal.entity.SelectionSpec
 import com.matisse.listener.Consumer
 import com.matisse.listener.OnCheckedListener
 import com.matisse.listener.OnSelectedListener
-import com.matisse.ui.activity.MatisseActivity
+import com.matisse.ui.activity.matisse.MatisseActivity
 import com.matisse.widget.CropImageView
 import java.io.File
-import java.util.*
 
 /**
  * Fluent API for building media select specification.
@@ -86,8 +85,7 @@ class SelectionCreator(
      * @return [SelectionCreator] for fluent API.
      */
     fun maxSelectable(maxSelectable: Int): SelectionCreator {
-        if (!selectionSpec.mediaTypeExclusive)
-            throw IllegalArgumentException("maxSelectable must be set when mediaTypeExclusive is true")
+        if (!selectionSpec.mediaTypeExclusive) return this
         if (maxSelectable < 1)
             throw IllegalArgumentException("maxSelectable must be greater than or equal to one")
         if (selectionSpec.maxImageSelectable > 0 || selectionSpec.maxVideoSelectable > 0)
@@ -107,7 +105,8 @@ class SelectionCreator(
     fun maxSelectablePerMediaType(
         maxImageSelectable: Int, maxVideoSelectable: Int
     ): SelectionCreator {
-        if (selectionSpec.mediaTypeExclusive || maxImageSelectable < 1 || maxVideoSelectable < 1)
+        if (selectionSpec.mediaTypeExclusive) return this
+        if (maxImageSelectable < 1 || maxVideoSelectable < 1)
             throw IllegalArgumentException(
                 "mediaTypeExclusive must be false and max selectable must be greater than or equal to one"
             )
@@ -171,6 +170,9 @@ class SelectionCreator(
      * @return [SelectionCreator] for fluent API.
      */
     fun captureStrategy(captureStrategy: CaptureStrategy): SelectionCreator {
+        if (!selectionSpec.capture) {
+            return this
+        }
         selectionSpec.captureStrategy = captureStrategy
         return this
     }
@@ -197,6 +199,9 @@ class SelectionCreator(
      */
     fun spanCount(spanCount: Int): SelectionCreator {
         if (spanCount < 1) throw IllegalArgumentException("spanCount cannot be less than 1")
+        if (selectionSpec.gridExpectedSize > 0) {
+            return this
+        }
         selectionSpec.spanCount = spanCount
         return this
     }

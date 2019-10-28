@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.zhihu.matisse.sample
+package com.leo.matisse
 
 import android.content.Context
 import com.leo.matisse.R
 import com.matisse.MimeType
+import com.matisse.MimeTypeManager
 import com.matisse.entity.IncapableCause
 import com.matisse.entity.Item
 import com.matisse.filter.Filter
@@ -27,11 +28,7 @@ import java.util.*
 class GifSizeFilter(private val mMinWidth: Int, private val mMinHeight: Int, private val mMaxSize: Int) : Filter() {
 
     override fun constraintTypes(): Set<MimeType> {
-        return object : HashSet<MimeType>() {
-            init {
-                add(MimeType.GIF)
-            }
-        }
+        return MimeTypeManager.ofImage()
     }
 
     override fun filter(context: Context, item: Item?): IncapableCause? {
