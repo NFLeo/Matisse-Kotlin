@@ -50,11 +50,13 @@ class SelectionSpec {
     var cropStyle = CropImageView.Style.RECTANGLE   // 裁剪框的形状
     var cropCacheFolder: File? = null               // 裁剪后文件保存路径
 
-    var hasInited = false
+    var hasInited = false                                   // 是否初始化完成
 
-    var isDarkStatus: Boolean = false
-    var noticeConsumer: NoticeConsumer? = null
-    var statusBarFuture: MFunction<BaseActivity>? = null
+    var isDarkStatus: Boolean = false                       // 状态栏字体是否为黑色
+    var noticeConsumer: NoticeConsumer? = null              // 库内提示具体回调
+    var statusBarFuture: MFunction<BaseActivity>? = null    // 状态栏处理回调
+
+    var isInnerCompress = true                              // 是否开启内部压缩
 
     class InstanceHolder {
         companion object {
@@ -75,7 +77,7 @@ class SelectionSpec {
 
     private fun reset() {
         mimeTypeSet = null
-        mediaTypeExclusive = true
+        mediaTypeExclusive = false
         themeId = R.style.Matisse_Default
         orientation = 0
         countable = false
@@ -93,7 +95,7 @@ class SelectionSpec {
         hasInited = true
 
         // crop
-        isCrop = true
+        isCrop = false
         isCropSaveRectangle = false
         cropFocusWidthPx = 0
         cropFocusHeightPx = 0
@@ -106,6 +108,8 @@ class SelectionSpec {
         isDarkStatus = false
         noticeConsumer = null
         statusBarFuture = null
+
+        isInnerCompress = true
     }
 
     // 是否可计数

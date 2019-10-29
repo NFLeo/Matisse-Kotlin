@@ -16,19 +16,18 @@ import com.matisse.entity.Album
 import com.matisse.entity.ConstValue
 import com.matisse.entity.ConstValue.EXTRA_RESULT_SELECTION
 import com.matisse.entity.ConstValue.EXTRA_RESULT_SELECTION_PATH
+import com.matisse.entity.IncapableCause
 import com.matisse.entity.Item
 import com.matisse.model.AlbumCallbacks
 import com.matisse.model.SelectedItemCollection
 import com.matisse.ui.activity.AlbumPreviewActivity
 import com.matisse.ui.activity.BaseActivity
-import com.matisse.ui.activity.ImageCropActivity
 import com.matisse.ui.activity.SelectedPreviewActivity
 import com.matisse.ui.adapter.AlbumMediaAdapter
 import com.matisse.ui.adapter.FolderItemMediaAdapter
 import com.matisse.ui.view.FolderBottomSheet
 import com.matisse.ui.view.MediaSelectionFragment
 import com.matisse.utils.*
-import com.matisse.widget.IncapableDialog
 import kotlinx.android.synthetic.main.activity_matisse.*
 import kotlinx.android.synthetic.main.include_view_bottom.*
 import kotlinx.android.synthetic.main.include_view_navigation.*
@@ -67,6 +66,7 @@ class MatisseActivity : BaseActivity(),
     override fun getResourceLayoutId() = R.layout.activity_matisse
 
     override fun setViewData() {
+        button_apply.setText(getAttrString(R.attr.Media_Album_text, R.string.album_name_all))
         selectedCollection = SelectedItemCollection(this).apply { onCreate(instanceState) }
         albumLoadHelper = AlbumLoadHelper(this, albumCallback)
         albumFolderSheetHelper = AlbumFolderSheetHelper(this, albumSheetCallback)
@@ -74,7 +74,6 @@ class MatisseActivity : BaseActivity(),
     }
 
     override fun initListener() {
-        button_apply.setText(getAttrString(R.attr.Media_Album_text, R.string.album_name_all))
         UIUtils.setOnClickListener(
             this, button_apply, button_preview,
             original_layout, button_complete, button_back
@@ -115,15 +114,13 @@ class MatisseActivity : BaseActivity(),
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode != Activity.RESULT_OK) return
 
-        var cropPath: String? = null
-        if (data != null) cropPath = data.getStringExtra(ConstValue.EXTRA_RESULT_BUNDLE)
+        val cropPath = data?.getStringExtra(ConstValue.EXTRA_RESULT_BUNDLE) ?: ""
 
         when (requestCode) {
             ConstValue.REQUEST_CODE_PREVIEW -> {
                 // 裁剪带回数据，则认为图片经过裁剪流程
-                if (!cropPath.isNullOrEmpty()) {
-                    doActivityResultFromCrop(cropPath)
-                } else doActivityResultFromPreview(data)
+                if (cropPath.isNotEmpty()) doActivityResultFromCrop(cropPath)
+                else doActivityResultFromPreview(data)
             }
             ConstValue.REQUEST_CODE_CAPTURE -> doActivityResultFromCapture()
             ConstValue.REQUEST_CODE_CROP -> doActivityResultFromCrop(cropPath)
@@ -154,17 +151,12 @@ class MatisseActivity : BaseActivity(),
                 selected?.forEach {
                     selectedUris.add(it.getContentUri())
                     selectedPaths.add(
-                        PathUtils.getPath(this@MatisseActivity, it.getContentUri()) ?: ""
+                        PathUtils.getPath(activity, it.getContentUri()) ?: ""
                     )
                 }
 
-                Intent().run {
-                    putParcelableArrayListExtra(EXTRA_RESULT_SELECTION, selectedUris)
-                    putStringArrayListExtra(EXTRA_RESULT_SELECTION_PATH, selectedPaths)
-                    putExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, originalEnable)
-                    setResult(Activity.RESULT_OK, this)
-                }
-                finish()
+                finishIntentFromPreview(activity, originalEnable, selectedUris, selectedPaths)
+                returnSelectedData()
             } else {
                 // 从预览界面返回过来
                 selectedCollection.overwrite(selected!!, collectionType)
@@ -201,9 +193,7 @@ class MatisseActivity : BaseActivity(),
 
         // Check is Crop first
         if (spec?.openCrop() == true) {
-            val intentCrop = Intent(this, ImageCropActivity::class.java)
-            intentCrop.putExtra(EXTRA_RESULT_SELECTION_PATH, selectedPath[0])
-            startActivityForResult(intentCrop, ConstValue.REQUEST_CODE_CROP)
+            gotoImageCrop(this, selectedPath)
         }
     }
 
@@ -211,19 +201,16 @@ class MatisseActivity : BaseActivity(),
      * 处理裁剪的[onActivityResult]
      */
     private fun doActivityResultFromCrop(cropPath: String?) {
-        Intent().apply {
-            putParcelableArrayListExtra(EXTRA_RESULT_SELECTION, arrayListOf<Uri>())
-            putStringArrayListExtra(EXTRA_RESULT_SELECTION_PATH, arrayListOf(cropPath ?: ""))
-            setResult(Activity.RESULT_OK, this)
-        }
-        finish()
+        finishIntentFromCrop(activity, cropPath)
+        returnSelectedData()
     }
 
     override fun provideSelectedItemCollection() = selectedCollection
 
     override fun onMediaClick(album: Album?, item: Item, adapterPosition: Int) {
         val intent = Intent(this, AlbumPreviewActivity::class.java)
-            .putExtra(ConstValue.EXTRA_ALBUM, album as Parcelable).putExtra(ConstValue.EXTRA_ITEM, item)
+            .putExtra(ConstValue.EXTRA_ALBUM, album as Parcelable)
+            .putExtra(ConstValue.EXTRA_ITEM, item)
             .putExtra(ConstValue.EXTRA_DEFAULT_BUNDLE, selectedCollection.getDataWithBundle())
             .putExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, originalEnable)
 
@@ -235,7 +222,7 @@ class MatisseActivity : BaseActivity(),
             button_back -> onBackPressed()
             button_preview -> {
                 SelectedPreviewActivity.instance(
-                    this@MatisseActivity, selectedCollection.getDataWithBundle(), originalEnable
+                    activity, selectedCollection.getDataWithBundle(), originalEnable
                 )
             }
             button_complete -> {
@@ -246,9 +233,7 @@ class MatisseActivity : BaseActivity(),
                     if (selectedCollection.asList().isEmpty()) null else selectedCollection.asList()[0]
 
                 if (spec?.openCrop() == true && spec?.isSupportCrop(item) == true) {
-                    val intentCrop = Intent(this, ImageCropActivity::class.java)
-                    intentCrop.putExtra(EXTRA_RESULT_SELECTION_PATH, selectedPaths[0])
-                    startActivityForResult(intentCrop, ConstValue.REQUEST_CODE_CROP)
+                    gotoImageCrop(this, selectedPaths)
                     return
                 }
 
@@ -257,23 +242,24 @@ class MatisseActivity : BaseActivity(),
                         .putStringArrayListExtra(EXTRA_RESULT_SELECTION_PATH, selectedPaths)
                         .putExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, originalEnable)
                 setResult(Activity.RESULT_OK, result)
-                finish()
+                returnSelectedData()
             }
 
             original_layout -> {
-                val count = countOverMaxSize()
-                if (count > 0) {
-                    val incapableDialog = IncapableDialog.newInstance(
-                        "",
-                        getString(R.string.error_over_original_count, count, spec?.originalMaxSize)
-                    )
-                    incapableDialog.show(supportFragmentManager, IncapableDialog::class.java.name)
+                val count = countOverMaxSize(selectedCollection)
+                if (count <= 0) {
+                    originalEnable = !originalEnable
+                    original.setChecked(originalEnable)
+                    spec?.onCheckedListener?.onCheck(originalEnable)
                     return
                 }
 
-                originalEnable = !originalEnable
-                original.setChecked(originalEnable)
-                spec?.onCheckedListener?.onCheck(originalEnable)
+                UIUtils.handleCause(
+                    activity, IncapableCause(
+                        IncapableCause.DIALOG, "",
+                        getString(R.string.error_over_original_count, count, spec?.originalMaxSize)
+                    )
+                )
             }
 
             button_apply -> {
@@ -313,25 +299,17 @@ class MatisseActivity : BaseActivity(),
 
     private fun updateOriginalState() {
         original.setChecked(originalEnable)
-        if (countOverMaxSize() > 0) {
-            if (originalEnable) {
-                val incapableDialog = IncapableDialog.newInstance(
-                    "", getString(R.string.error_over_original_size, spec!!.originalMaxSize)
+        if (countOverMaxSize(selectedCollection) > 0 || originalEnable) {
+            UIUtils.handleCause(
+                activity, IncapableCause(
+                    IncapableCause.DIALOG, "",
+                    getString(R.string.error_over_original_size, spec?.originalMaxSize)
                 )
-                incapableDialog.show(supportFragmentManager, IncapableDialog::class.java.name)
-                original.setChecked(false)
-                originalEnable = false
-            }
-        }
-    }
+            )
 
-    private fun countOverMaxSize(): Int {
-        var count = 0
-        selectedCollection.asList().filter { it.isImage() }.forEach {
-            val size = PhotoMetadataUtils.getSizeInMB(it.size)
-            if (size > spec?.originalMaxSize ?: 0) count++
+            original.setChecked(false)
+            originalEnable = false
         }
-        return count
     }
 
     private fun onAlbumSelected(album: Album) {
@@ -346,6 +324,13 @@ class MatisseActivity : BaseActivity(),
                 .replace(container.id, fragment, MediaSelectionFragment::class.java.simpleName)
                 .commitAllowingStateLoss()
         }
+    }
+
+    /**
+     * 返回选择结果
+     */
+    private fun returnSelectedData() {
+        finish()
     }
 
     private var albumCallback = object : AlbumCallbacks {
@@ -377,7 +362,7 @@ class MatisseActivity : BaseActivity(),
             if (!albumFolderSheetHelper.setLastFolderCheckedPosition(position)) return
             albumLoadHelper.setStateCurrentSelection(position)
 
-            button_apply.text = album.getDisplayName(this@MatisseActivity)
+            button_apply.text = album.getDisplayName(activity)
             onAlbumSelected(album)
         }
     }

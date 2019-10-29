@@ -10,6 +10,7 @@ import com.matisse.R
 import com.matisse.entity.ConstValue
 import com.matisse.utils.BitmapUtils
 import com.matisse.utils.UIUtils
+import com.matisse.utils.finishIntentFromCropSuccess
 import com.matisse.widget.CropImageView
 import com.matisse.widget.IncapableDialog
 import kotlinx.android.synthetic.main.activity_crop.*
@@ -43,14 +44,10 @@ class ImageCropActivity : BaseActivity(), View.OnClickListener,
         imagePath = intent.getStringExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH) ?: return
 
         spec?.apply {
-            val cropFocusNormalWidth =
-                UIUtils.getScreenWidth(this@ImageCropActivity) - UIUtils.dp2px(
-                    this@ImageCropActivity, 30f
-                ).toInt()
-            val cropFocusNormalHeight =
-                UIUtils.getScreenHeight(this@ImageCropActivity) - UIUtils.dp2px(
-                    this@ImageCropActivity, 200f
-                ).toInt()
+            val cropFocusNormalWidth = UIUtils.getScreenWidth(activity) -
+                    UIUtils.dp2px(activity, 30f).toInt()
+            val cropFocusNormalHeight = UIUtils.getScreenHeight(activity) -
+                    UIUtils.dp2px(activity, 200f).toInt()
 
             val cropWidth = if (cropFocusWidthPx in 1 until cropFocusNormalWidth)
                 cropFocusWidthPx else cropFocusNormalWidth
@@ -85,8 +82,7 @@ class ImageCropActivity : BaseActivity(), View.OnClickListener,
     }
 
     override fun initListener() {
-        button_complete.setOnClickListener(this)
-        button_back.setOnClickListener(this)
+        UIUtils.setOnClickListener(this, button_complete, button_back)
         cv_crop_image.setOnBitmapSaveCompleteListener(this)
     }
 
@@ -107,10 +103,7 @@ class ImageCropActivity : BaseActivity(), View.OnClickListener,
     }
 
     override fun onBitmapSaveSuccess(file: File) {
-        val intent = Intent()
-        intent.putExtra(ConstValue.EXTRA_RESULT_BUNDLE, file.absolutePath)
-        setResult(Activity.RESULT_OK, intent)
-        finish()
+        finishIntentFromCropSuccess(this, file.absolutePath)
     }
 
     override fun onBitmapSaveError(file: File) {

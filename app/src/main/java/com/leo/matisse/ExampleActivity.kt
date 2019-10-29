@@ -336,6 +336,7 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
                     view?.visibility = if (isDarkStatus) View.VISIBLE else View.GONE
                 }
             })
+            .setIsInnerCompress(true)
             .forResult(ConstValue.REQUEST_CODE_CHOOSE)
     }
 

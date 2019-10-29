@@ -4,9 +4,9 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import androidx.viewpager.widget.ViewPager
 import android.view.View
 import android.view.WindowManager
+import androidx.viewpager.widget.ViewPager
 import com.matisse.R
 import com.matisse.entity.ConstValue
 import com.matisse.entity.IncapableCause
@@ -14,12 +14,8 @@ import com.matisse.entity.Item
 import com.matisse.model.SelectedItemCollection
 import com.matisse.ui.adapter.PreviewPagerAdapter
 import com.matisse.ui.view.PreviewItemFragment
-import com.matisse.utils.PathUtils
-import com.matisse.utils.PhotoMetadataUtils
-import com.matisse.utils.Platform
-import com.matisse.utils.UIUtils
+import com.matisse.utils.*
 import com.matisse.widget.CheckView
-import com.matisse.widget.IncapableDialog
 import kotlinx.android.synthetic.main.activity_media_preview.*
 import kotlinx.android.synthetic.main.include_view_bottom.*
 
@@ -35,7 +31,7 @@ open class BasePreviewActivity : BaseActivity(), View.OnClickListener,
     lateinit var selectedCollection: SelectedItemCollection
     var adapter: PreviewPagerAdapter? = null
     var previousPos = -1
-    var originalEnable = false
+    private var originalEnable = false
 
 
     override fun configActivity() {
@@ -68,23 +64,8 @@ open class BasePreviewActivity : BaseActivity(), View.OnClickListener,
     }
 
     override fun initListener() {
-        button_preview.setOnClickListener(this)
-        button_apply.setOnClickListener(this)
-        check_view.setOnClickListener(this)
-        original_layout.setOnClickListener(this)
+        UIUtils.setOnClickListener(this, button_preview, button_apply, check_view, original_layout)
         pager?.addOnPageChangeListener(this)
-    }
-
-    private fun countOverMaxSize(): Int {
-        var count = 0
-        selectedCollection.asList().forEach {
-            if (it.isImage()) {
-                val size = PhotoMetadataUtils.getSizeInMB(it.size)
-                if (size > spec?.originalMaxSize ?: 0) count++
-            }
-        }
-
-        return count
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -94,18 +75,8 @@ open class BasePreviewActivity : BaseActivity(), View.OnClickListener,
     }
 
     override fun onBackPressed() {
-        sendBackResult(false)
+        finishIntentFromPreviewApply(activity, false, selectedCollection, originalEnable)
         super.onBackPressed()
-    }
-
-    private fun sendBackResult(apply: Boolean) {
-        val intent = Intent()
-        intent.putExtra(ConstValue.EXTRA_RESULT_BUNDLE, selectedCollection.getDataWithBundle())
-        intent.putExtra(ConstValue.EXTRA_RESULT_APPLY, apply)
-        intent.putExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, originalEnable)
-        setResult(Activity.RESULT_OK, intent)
-
-        if (apply) finish()
     }
 
     @SuppressLint("SetTextI18n")
@@ -150,15 +121,15 @@ open class BasePreviewActivity : BaseActivity(), View.OnClickListener,
 
     private fun updateOriginalState() {
         original?.setChecked(originalEnable)
-        if (countOverMaxSize() > 0) {
-            if (originalEnable) {
-                val incapableDialog = IncapableDialog.newInstance(
-                    "", getString(R.string.error_over_original_size, spec!!.originalMaxSize)
+        if (countOverMaxSize(selectedCollection) > 0 || originalEnable) {
+            UIUtils.handleCause(
+                activity, IncapableCause(
+                    IncapableCause.DIALOG, "",
+                    getString(R.string.error_over_original_size, spec?.originalMaxSize)
                 )
-                incapableDialog.show(supportFragmentManager, IncapableDialog::class.java.name)
-                original?.setChecked(false)
-                originalEnable = false
-            }
+            )
+            original?.setChecked(false)
+            originalEnable = false
         }
     }
 
@@ -237,28 +208,30 @@ open class BasePreviewActivity : BaseActivity(), View.OnClickListener,
                         )
                         startActivityForResult(intentCrop, ConstValue.REQUEST_CODE_CROP)
                     } else {
-                        sendBackResult(true)
+                        finishIntentFromPreviewApply(
+                            activity, true, selectedCollection, originalEnable
+                        )
                     }
                 } else {
-                    sendBackResult(true)
+                    finishIntentFromPreviewApply(activity, true, selectedCollection, originalEnable)
                 }
             }
 
             original_layout -> {
-                val count = countOverMaxSize()
-                if (count > 0) {
-                    val incapableDialog = IncapableDialog.newInstance(
-                        "",
-                        getString(R.string.error_over_original_count, count, spec?.originalMaxSize)
-                    )
-                    incapableDialog.show(supportFragmentManager, IncapableDialog::class.java.name)
+                val count = countOverMaxSize(selectedCollection)
+                if (count <= 0) {
+                    originalEnable = !originalEnable
+                    original?.setChecked(originalEnable)
+                    spec?.onCheckedListener?.onCheck(originalEnable)
                     return
                 }
 
-                originalEnable = !originalEnable
-                original?.setChecked(originalEnable)
-
-                spec?.onCheckedListener?.onCheck(originalEnable)
+                UIUtils.handleCause(
+                    activity, IncapableCause(
+                        IncapableCause.DIALOG, "",
+                        getString(R.string.error_over_original_count, count, spec?.originalMaxSize)
+                    )
+                )
             }
 
             check_view -> {
@@ -295,10 +268,8 @@ open class BasePreviewActivity : BaseActivity(), View.OnClickListener,
         if (resultCode != Activity.RESULT_OK) return
 
         if (requestCode == ConstValue.REQUEST_CODE_CROP) {
-            val resultPath = data?.getStringExtra(ConstValue.EXTRA_RESULT_BUNDLE)
-            val result = Intent().putExtra(ConstValue.EXTRA_RESULT_BUNDLE, resultPath)
-            setResult(Activity.RESULT_OK, result)
-            finish()
+            val resultPath = data?.getStringExtra(ConstValue.EXTRA_RESULT_BUNDLE) ?: return
+            finishIntentFromCropSuccess(activity, resultPath)
         }
     }
 

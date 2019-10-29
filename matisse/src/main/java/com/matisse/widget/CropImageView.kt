@@ -444,8 +444,8 @@ class CropImageView : AppCompatImageView {
 
             val saveFile = msg?.obj as File
             when (msg.what) {
-                SAVE_SUCCESS -> kListener!!.onBitmapSaveSuccess(saveFile)
-                SAVE_ERROR -> kListener!!.onBitmapSaveError(saveFile)
+                SAVE_SUCCESS -> kListener?.onBitmapSaveSuccess(saveFile)
+                SAVE_ERROR -> kListener?.onBitmapSaveError(saveFile)
             }
         }
     }

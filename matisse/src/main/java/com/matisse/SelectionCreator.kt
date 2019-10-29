@@ -338,6 +338,7 @@ class SelectionCreator(
      * @param isDark [Boolean]
      * @return [SelectionCreator] for fluent API.
      */
+    @Deprecated("外部处理状态栏")
     fun setStatusIsDark(isDark: Boolean) = this.run {
         selectionSpec.isDarkStatus = isDark
         this
@@ -356,6 +357,15 @@ class SelectionCreator(
      */
     fun setStatusBarFuture(statusBarFunction: MFunction<BaseActivity>?) = this.run {
         selectionSpec.statusBarFuture = statusBarFunction
+        this
+    }
+
+    /**
+     * is open inner image compress
+     * 是否开启内部压缩
+     */
+    fun setIsInnerCompress(isInnerCompress: Boolean) = this.run{
+        selectionSpec.isInnerCompress = isInnerCompress
         this
     }
 

@@ -1,17 +1,17 @@
 package com.matisse.ui.activity
 
 import android.app.Activity
+import android.content.Context
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.gyf.barlibrary.ImmersionBar
 import com.matisse.R
 import com.matisse.internal.entity.SelectionSpec
-import com.matisse.utils.Platform
 import com.matisse.utils.UIUtils
 
 abstract class BaseActivity : AppCompatActivity() {
 
+    lateinit var activity: Activity
     var spec: SelectionSpec? = null
     var instanceState: Bundle? = null
 
@@ -20,6 +20,7 @@ abstract class BaseActivity : AppCompatActivity() {
         setTheme(spec?.themeId ?: R.style.Matisse_Default)
         super.onCreate(savedInstanceState)
         if (safeCancelActivity()) return
+        activity = this
         setContentView(getResourceLayoutId())
         configActivity()
         configSaveInstanceState(savedInstanceState)
@@ -58,18 +59,10 @@ abstract class BaseActivity : AppCompatActivity() {
 
     abstract fun initListener()
 
-    override fun onDestroy() {
-        super.onDestroy()
-        if (Platform.isClassExists("com.gyf.barlibrary.ImmersionBar")) {
-            ImmersionBar.with(this).destroy()
-        }
-    }
-
     /**
      * 获取主题配置中的属性值
      * @param attr 主题配置属性key
      * @param defaultRes 默认值
      */
-    fun getAttrString(attr: Int, defaultRes: Int) =
-        UIUtils.getAttrString(this, attr, defaultRes)
+    fun getAttrString(attr: Int, defaultRes: Int) = UIUtils.getAttrString(this, attr, defaultRes)
 }

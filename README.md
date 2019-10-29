@@ -10,6 +10,9 @@ Matisse核心功能：[https://github.com/zhihu/Matisse](https://github.com/zhih
 图片压缩提供者：[https://github.com/nanchen2251](https://github.com/nanchen2251)
 
 # 版本更新记录
+2019-10-29 (持续更新 待发布)
+1. 修复相册弹窗高度不准确问题
+
 2019-10-28 (持续更新 待发布)
 1. 支持相机拍照完成后多选
 2. 扩展提示方法，支持使用外部自定义弹窗

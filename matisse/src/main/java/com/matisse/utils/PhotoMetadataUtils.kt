@@ -27,7 +27,6 @@ import java.util.*
  */
 object PhotoMetadataUtils {
 
-    private val TAG = PhotoMetadataUtils::class.java.simpleName
     private const val MAX_WIDTH = 1600
     private const val SCHEME_CONTENT = "content"
 
