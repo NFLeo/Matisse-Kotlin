@@ -167,42 +167,6 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (data == null) return
-
-        if (requestCode == ConstValue.REQUEST_CODE_CHOOSE && resultCode == Activity.RESULT_OK) {
-            var string = ""
-
-            // 获取uri返回值  裁剪结果不返回uri
-            val uriList = Matisse.obtainResult(data)
-            // 获取文件路径返回值
-            val strList = Matisse.obtainPathResult(data)
-
-            val compressedList = Matisse.obtainCompressResult(data)
-
-            uriList.forEach {
-                string += it.toString() + "\n"
-            }
-
-            string += "\n"
-
-            strList.forEach {
-                string += it + "\n"
-            }
-
-            string += "\n"
-
-            compressedList?.forEach {
-                string += it + "\n"
-            }
-
-            Glide.with(this).load(strList[0]).into(iv_image)
-
-            text.text = "\n\n$string"
-        }
-    }
-
     private var checkedOnCheckedListener =
         CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
             val mimeType = when (buttonView) {
@@ -355,5 +319,41 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
             return 0
         }
         return s.toString().toInt()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (data == null) return
+
+        if (requestCode == ConstValue.REQUEST_CODE_CHOOSE && resultCode == Activity.RESULT_OK) {
+            var string = "uri 路径集合：\n"
+
+            // 获取uri返回值  裁剪结果不返回uri
+            val uriList = Matisse.obtainResult(data)
+            // 获取文件路径返回值
+            val strList = Matisse.obtainPathResult(data)
+
+            val compressedList = Matisse.obtainCompressResult(data)
+
+            uriList.forEach {
+                string += it.toString() + "\n"
+            }
+
+            string += "\npath 路径集合：\n"
+
+            strList.forEach {
+                string += it + "\n"
+            }
+
+            string += "\n压缩后路径集合：\n"
+
+            compressedList?.forEach {
+                string += it + "\n"
+            }
+
+            Glide.with(this).load(strList[0]).into(iv_image)
+
+            text.text = "\n\n$string"
+        }
     }
 }

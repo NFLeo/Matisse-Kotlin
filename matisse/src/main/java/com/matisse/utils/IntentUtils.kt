@@ -6,6 +6,7 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import com.matisse.compress.CompressHelper
+import com.matisse.compress.FileUtil
 import com.matisse.entity.ConstValue
 import com.matisse.entity.Item
 import com.matisse.internal.entity.SelectionSpec
@@ -80,9 +81,20 @@ private fun finishIntentToMain(
  * @param cropPath 需裁剪的图片路径
  */
 fun finishIntentFromCrop(activity: Activity, cropPath: String?) {
+    if (cropPath == null || cropPath == "") return
+
+    var compressPicture = ""
+    if (SelectionSpec.getInstance().isInnerCompress) {
+        compressPicture = CompressHelper.getDefault(activity)
+            ?.compressToFile(FileUtil.getFileByPath(cropPath))?.path ?: cropPath
+    }
+
     Intent().apply {
         putParcelableArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION, arrayListOf<Uri>())
-        putStringArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH, arrayListOf(cropPath ?: ""))
+        putStringArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH, arrayListOf(cropPath))
+        putStringArrayListExtra(
+            ConstValue.EXTRA_RESULT_SELECTION_COMPRESS, arrayListOf(compressPicture)
+        )
         activity.setResult(Activity.RESULT_OK, this)
     }
     activity.finish()
