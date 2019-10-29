@@ -10,8 +10,12 @@ Matisse核心功能：[https://github.com/zhihu/Matisse](https://github.com/zhih
 图片压缩提供者：[https://github.com/nanchen2251](https://github.com/nanchen2251)
 
 # 版本更新记录
-2019-10-29 (持续更新 待发布)
+2019-10-29 (1.2.3)
 1. 修复相册弹窗高度不准确问题
+2. 支持压缩配置，外部添加开关  api:[isInnerCompress]
+3. 完善未选中资源时各按钮点击添加提示
+4. 修复不同设备返回的媒体类型表示不一致（如：JPEG image/jpeg）
+5. 去除[api setStatusIsDark], 外部处理状态栏，见[api setStatusBarFuture]
 
 2019-10-28 (持续更新 待发布)
 1. 支持相机拍照完成后多选
@@ -32,7 +36,7 @@ Matisse核心功能：[https://github.com/zhihu/Matisse](https://github.com/zhih
                 }
             })
 ```
-4. 适配Android Q
+4. 按官方方式适配Android Q
 
 2019-10-21 (1.2.2)
 1. 修复方形裁剪图片变形问题
@@ -98,7 +102,7 @@ SelectionCreator.setNoticeConsumer(object : NoticeConsumer {
 关于打包报错问题：
 
 使用：
-1. gradle中添加 implementation 'com.nfleo:MatisseKotlin:1.2.2'
+1. gradle中添加 implementation 'com.nfleo:MatisseKotlin:1.2.3'
 2. AndroidManifest.xml中添加以下代码
 * 注：注意provider androidx的差别
         <provider
