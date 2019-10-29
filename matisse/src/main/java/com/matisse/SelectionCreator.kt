@@ -333,18 +333,6 @@ class SelectionCreator(
     }
 
     /**
-     * Set status text color
-     *
-     * @param isDark [Boolean]
-     * @return [SelectionCreator] for fluent API.
-     */
-    @Deprecated("外部处理状态栏")
-    fun setStatusIsDark(isDark: Boolean) = this.run {
-        selectionSpec.isDarkStatus = isDark
-        this
-    }
-
-    /**
      * set notice type for matisse
      */
     fun setNoticeConsumer(noticeConsumer: NoticeConsumer?) = this.run {

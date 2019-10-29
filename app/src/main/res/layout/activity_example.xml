@@ -283,27 +283,27 @@
             app:showText="true" />
 
         <TextView
-            android:id="@+id/tv_status"
+            android:id="@+id/tv_compress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="50dp"
-            android:text="状态栏字色"
+            android:text="内部实现压缩"
             app:layout_constraintBottom_toBottomOf="@+id/tv_capture"
             app:layout_constraintStart_toEndOf="@id/switch_choose_type"
             app:layout_constraintTop_toTopOf="@+id/tv_capture" />
 
         <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/switch_status"
+            android:id="@+id/switch_compress"
             android:layout_width="wrap_content"
             android:layout_height="30dp"
             android:layout_marginStart="10dp"
             android:checked="false"
-            android:textOff="白"
-            android:textOn="黑"
+            android:textOff="是"
+            android:textOn="否"
             android:textSize="10sp"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_status"
-            app:layout_constraintStart_toEndOf="@+id/tv_status"
-            app:layout_constraintTop_toTopOf="@+id/tv_status"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_compress"
+            app:layout_constraintStart_toEndOf="@+id/tv_compress"
+            app:layout_constraintTop_toTopOf="@+id/tv_compress"
             app:showText="true" />
 
         <TextView

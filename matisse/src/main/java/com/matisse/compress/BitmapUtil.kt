@@ -188,7 +188,6 @@ object BitmapUtil {
                 out?.close()
             } catch (ignored: IOException) {
             }
-
         }
 
         return File(filename)
@@ -217,7 +216,11 @@ object BitmapUtil {
     /**
      * 计算inSampleSize
      */
-    private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
+    private fun calculateInSampleSize(
+        options: BitmapFactory.Options,
+        reqWidth: Int,
+        reqHeight: Int
+    ): Int {
         val height = options.outHeight
         val width = options.outWidth
         var inSampleSize = 1

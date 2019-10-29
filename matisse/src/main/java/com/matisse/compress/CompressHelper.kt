@@ -68,6 +68,19 @@ class CompressHelper(private val context: Context) {
     }
 
     /**
+     * 压缩成文件
+     * @param uri  原始文件
+     * @return      压缩后的文件
+     */
+    fun compressToFile(uri: Uri): File {
+        return BitmapUtil.compressImage(
+            context, uri, maxWidth, maxHeight,
+            compressFormat, bitmapConfig, quality, destinationDirectoryPath,
+            fileNamePrefix, fileName
+        )
+    }
+
+    /**
      * 压缩为Bitmap
      * @param file  原始文件
      * @return      压缩后的Bitmap

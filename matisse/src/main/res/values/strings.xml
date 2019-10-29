@@ -25,4 +25,6 @@
     <string name="error_over_original_count">%1$d images over %2$d MB. Original will be unchecked</string>
     <string name="error_gif">not larger than %1$dpx and %2$sM。</string>
     <string name="error_crop">Crop Failed</string>
+    <string name="please_select_media_resource">Please select media resource</string>
+    <string name="empty_album">album is empty</string>
 </resources>

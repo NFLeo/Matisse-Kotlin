@@ -19,15 +19,12 @@ import com.gyf.barlibrary.ImmersionBar
 import com.matisse.Matisse
 import com.matisse.MimeType
 import com.matisse.MimeTypeManager
-import com.matisse.compress.CompressHelper
-import com.matisse.compress.FileUtil
 import com.matisse.entity.CaptureStrategy
 import com.matisse.entity.ConstValue
 import com.matisse.entity.IncapableCause
-import com.matisse.listener.NoticeConsumer
 import com.matisse.listener.MFunction
+import com.matisse.listener.NoticeConsumer
 import com.matisse.ui.activity.BaseActivity
-import com.matisse.utils.PhotoMetadataUtils
 import com.matisse.utils.Platform
 import com.matisse.widget.CropImageView
 import com.matisse.widget.IncapableDialog
@@ -47,7 +44,7 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
     private var isOpenCamera = false
     private var spanCount = 3
     private var gridSizePx = 0
-    private var isDarkStatus = false
+    private var isInnerCompress = true
     private var isCrop = false
     private var cropWidth = -1
     private var cropHeight = -1
@@ -129,8 +126,8 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
             isOpenCamera = isChecked
         }
 
-        switch_status.setOnCheckedChangeListener { _, isChecked ->
-            isDarkStatus = isChecked
+        switch_compress.setOnCheckedChangeListener { _, isChecked ->
+            isInnerCompress = isChecked
         }
 
         switch_crop.setOnCheckedChangeListener { _, isChecked ->
@@ -182,6 +179,8 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
             // 获取文件路径返回值
             val strList = Matisse.obtainPathResult(data)
 
+            val compressedList = Matisse.obtainCompressResult(data)
+
             uriList.forEach {
                 string += it.toString() + "\n"
             }
@@ -192,15 +191,13 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
                 string += it + "\n"
             }
 
-            // 原文件
-            val file = FileUtil.getFileByPath(Matisse.obtainPathResult(data)[0])
+            string += "\n"
 
-            Glide.with(this).load(file).into(iv_image)
-            // 压缩后的文件         （多个文件压缩可以循环压缩）
-            val file1 = CompressHelper.getDefault(applicationContext)?.compressToFile(file)
-            string += PhotoMetadataUtils.getSizeInMB(file.length()).toString() + " PK " +
-                    PhotoMetadataUtils.getSizeInMB(file1?.length() ?: 0)
-            string = "\n\n$string"
+            compressedList?.forEach {
+                string += it + "\n"
+            }
+
+            Glide.with(this).load(strList[0]).into(iv_image)
 
             text.text = "\n\n$string"
         }
@@ -270,12 +267,10 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
                 ev_span_1 -> {
                     spanCount = formatStrTo0(s.toString())
                     gridSizePx = 0
-//                    ev_span_1.setText("0")
                 }
                 ev_span_2 -> {
                     gridSizePx = formatStrTo0(s.toString())
                     spanCount = 0
-//                    ev_span_2.setText("0")
                 }
             }
         }
@@ -302,7 +297,6 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
             .isCropSaveRectangle(isSaveRectangle)
             .maxSelectable(maxCount)
             .maxSelectablePerMediaType(maxImageCount, maxVideoCount)
-            .setStatusIsDark(isDarkStatus)
             .captureStrategy(
                 CaptureStrategy(
                     true,
@@ -327,16 +321,16 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
                 override fun accept(params: BaseActivity, view: View?) {
                     // 外部设置状态栏
                     ImmersionBar.with(params)?.run {
-                        statusBarDarkFont(isDarkStatus)
+                        statusBarDarkFont(true)
                         view?.apply { titleBar(this) }
                         init()
                     }
 
                     // 外部可隐藏Matisse界面中的View
-                    view?.visibility = if (isDarkStatus) View.VISIBLE else View.GONE
+//                    view?.visibility = if (isDarkStatus) View.VISIBLE else View.GONE
                 }
             })
-            .setIsInnerCompress(true)
+            .setIsInnerCompress(isInnerCompress)
             .forResult(ConstValue.REQUEST_CODE_CHOOSE)
     }
 

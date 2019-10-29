@@ -52,7 +52,6 @@ class SelectionSpec {
 
     var hasInited = false                                   // 是否初始化完成
 
-    var isDarkStatus: Boolean = false                       // 状态栏字体是否为黑色
     var noticeConsumer: NoticeConsumer? = null              // 库内提示具体回调
     var statusBarFuture: MFunction<BaseActivity>? = null    // 状态栏处理回调
 
@@ -105,7 +104,6 @@ class SelectionSpec {
         originalable = false
         originalMaxSize = Integer.MAX_VALUE
 
-        isDarkStatus = false
         noticeConsumer = null
         statusBarFuture = null
 

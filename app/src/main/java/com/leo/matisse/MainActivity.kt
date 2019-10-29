@@ -54,7 +54,6 @@ class MainActivity : AppCompatActivity() {
                         .cropStyle(CropImageView.Style.CIRCLE)
                         .isCropSaveRectangle(true)
                         .maxSelectable(1)
-                        .setStatusIsDark(true)
                         .theme(R.style.CustomMatisseStyle)
                         .captureStrategy(
                             CaptureStrategy(
@@ -99,7 +98,6 @@ class MainActivity : AppCompatActivity() {
                         .cropStyle(CropImageView.Style.RECTANGLE)
                         .cropFocusWidthPx(UIUtils.dp2px(this, 250f).toInt())
                         .cropFocusHeightPx(UIUtils.dp2px(this, 500f).toInt())
-                        .setStatusIsDark(false)
                         .theme(R.style.CustomMatisseStyle)
                         .captureStrategy(
                             CaptureStrategy(

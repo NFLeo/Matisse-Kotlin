@@ -180,6 +180,8 @@ class SelectedItemCollection(private var context: Context) {
 
     fun count() = items.size
 
+    fun items() = items.toList()
+
     /**
      * 注：
      * 此处取的是item在选中集合中的序号，

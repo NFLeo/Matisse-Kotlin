@@ -52,15 +52,27 @@ class Matisse(activity: Activity?, fragment: Fragment? = null) {
         }
 
         /**
+         * Obtain user selected compressed file path.
+         *
+         * @param data Intent passed by [Activity.onActivityResult] or
+         * [Fragment.onActivityResult].
+         * @return User selected compressed media path list.
+         */
+        fun obtainCompressResult(data: Intent): List<String>? {
+            return data.getStringArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION_COMPRESS)?.run {
+                this
+            }
+        }
+
+        /**
          * Obtain user selected media path list in the starting Activity or Fragment.
          *
          * @param data Intent passed by [Activity.onActivityResult] or
          * [Fragment.onActivityResult].
          * @return User selected media path list.
          */
-        fun obtainPathResult(data: Intent): List<String> {
-            return data.getStringArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH)
-        }
+        fun obtainPathResult(data: Intent) =
+            data.getStringArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH) as List<String>
 
         /**
          * Obtain state whether user decide to use selected media in original
@@ -69,9 +81,8 @@ class Matisse(activity: Activity?, fragment: Fragment? = null) {
          * [Fragment.onActivityResult].
          * @return Whether use original photo
          */
-        fun obtainOriginalState(data: Intent): Boolean {
-            return data.getBooleanExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, false)
-        }
+        fun obtainOriginalState(data: Intent) =
+            data.getBooleanExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, false)
     }
 
     private val mContext = WeakReference(activity)

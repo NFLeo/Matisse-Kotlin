@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.Intent
 import android.database.Cursor
 import android.media.MediaScannerConnection
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -14,8 +13,6 @@ import android.view.View
 import com.matisse.R
 import com.matisse.entity.Album
 import com.matisse.entity.ConstValue
-import com.matisse.entity.ConstValue.EXTRA_RESULT_SELECTION
-import com.matisse.entity.ConstValue.EXTRA_RESULT_SELECTION_PATH
 import com.matisse.entity.IncapableCause
 import com.matisse.entity.Item
 import com.matisse.model.AlbumCallbacks
@@ -127,39 +124,89 @@ class MatisseActivity : BaseActivity(),
         }
     }
 
+    override fun onClick(v: View?) {
+        when (v) {
+            button_back -> onBackPressed()
+            button_preview -> {
+                if (selectedCollection.count() == 0) {
+                    UIUtils.handleCause(
+                        activity, IncapableCause(getString(R.string.please_select_media_resource))
+                    )
+                    return
+                }
+
+                SelectedPreviewActivity.instance(
+                    activity, selectedCollection.getDataWithBundle(), originalEnable
+                )
+            }
+            button_complete -> {
+                if (selectedCollection.count() == 0) {
+                    UIUtils.handleCause(
+                        activity, IncapableCause(getString(R.string.please_select_media_resource))
+                    )
+                    return
+                }
+
+                val item = selectedCollection.asList()[0]
+                if (spec?.openCrop() == true && spec?.isSupportCrop(item) == true) {
+                    gotoImageCrop(this, selectedCollection.asListOfString() as ArrayList<String>)
+                    return
+                }
+
+                handleIntentFromPreview(activity, originalEnable, selectedCollection.items())
+            }
+
+            original_layout -> {
+                val count = countOverMaxSize(selectedCollection)
+                if (count <= 0) {
+                    originalEnable = !originalEnable
+                    original.setChecked(originalEnable)
+                    spec?.onCheckedListener?.onCheck(originalEnable)
+                    return
+                }
+
+                UIUtils.handleCause(
+                    activity, IncapableCause(
+                        IncapableCause.DIALOG, "",
+                        getString(R.string.error_over_original_count, count, spec?.originalMaxSize)
+                    )
+                )
+            }
+
+            button_apply -> {
+                if (allAlbum?.isAll() == true && allAlbum?.isEmpty() == true) {
+                    UIUtils.handleCause(activity, IncapableCause(getString(R.string.empty_album)))
+                    return
+                }
+
+                albumFolderSheetHelper.createFolderSheetDialog()
+            }
+        }
+    }
+
+    override fun provideSelectedItemCollection() = selectedCollection
+
+    override fun onMediaClick(album: Album?, item: Item, adapterPosition: Int) {
+        val intent = Intent(this, AlbumPreviewActivity::class.java)
+            .putExtra(ConstValue.EXTRA_ALBUM, album as Parcelable)
+            .putExtra(ConstValue.EXTRA_ITEM, item)
+            .putExtra(ConstValue.EXTRA_DEFAULT_BUNDLE, selectedCollection.getDataWithBundle())
+            .putExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, originalEnable)
+
+        startActivityForResult(intent, ConstValue.REQUEST_CODE_PREVIEW)
+    }
+
     /**
      * 处理预览的[onActivityResult]
      */
     private fun doActivityResultFromPreview(data: Intent?) {
         data?.apply {
-            val resultBundle = getBundleExtra(ConstValue.EXTRA_RESULT_BUNDLE)
-            var selected: ArrayList<Item>? = null
-            var collectionType: Int = SelectedItemCollection.COLLECTION_UNDEFINED
-            resultBundle?.apply {
-                selected = getParcelableArrayList(ConstValue.STATE_SELECTION)
-                collectionType = getInt(
-                    ConstValue.STATE_COLLECTION_TYPE, SelectedItemCollection.COLLECTION_UNDEFINED
-                )
-            }
 
             originalEnable = getBooleanExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, false)
+            val isApplyData = getBooleanExtra(ConstValue.EXTRA_RESULT_APPLY, false)
+            handlePreviewIntent(activity, data, originalEnable, isApplyData, selectedCollection)
 
-            if (getBooleanExtra(ConstValue.EXTRA_RESULT_APPLY, false)) {
-                // 从预览界面确认提交过来
-                val selectedUris = arrayListOf<Uri>()
-                val selectedPaths = arrayListOf<String>()
-                selected?.forEach {
-                    selectedUris.add(it.getContentUri())
-                    selectedPaths.add(
-                        PathUtils.getPath(activity, it.getContentUri()) ?: ""
-                    )
-                }
-
-                finishIntentFromPreview(activity, originalEnable, selectedUris, selectedPaths)
-                returnSelectedData()
-            } else {
-                // 从预览界面返回过来
-                selectedCollection.overwrite(selected!!, collectionType)
+            if (!isApplyData) {
                 val mediaSelectionFragment = supportFragmentManager.findFragmentByTag(
                     MediaSelectionFragment::class.java.simpleName
                 )
@@ -202,83 +249,12 @@ class MatisseActivity : BaseActivity(),
      */
     private fun doActivityResultFromCrop(cropPath: String?) {
         finishIntentFromCrop(activity, cropPath)
-        returnSelectedData()
-    }
-
-    override fun provideSelectedItemCollection() = selectedCollection
-
-    override fun onMediaClick(album: Album?, item: Item, adapterPosition: Int) {
-        val intent = Intent(this, AlbumPreviewActivity::class.java)
-            .putExtra(ConstValue.EXTRA_ALBUM, album as Parcelable)
-            .putExtra(ConstValue.EXTRA_ITEM, item)
-            .putExtra(ConstValue.EXTRA_DEFAULT_BUNDLE, selectedCollection.getDataWithBundle())
-            .putExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, originalEnable)
-
-        startActivityForResult(intent, ConstValue.REQUEST_CODE_PREVIEW)
-    }
-
-    override fun onClick(v: View?) {
-        when (v) {
-            button_back -> onBackPressed()
-            button_preview -> {
-                SelectedPreviewActivity.instance(
-                    activity, selectedCollection.getDataWithBundle(), originalEnable
-                )
-            }
-            button_complete -> {
-                val selectedUris = selectedCollection.asListOfUri() as ArrayList<Uri>
-                val selectedPaths = selectedCollection.asListOfString() as ArrayList<String>
-
-                val item =
-                    if (selectedCollection.asList().isEmpty()) null else selectedCollection.asList()[0]
-
-                if (spec?.openCrop() == true && spec?.isSupportCrop(item) == true) {
-                    gotoImageCrop(this, selectedPaths)
-                    return
-                }
-
-                val result =
-                    Intent().putParcelableArrayListExtra(EXTRA_RESULT_SELECTION, selectedUris)
-                        .putStringArrayListExtra(EXTRA_RESULT_SELECTION_PATH, selectedPaths)
-                        .putExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, originalEnable)
-                setResult(Activity.RESULT_OK, result)
-                returnSelectedData()
-            }
-
-            original_layout -> {
-                val count = countOverMaxSize(selectedCollection)
-                if (count <= 0) {
-                    originalEnable = !originalEnable
-                    original.setChecked(originalEnable)
-                    spec?.onCheckedListener?.onCheck(originalEnable)
-                    return
-                }
-
-                UIUtils.handleCause(
-                    activity, IncapableCause(
-                        IncapableCause.DIALOG, "",
-                        getString(R.string.error_over_original_count, count, spec?.originalMaxSize)
-                    )
-                )
-            }
-
-            button_apply -> {
-                if (allAlbum?.isAll() == true && allAlbum?.isEmpty() == true) return
-
-                albumFolderSheetHelper.createFolderSheetDialog()
-            }
-        }
     }
 
     @SuppressLint("SetTextI18n")
     private fun updateBottomToolbar() {
         val selectedCount = selectedCollection.count()
-        button_preview.isEnabled = true
-        button_complete.isEnabled = true
-
         if (selectedCount == 0) {
-            button_preview.isEnabled = false
-            button_complete.isEnabled = false
             button_complete.setText(getAttrString(R.attr.Media_Sure_text, R.string.button_sure))
         } else if (selectedCount == 1 && spec?.singleSelectionModeEnabled() == true) {
             button_complete.setText(getAttrString(R.attr.Media_Sure_text, R.string.button_sure))
@@ -324,13 +300,6 @@ class MatisseActivity : BaseActivity(),
                 .replace(container.id, fragment, MediaSelectionFragment::class.java.simpleName)
                 .commitAllowingStateLoss()
         }
-    }
-
-    /**
-     * 返回选择结果
-     */
-    private fun returnSelectedData() {
-        finish()
     }
 
     private var albumCallback = object : AlbumCallbacks {
