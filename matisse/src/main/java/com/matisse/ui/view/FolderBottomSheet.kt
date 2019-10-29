@@ -56,6 +56,7 @@ class FolderBottomSheet : BottomSheetDialogFragment() {
         recyclerView = kParentView?.findViewById(R.id.recyclerview)!!
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.setHasFixedSize(true)
+        setRecyclerViewHeight()
         adapter = FolderItemMediaAdapter(context!!, currentPosition).apply {
             recyclerView.adapter = this
             callback?.initData(this)
@@ -67,6 +68,10 @@ class FolderBottomSheet : BottomSheetDialogFragment() {
                 }
             }
         }
+    }
+
+    private fun setRecyclerViewHeight() {
+        recyclerView.layoutParams.height = UIUtils.getScreenHeight(context!!) / 2
     }
 
     interface BottomSheetCallback {
