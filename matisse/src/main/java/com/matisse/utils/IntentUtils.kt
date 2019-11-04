@@ -16,8 +16,8 @@ import com.matisse.ui.activity.ImageCropActivity
 /**
  * 打开裁剪界面
  */
-fun gotoImageCrop(activity: Activity, selectedPath: ArrayList<String>) {
-    if (selectedPath.isEmpty()) return
+fun gotoImageCrop(activity: Activity, selectedPath: ArrayList<String>?) {
+    if (selectedPath == null || selectedPath.isEmpty()) return
 
     val intentCrop = Intent(activity, ImageCropActivity::class.java)
     intentCrop.putExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH, selectedPath[0])
@@ -96,8 +96,8 @@ fun finishIntentFromCrop(activity: Activity, cropPath: String?) {
             ConstValue.EXTRA_RESULT_SELECTION_COMPRESS, arrayListOf(compressPicture)
         )
         activity.setResult(Activity.RESULT_OK, this)
+        activity.finish()
     }
-    activity.finish()
 }
 
 /**

@@ -75,6 +75,16 @@ class Matisse(activity: Activity?, fragment: Fragment? = null) {
             data.getStringArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH) as List<String>
 
         /**
+         * Obtain user selected media path id list in the starting Activity or Fragment.
+         *
+         * @param data Intent passed by [Activity.onActivityResult] or
+         * [Fragment.onActivityResult].
+         * @return User selected media path id list.
+         */
+        fun obtainPathIdResult(data: Intent) =
+            data.getStringArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION_ID) as List<String>
+
+        /**
          * Obtain state whether user decide to use selected media in original
          *
          * @param data Intent passed by [Activity.onActivityResult] or

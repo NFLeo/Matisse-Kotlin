@@ -352,8 +352,18 @@ class SelectionCreator(
      * is open inner image compress
      * 是否开启内部压缩
      */
-    fun setIsInnerCompress(isInnerCompress: Boolean) = this.run{
+    fun setIsInnerCompress(isInnerCompress: Boolean) = this.run {
         selectionSpec.isInnerCompress = isInnerCompress
+        this
+    }
+
+    /**
+     * set last choose pictures ids
+     * id is cursor id. not support crop picture
+     * 预选中上次带回的图片
+     */
+    fun setLastChoosePicturesIdOrUri(list: ArrayList<String>?) = this.run {
+        selectionSpec.lastChoosePictureIdsOrUris = list
         this
     }
 

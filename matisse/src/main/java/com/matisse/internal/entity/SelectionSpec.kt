@@ -57,6 +57,8 @@ class SelectionSpec {
 
     var isInnerCompress = true                              // 是否开启内部压缩
 
+    var lastChoosePictureIdsOrUris: ArrayList<String>? = null   // 上次选中的图片Id
+
     class InstanceHolder {
         companion object {
             val INSTANCE: SelectionSpec = SelectionSpec()
@@ -108,6 +110,8 @@ class SelectionSpec {
         statusBarFuture = null
 
         isInnerCompress = true
+
+        lastChoosePictureIdsOrUris = null
     }
 
     // 是否可计数

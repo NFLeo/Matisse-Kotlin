@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatButton
 import com.bumptech.glide.Glide
 import com.matisse.Matisse
 import com.matisse.MimeTypeManager
@@ -26,17 +27,14 @@ import com.matisse.utils.UIUtils
 import com.matisse.widget.CropImageView
 import com.tbruyelle.rxpermissions2.RxPermissions
 import kotlinx.android.synthetic.main.activity_main.*
-import java.text.DecimalFormat
-import kotlin.math.log10
-import kotlin.math.pow
 
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_example)
+        setContentView(R.layout.activity_main)
 
-        btn_media_store.setOnClickListener {
+        findViewById<AppCompatButton>(R.id.btn_media_store).setOnClickListener {
             RxPermissions(this@MainActivity)
                 .request(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA)
                 .subscribe {
@@ -78,7 +76,7 @@ class MainActivity : AppCompatActivity() {
                 }
         }
 
-        btn_media_multi.setOnClickListener {
+        findViewById<AppCompatButton>(R.id.btn_media_multi).setOnClickListener {
             RxPermissions(this@MainActivity)
                 .request(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA)
                 .subscribe {
@@ -163,14 +161,5 @@ class MainActivity : AppCompatActivity() {
 
             text.text = "\n\n$string"
         }
-    }
-
-    private fun getReadableFileSize(size: Long): String {
-        if (size <= 0) return "0"
-
-        val units = arrayOf("B", "KB", "MB", "GB", "TB")
-        val digitGroups = (log10(size.toDouble()) / log10(1024.0)).toInt()
-        return DecimalFormat("#,##0.#")
-            .format(size / 1024.0.pow(digitGroups.toDouble())) + " " + units[digitGroups]
     }
 }

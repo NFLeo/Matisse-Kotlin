@@ -105,6 +105,8 @@ class AlbumMediaAdapter(
      * 初始化选择框选中状态
      */
     private fun setCheckStatus(item: Item, mediaGrid: MediaGrid) {
+        // 初始化时 添加上次选中的图片
+        setLastChooseItems(item)
         if (selectionSpec.isCountable()) {
             val checkedNum = selectedCollection.checkedNumOf(item)
 
@@ -236,6 +238,20 @@ class AlbumMediaAdapter(
         val cause = selectedCollection.isAcceptable(item)
         UIUtils.handleCause(context, cause)
         return cause == null
+    }
+
+    /**
+     * 初始化外部传入上次选中的图片
+     */
+    private fun setLastChooseItems(item: Item) {
+        if (selectionSpec.lastChoosePictureIdsOrUris == null) return
+
+        selectionSpec.lastChoosePictureIdsOrUris?.forEachIndexed { index, s ->
+            if (s == item.id.toString() || s == item.getContentUri().toString()) {
+                selectedCollection.add(item)
+                selectionSpec.lastChoosePictureIdsOrUris!![index] = ""
+            }
+        }
     }
 
     interface CheckStateListener {

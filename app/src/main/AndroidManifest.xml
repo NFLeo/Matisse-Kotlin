@@ -16,7 +16,7 @@
             </intent-filter>
 
         </activity>
-<!--        <activity android:name=".ExampleActivity" />-->
+        <activity android:name=".MainActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

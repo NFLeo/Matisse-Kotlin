@@ -6,6 +6,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -19,13 +20,17 @@ import com.gyf.barlibrary.ImmersionBar
 import com.matisse.Matisse
 import com.matisse.MimeType
 import com.matisse.MimeTypeManager
+import com.matisse.SelectionCreator
 import com.matisse.entity.CaptureStrategy
 import com.matisse.entity.ConstValue
 import com.matisse.entity.IncapableCause
 import com.matisse.listener.MFunction
 import com.matisse.listener.NoticeConsumer
 import com.matisse.ui.activity.BaseActivity
+import com.matisse.utils.MediaStoreCompat
+import com.matisse.utils.PathUtils
 import com.matisse.utils.Platform
+import com.matisse.utils.gotoImageCrop
 import com.matisse.widget.CropImageView
 import com.matisse.widget.IncapableDialog
 import com.tbruyelle.rxpermissions2.RxPermissions
@@ -147,7 +152,7 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
         }
 
         btn_open_matisse.setOnClickListener(this)
-        btn_open_matisse.setOnClickListener(this)
+        btn_open_capture.setOnClickListener(this)
 
         ev_max_1.addTextChangedListener(textChanged(ev_max_1))
         ev_max_2.addTextChangedListener(textChanged(ev_max_2))
@@ -213,11 +218,82 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
 
         when (v) {
             btn_open_matisse -> {
+                createMatisse()
                 openMatisse()
             }
             btn_open_capture -> {
+                createMediaStoreCompat()
+                mediaStoreCompat?.dispatchCaptureIntent(this, ConstValue.REQUEST_CODE_CAPTURE)
             }
         }
+    }
+
+    private var mediaStoreCompat: MediaStoreCompat? = null
+    private var selectionCreator: SelectionCreator? = null
+    private var selectedPathIds: List<String>? = null
+
+    private fun createMatisse() {
+
+        setEditText()
+        selectionCreator = Matisse.from(this@ExampleActivity)
+            .choose(showType, mediaTypeExclusive)
+            .theme(defaultTheme)
+            .countable(isCountable)
+            .capture(isOpenCamera)
+            .isCrop(isCrop)
+            .cropStyle(cropType)
+            .cropFocusWidthPx(cropWidth)
+            .cropFocusHeightPx(cropHeight)
+            .isCropSaveRectangle(isSaveRectangle)
+            .maxSelectable(maxCount)
+            .maxSelectablePerMediaType(maxImageCount, maxVideoCount)
+            .captureStrategy(
+                CaptureStrategy(
+                    true,
+                    "${Platform.getPackageName(this@ExampleActivity)}.fileprovider"
+                )
+            )
+            .thumbnailScale(0.6f)
+            .spanCount(spanCount)
+            .gridExpectedSize(gridSizePx)
+            .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+            .imageEngine(Glide4Engine())
+            .theme(R.style.CustomMatisseStyle)
+            .setLastChoosePicturesIdOrUri(selectedPathIds as ArrayList<String>?)
+            .setNoticeConsumer(object : NoticeConsumer {
+                override fun accept(
+                    context: Context, noticeType: Int, title: String, message: String
+                ) {
+                    // 外部提示，可外部定义样式
+                    showToast(context, noticeType, title, message)
+                }
+            })
+            .setStatusBarFuture(object : MFunction<BaseActivity> {
+                override fun accept(params: BaseActivity, view: View?) {
+                    // 外部设置状态栏
+                    ImmersionBar.with(params)?.run {
+                        statusBarDarkFont(true)
+                        view?.apply { titleBar(this) }
+                        init()
+                    }
+
+                    // 外部可隐藏Matisse界面中的View
+//                    view?.visibility = if (isDarkStatus) View.VISIBLE else View.GONE
+                }
+            })
+            .setIsInnerCompress(isInnerCompress)
+    }
+
+    private fun createMediaStoreCompat() {
+        if (mediaStoreCompat != null) return
+
+        val captureStrategy =
+            CaptureStrategy(
+                true,
+                "${Platform.getPackageName(this@ExampleActivity)}.fileprovider"
+            )
+        mediaStoreCompat = MediaStoreCompat(this, null)
+        mediaStoreCompat?.setCaptureStrategy(captureStrategy)
     }
 
     private fun textChanged(ev: EditText) = object : TextWatcher {
@@ -247,55 +323,7 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun openMatisse() {
-        setEditText()
-
-        Matisse.from(this@ExampleActivity)
-            .choose(showType, mediaTypeExclusive)
-            .theme(defaultTheme)
-            .countable(isCountable)
-            .capture(isOpenCamera)
-            .isCrop(isCrop)
-            .cropStyle(cropType)
-            .cropFocusWidthPx(cropWidth)
-            .cropFocusHeightPx(cropHeight)
-            .isCropSaveRectangle(isSaveRectangle)
-            .maxSelectable(maxCount)
-            .maxSelectablePerMediaType(maxImageCount, maxVideoCount)
-            .captureStrategy(
-                CaptureStrategy(
-                    true,
-                    "${Platform.getPackageName(this@ExampleActivity)}.fileprovider"
-                )
-            )
-            .thumbnailScale(0.6f)
-            .spanCount(spanCount)
-            .gridExpectedSize(gridSizePx)
-            .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
-            .imageEngine(Glide4Engine())
-            .theme(R.style.CustomMatisseStyle)
-            .setNoticeConsumer(object : NoticeConsumer {
-                override fun accept(
-                    context: Context, noticeType: Int, title: String, message: String
-                ) {
-                    // 外部提示，可外部定义样式
-                    showToast(context, noticeType, title, message)
-                }
-            })
-            .setStatusBarFuture(object : MFunction<BaseActivity> {
-                override fun accept(params: BaseActivity, view: View?) {
-                    // 外部设置状态栏
-                    ImmersionBar.with(params)?.run {
-                        statusBarDarkFont(true)
-                        view?.apply { titleBar(this) }
-                        init()
-                    }
-
-                    // 外部可隐藏Matisse界面中的View
-//                    view?.visibility = if (isDarkStatus) View.VISIBLE else View.GONE
-                }
-            })
-            .setIsInnerCompress(isInnerCompress)
-            .forResult(ConstValue.REQUEST_CODE_CHOOSE)
+        selectionCreator?.forResult(ConstValue.REQUEST_CODE_CHOOSE)
     }
 
     private fun setEditText() {
@@ -323,37 +351,70 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (data == null) return
+        if (resultCode != Activity.RESULT_OK) return
 
-        if (requestCode == ConstValue.REQUEST_CODE_CHOOSE && resultCode == Activity.RESULT_OK) {
-            var string = "uri 路径集合：\n"
-
-            // 获取uri返回值  裁剪结果不返回uri
-            val uriList = Matisse.obtainResult(data)
-            // 获取文件路径返回值
-            val strList = Matisse.obtainPathResult(data)
-
-            val compressedList = Matisse.obtainCompressResult(data)
-
-            uriList.forEach {
-                string += it.toString() + "\n"
-            }
-
-            string += "\npath 路径集合：\n"
-
-            strList.forEach {
-                string += it + "\n"
-            }
-
-            string += "\n压缩后路径集合：\n"
-
-            compressedList?.forEach {
-                string += it + "\n"
-            }
-
-            Glide.with(this).load(strList[0]).into(iv_image)
-
-            text.text = "\n\n$string"
+        when (requestCode) {
+            ConstValue.REQUEST_CODE_CHOOSE -> doActivityResultForChoose(data)
+            ConstValue.REQUEST_CODE_CAPTURE -> doActivityResultForCapture()
+            ConstValue.REQUEST_CODE_CROP -> doActivityResultForCrop(data)
         }
+    }
+
+    private fun doActivityResultForChoose(data: Intent?) {
+        if (data == null) return
+        // 获取uri返回值  裁剪结果不返回uri
+        val uriList = Matisse.obtainResult(data)
+        // 获取文件路径返回值
+        val strList = Matisse.obtainPathResult(data)
+        val compressedList = Matisse.obtainCompressResult(data)
+        selectedPathIds = Matisse.obtainPathIdResult(data)
+
+        Glide.with(this).load(strList[0]).into(iv_image)
+        showPictureResult(uriList, strList, compressedList)
+    }
+
+    private fun doActivityResultForCapture() {
+        val photoPath = mediaStoreCompat?.getCurrentPhotoPath() ?: ""
+        if (isCrop) {
+            gotoImageCrop(this, arrayListOf(photoPath))
+        } else {
+            showCompressedPath(photoPath)
+        }
+    }
+
+    private fun doActivityResultForCrop(data: Intent?) {
+        if (data == null) return
+        val cropPath = data.getStringExtra(ConstValue.EXTRA_RESULT_BUNDLE) ?: ""
+        showCompressedPath(cropPath)
+    }
+
+    private fun showCompressedPath(path: String) {
+        val compressedPath = PathUtils.getCompressedPath(this, path)
+        showPictureResult(null, arrayListOf(path), arrayListOf(compressedPath))
+        Glide.with(this).load(compressedPath).into(iv_image)
+    }
+
+    private fun showPictureResult(
+        uriList: List<Uri>?, strList: List<String>?, compressedList: List<String>?
+    ) {
+        var string = "uri 路径集合：\n"
+
+        uriList?.forEach {
+            string += it.toString() + "\n"
+        }
+
+        string += "\npath 路径集合：\n"
+
+        strList?.forEach {
+            string += it + "\n"
+        }
+
+        string += "\n压缩后路径集合：\n"
+
+        compressedList?.forEach {
+            string += it + "\n"
+        }
+
+        text.text = "\n\n$string"
     }
 }

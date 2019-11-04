@@ -1,5 +1,6 @@
 package com.matisse.utils
 
+import android.app.Activity
 import android.content.ContentUris
 import android.content.Context
 import android.database.Cursor
@@ -7,6 +8,9 @@ import android.net.Uri
 import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
+import com.matisse.compress.CompressHelper
+import com.matisse.compress.FileUtil
+import com.matisse.internal.entity.SelectionSpec
 
 /**
  * Describe : http://stackoverflow.com/a/27271131/4739220
@@ -14,7 +18,9 @@ import android.provider.MediaStore
  */
 object PathUtils {
 
-    fun getPath(context: Context, uri: Uri): String? {
+    fun getPath(context: Context, uri: Uri?): String? {
+        if (uri == null) return ""
+
         // DocumentProvider
         if (Platform.hasKitKat19() && DocumentsContract.isDocumentUri(context, uri)) {
             // ExternalStorageProvider
@@ -113,4 +119,13 @@ object PathUtils {
     private fun isMediaDocument(uri: Uri): Boolean {
         return "com.android.providers.media.documents" == uri.authority
     }
+
+    /**
+     * 获取压缩后的图片
+     */
+    fun getCompressedPath(activity: Activity, path: String) =
+        if (SelectionSpec.getInstance().isInnerCompress) {
+            CompressHelper.getDefault(activity)
+                ?.compressToFile(FileUtil.getFileByPath(path))?.path ?: path
+        } else ""
 }

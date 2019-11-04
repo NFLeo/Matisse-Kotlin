@@ -21,6 +21,8 @@ import java.io.InputStream
 import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.util.*
+import kotlin.math.log10
+import kotlin.math.pow
 
 /**
  * Created by Leo on 2018/8/29 on 15:24.
@@ -114,6 +116,15 @@ object PhotoMetadataUtils {
         var result = df.format((sizeInBytes.toFloat() / 1024f / 1024f).toDouble())
         result = result.replace(",".toRegex(), ".") // in some case , 0.0 will be 0,0
         return java.lang.Float.valueOf(result)
+    }
+
+    fun getReadableFileSize(size: Long): String {
+        if (size <= 0) return "0"
+
+        val units = arrayOf("B", "KB", "MB", "GB", "TB")
+        val digitGroups = (log10(size.toDouble()) / log10(1024.0)).toInt()
+        return DecimalFormat("#,##0.#")
+            .format(size / 1024.0.pow(digitGroups.toDouble())) + " " + units[digitGroups]
     }
 
     fun getBitmapSize(uri: Uri?, activity: Activity?): Point {

@@ -134,7 +134,7 @@ class ImageCropActivity : BaseActivity(), View.OnClickListener,
     }
 
     override fun onDestroy() {
-        cv_crop_image.setOnBitmapSaveCompleteListener(null)
+        cv_crop_image?.setOnBitmapSaveCompleteListener(null)
         if (null != bitmap && bitmap?.isRecycled == false) {
             bitmap?.recycle()
             bitmap = null

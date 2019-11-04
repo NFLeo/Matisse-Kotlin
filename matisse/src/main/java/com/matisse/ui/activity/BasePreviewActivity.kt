@@ -201,12 +201,8 @@ open class BasePreviewActivity : BaseActivity(), View.OnClickListener,
                     val item = adapter?.getMediaItem(pager.currentItem)
 
                     if (spec?.isSupportCrop(item) == true) {
-                        val intentCrop = Intent(this, ImageCropActivity::class.java)
-                        intentCrop.putExtra(
-                            ConstValue.EXTRA_RESULT_SELECTION_PATH,
-                            PathUtils.getPath(this, item?.getContentUri()!!)
-                        )
-                        startActivityForResult(intentCrop, ConstValue.REQUEST_CODE_CROP)
+                        val itemPath = PathUtils.getPath(this, item?.getContentUri()) ?: ""
+                        gotoImageCrop(this, arrayListOf(itemPath))
                     } else {
                         finishIntentFromPreviewApply(
                             activity, true, selectedCollection, originalEnable
