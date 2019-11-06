@@ -144,13 +144,14 @@ class MainActivity : AppCompatActivity() {
 
             string += "\n"
 
-            strList.forEach {
+            strList?.forEach {
                 string += it + "\n"
             }
 
+            val path = Matisse.obtainPathResult(data) ?: return
 
             // 原文件
-            val file = FileUtil.getFileByPath(Matisse.obtainPathResult(data)[0])
+            val file = FileUtil.getFileByPath(path[0])
 
             Glide.with(this).load(file).into(iv_image)
             // 压缩后的文件         （多个文件压缩可以循环压缩）

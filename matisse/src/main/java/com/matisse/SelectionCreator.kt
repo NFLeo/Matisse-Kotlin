@@ -361,6 +361,7 @@ class SelectionCreator(
      * set last choose pictures ids
      * id is cursor id. not support crop picture
      * 预选中上次带回的图片
+     * 注：暂时无法保持预选中图片的顺序
      */
     fun setLastChoosePicturesIdOrUri(list: ArrayList<String>?) = this.run {
         selectionSpec.lastChoosePictureIdsOrUris = list

@@ -369,7 +369,10 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
         val compressedList = Matisse.obtainCompressResult(data)
         selectedPathIds = Matisse.obtainPathIdResult(data)
 
-        Glide.with(this).load(strList[0]).into(iv_image)
+        strList?.apply {
+            Glide.with(this@ExampleActivity).load(this[0]).into(iv_image)
+        }
+
         showPictureResult(uriList, strList, compressedList)
     }
 
