@@ -55,6 +55,7 @@
             android:layout_height="wrap_content"
             android:paddingTop="10dp"
             android:text="自定义显示"
+            android:visibility="gone"
             android:textColor="@color/black"
             app:layout_constraintStart_toStartOf="@+id/rg_show"
             app:layout_constraintTop_toBottomOf="@+id/rg_show" />
@@ -62,6 +63,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/view_show_customize"
             android:layout_width="0dp"
+            android:visibility="gone"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/tv_show_customize"

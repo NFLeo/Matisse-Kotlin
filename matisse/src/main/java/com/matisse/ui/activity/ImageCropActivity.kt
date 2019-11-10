@@ -16,6 +16,7 @@ import com.matisse.widget.IncapableDialog
 import kotlinx.android.synthetic.main.activity_crop.*
 import kotlinx.android.synthetic.main.include_view_navigation.*
 import java.io.File
+import kotlin.math.min
 
 /**
  * desc：图片裁剪</br>
@@ -55,8 +56,15 @@ class ImageCropActivity : BaseActivity(), View.OnClickListener,
             val cropHeight = if (cropFocusHeightPx in 1 until cropFocusNormalHeight)
                 cropFocusHeightPx else cropFocusNormalHeight
 
-            outputX = cropWidth
-            outputY = cropHeight
+            // 圆形裁剪时，取宽高最短边作为裁剪结果
+            // 方形裁剪时，取焦点框尺寸作为裁剪结果尺寸
+            if (cropStyle == CropImageView.Style.CIRCLE) {
+                outputX = min(cropWidth, cropHeight)
+                outputY = outputX
+            } else {
+                outputX = cropWidth
+                outputY = cropHeight
+            }
             isSaveRectangle = isCropSaveRectangle
 
             cv_crop_image.setFocusStyle(cropStyle)

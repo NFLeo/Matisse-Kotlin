@@ -214,18 +214,18 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
                     ).show()
                     return@subscribe
                 }
-            }
 
-        when (v) {
-            btn_open_matisse -> {
-                createMatisse()
-                openMatisse()
+                when (v) {
+                    btn_open_matisse -> {
+                        createMatisse()
+                        openMatisse()
+                    }
+                    btn_open_capture -> {
+                        createMediaStoreCompat()
+                        mediaStoreCompat?.dispatchCaptureIntent(this, ConstValue.REQUEST_CODE_CAPTURE)
+                    }
+                }
             }
-            btn_open_capture -> {
-                createMediaStoreCompat()
-                mediaStoreCompat?.dispatchCaptureIntent(this, ConstValue.REQUEST_CODE_CAPTURE)
-            }
-        }
     }
 
     private var mediaStoreCompat: MediaStoreCompat? = null
@@ -340,6 +340,9 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
         if (spanCount > 0) {
             gridSizePx = 0
         }
+
+        cropWidth = formatStrTo0(ev_crop_width.text.toString())
+        cropHeight = formatStrTo0(ev_crop_height.text.toString())
     }
 
     private fun formatStrTo0(s: String?): Int {

@@ -10,6 +10,9 @@ Matisse核心功能：[https://github.com/zhihu/Matisse](https://github.com/zhih
 图片压缩提供者：[https://github.com/nanchen2251](https://github.com/nanchen2251)
 
 # 版本更新记录
+2019-11-10 (2.0.1)
+1. 修复裁剪结果尺寸异常
+
 2019-11-4 (2.0)
 1. 相机单独提取
 2. 支持默认选中，可传入上次选中的项（通过图片cursor id或uri string对比）
@@ -17,6 +20,7 @@ Matisse核心功能：[https://github.com/zhihu/Matisse](https://github.com/zhih
 ```
 .setLastChoosePicturesIdOrUri(selectedPathIds as ArrayList<String>?)
 ```
+3. 修复压缩为空带回崩溃
 
 2019-10-29 (1.2.3)
 1. 修复相册弹窗高度不准确问题
@@ -110,7 +114,7 @@ SelectionCreator.setNoticeConsumer(object : NoticeConsumer {
 关于打包报错问题：
 
 使用：
-1. gradle中添加 implementation 'com.nfleo:MatisseKotlin:2.0'
+1. gradle中添加 implementation 'com.nfleo:MatisseKotlin:2.0.1'
 2. AndroidManifest.xml中添加以下代码
 * 注：注意provider androidx的差别
         <provider
