@@ -1,3 +1,5 @@
+[ ![Download](https://api.bintray.com/packages/nfleo/MatisseKotlin/MatisseKotlin/images/download.svg?version=2.0.2) ](https://bintray.com/nfleo/MatisseKotlin/MatisseKotlin/2.0.2/link)
+
 ![Image](/image/banner.png)
 
 [Matisse-kotlin地址](https://github.com/NFLeo/Matisse-Kotlin)
@@ -10,6 +12,11 @@ Matisse核心功能：[https://github.com/zhihu/Matisse](https://github.com/zhih
 图片压缩提供者：[https://github.com/nanchen2251](https://github.com/nanchen2251)
 
 # 版本更新记录
+2019-12-10 (2.0.2)
+1. 修复mimeType为空情况
+2. 修复spanSize和gridExceptedSize同时设置冲突
+    注：同时设置时，读取gridExceptedSize值
+
 2019-11-10 (2.0.1)
 1. 修复裁剪结果尺寸异常
 
@@ -114,7 +121,7 @@ SelectionCreator.setNoticeConsumer(object : NoticeConsumer {
 关于打包报错问题：
 
 使用：
-1. gradle中添加 implementation 'com.nfleo:MatisseKotlin:2.0.1'
+1. gradle中添加 implementation 'com.nfleo:MatisseKotlin:2.0.2'
 2. AndroidManifest.xml中添加以下代码
 * 注：注意provider androidx的差别
         <provider
