@@ -28,23 +28,23 @@ class MimeTypeManager {
             MimeType.MKV, MimeType.WEBM, MimeType.TS, MimeType.AVI
         )
 
-        fun isImage(mimeType: String) = MimeType.JPEG.getKey().contains(mimeType.toLowerCase())
-                || MimeType.PNG.getKey().contains(mimeType.toLowerCase())
-                || MimeType.GIF.getKey().contains(mimeType.toLowerCase())
-                || MimeType.BMP.getKey().contains(mimeType.toLowerCase())
-                || MimeType.WEBP.getKey().contains(mimeType.toLowerCase())
+        fun isImage(mimeType: String?) = MimeType.JPEG.getKey().contains(lowerCaseMimeType(mimeType))
+                || MimeType.PNG.getKey().contains(lowerCaseMimeType(mimeType))
+                || MimeType.GIF.getKey().contains(lowerCaseMimeType(mimeType))
+                || MimeType.BMP.getKey().contains(lowerCaseMimeType(mimeType))
+                || MimeType.WEBP.getKey().contains(lowerCaseMimeType(mimeType))
 
-        fun isVideo(mimeType: String) = MimeType.MPEG.getKey().contains(mimeType.toLowerCase())
-                || MimeType.MP4.getKey().contains(mimeType.toLowerCase())
-                || MimeType.QUICKTIME.getKey().contains(mimeType.toLowerCase())
-                || MimeType.THREEGPP.getKey().contains(mimeType.toLowerCase())
-                || MimeType.THREEGPP2.getKey().contains(mimeType.toLowerCase())
-                || MimeType.MKV.getKey().contains(mimeType.toLowerCase())
-                || MimeType.WEBM.getKey().contains(mimeType.toLowerCase())
-                || MimeType.TS.getKey().contains(mimeType.toLowerCase())
-                || MimeType.AVI.getKey().contains(mimeType.toLowerCase())
+        fun isVideo(mimeType: String) = MimeType.MPEG.getKey().contains(lowerCaseMimeType(mimeType))
+                || MimeType.MP4.getKey().contains(lowerCaseMimeType(mimeType))
+                || MimeType.QUICKTIME.getKey().contains(lowerCaseMimeType(mimeType))
+                || MimeType.THREEGPP.getKey().contains(lowerCaseMimeType(mimeType))
+                || MimeType.THREEGPP2.getKey().contains(lowerCaseMimeType(mimeType))
+                || MimeType.MKV.getKey().contains(lowerCaseMimeType(mimeType))
+                || MimeType.WEBM.getKey().contains(lowerCaseMimeType(mimeType))
+                || MimeType.TS.getKey().contains(lowerCaseMimeType(mimeType))
+                || MimeType.AVI.getKey().contains(lowerCaseMimeType(mimeType))
 
-        fun isGif(mimeType: String) = MimeType.GIF.toString().contains(mimeType.toLowerCase())
+        fun isGif(mimeType: String) = MimeType.GIF.toString().contains(lowerCaseMimeType(mimeType))
 
         fun arraySetOf(vararg suffixes: String) = ArraySet(mutableListOf(*suffixes))
 
@@ -73,5 +73,7 @@ class MimeTypeManager {
             }
             return false
         }
+
+        private fun lowerCaseMimeType(mimeType: String?) = mimeType?.toLowerCase() ?: ""
     }
 }

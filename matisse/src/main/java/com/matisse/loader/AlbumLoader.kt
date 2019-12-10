@@ -34,22 +34,18 @@ class AlbumLoader(context: Context, selection: String, selectionArgs: Array<out 
         const val COLUMN_URI = "uri"
 
         val COLUMNS = arrayOf(
-            MediaStore.Files.FileColumns._ID,
-            BUCKET_ID, BUCKET_DISPLAY_NAME,
-            MediaStore.MediaColumns.MIME_TYPE,
-            COLUMN_URI, COLUMN_COUNT
+            MediaStore.Files.FileColumns._ID, BUCKET_ID, BUCKET_DISPLAY_NAME,
+            MediaStore.MediaColumns.MIME_TYPE, COLUMN_URI, COLUMN_COUNT
         )
 
         val PROJECTION = arrayOf(
-            MediaStore.Files.FileColumns._ID, BUCKET_ID,
-            BUCKET_DISPLAY_NAME, MediaStore.MediaColumns.MIME_TYPE,
-            "COUNT(*) AS $COLUMN_COUNT"
+            MediaStore.Files.FileColumns._ID, BUCKET_ID, BUCKET_DISPLAY_NAME,
+            MediaStore.MediaColumns.MIME_TYPE, "COUNT(*) AS $COLUMN_COUNT"
         )
 
         private val PROJECTION_29 = arrayOf(
-            MediaStore.Files.FileColumns._ID,
-            BUCKET_ID, BUCKET_DISPLAY_NAME,
-            MediaStore.MediaColumns.MIME_TYPE
+            MediaStore.Files.FileColumns._ID, BUCKET_ID,
+            BUCKET_DISPLAY_NAME, MediaStore.MediaColumns.MIME_TYPE
         )
 
         private const val SELECTION = "(" + MediaStore.Files.FileColumns.MEDIA_TYPE + "=? " +
@@ -85,12 +81,10 @@ class AlbumLoader(context: Context, selection: String, selectionArgs: Array<out 
             val selectionArgs: Array<String>
 
             when {
-                SelectionSpec.getInstance().onlyShowImages() ->
-                    selectionArgs =
-                        getSelectionArgsForSingleMediaType(MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE)
-                SelectionSpec.getInstance().onlyShowVideos() ->
-                    selectionArgs =
-                        getSelectionArgsForSingleMediaType(MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO)
+                SelectionSpec.getInstance().onlyShowImages() -> selectionArgs =
+                    getSelectionArgsForSingleMediaType(MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE)
+                SelectionSpec.getInstance().onlyShowVideos() -> selectionArgs =
+                    getSelectionArgsForSingleMediaType(MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO)
                 else -> {
                     selection = if (beforeAndroidTen()) SELECTION else SELECTION_29
                     selectionArgs = SELECTION_ARGS
@@ -104,14 +98,11 @@ class AlbumLoader(context: Context, selection: String, selectionArgs: Array<out 
     override fun loadInBackground(): Cursor? {
         val albums = super.loadInBackground()
         val allAlbum = MatrixCursor(COLUMNS)
-        return if (beforeAndroidTen()) {
-            loadBelowAndroidQ(albums, allAlbum)
-        } else loadAboveAndroidQ(albums, allAlbum)
+        return if (beforeAndroidTen()) loadBelowAndroidQ(albums, allAlbum)
+        else loadAboveAndroidQ(albums, allAlbum)
     }
 
-    private fun loadBelowAndroidQ(
-        albums: Cursor?, allAlbum: MatrixCursor
-    ): MergeCursor {
+    private fun loadBelowAndroidQ(albums: Cursor?, allAlbum: MatrixCursor): MergeCursor {
         var totalCount = 0
         var allAlbumCoverUri: Uri? = null
         val otherAlbums = MatrixCursor(COLUMNS)
@@ -132,18 +123,15 @@ class AlbumLoader(context: Context, selection: String, selectionArgs: Array<out 
                 )
                 totalCount += count
             }
-            if (albums.moveToFirst()) {
-                allAlbumCoverUri = getUri(albums)
-            }
+            if (albums.moveToFirst()) allAlbumCoverUri = getUri(albums)
+
         }
 
         allAlbumAddRow(allAlbumCoverUri, totalCount, allAlbum)
         return MergeCursor(arrayOf<Cursor>(allAlbum, otherAlbums))
     }
 
-    private fun loadAboveAndroidQ(
-        albums: Cursor?, allAlbum: MatrixCursor
-    ): MergeCursor {
+    private fun loadAboveAndroidQ(albums: Cursor?, allAlbum: MatrixCursor): MergeCursor {
         var totalCount = 0
         var allAlbumCoverUri: Uri? = null
         val otherAlbums = MatrixCursor(COLUMNS)
@@ -155,11 +143,8 @@ class AlbumLoader(context: Context, selection: String, selectionArgs: Array<out 
                 val bucketId = getLong(getColumnIndex(BUCKET_ID))
 
                 var count: Long? = countMap[bucketId]
-                if (count == null) {
-                    count = 1L
-                } else {
-                    count++
-                }
+                if (count == null) count = 1L else count++
+
                 countMap[bucketId] = count
             }
 
@@ -196,22 +181,18 @@ class AlbumLoader(context: Context, selection: String, selectionArgs: Array<out 
         return MergeCursor(arrayOf<Cursor>(allAlbum, otherAlbums))
     }
 
-    private fun allAlbumAddRow(
-        allAlbumCoverUri: Uri?, totalCount: Int, allAlbum: MatrixCursor
-    ) {
-        val row: Array<String?> = arrayOfNulls(6)
-        row[0] = Album.ALBUM_ID_ALL
-        row[1] = Album.ALBUM_ID_ALL
-        row[2] = Album.ALBUM_NAME_ALL
-        row[3] = null
-        row[4] = allAlbumCoverUri?.toString()
-        row[5] = totalCount.toString()
+    private fun allAlbumAddRow(allAlbumCoverUri: Uri?, totalCount: Int, allAlbum: MatrixCursor) {
+        val row: Array<String?> = arrayOf(
+            Album.ALBUM_ID_ALL, Album.ALBUM_ID_ALL, Album.ALBUM_NAME_ALL,
+            null, allAlbumCoverUri?.toString(), totalCount.toString()
+        )
         allAlbum.addRow(row)
     }
 
     private fun getUri(cursor: Cursor): Uri {
         val id = cursor.getLong(cursor.getColumnIndex(MediaStore.Files.FileColumns._ID))
-        val mimeType = cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE))
+        val mimeType =
+            cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE)) ?: ""
         val contentUri = when {
             MimeTypeManager.isImage(mimeType) -> MediaStore.Images.Media.EXTERNAL_CONTENT_URI
             MimeTypeManager.isVideo(mimeType) -> MediaStore.Video.Media.EXTERNAL_CONTENT_URI

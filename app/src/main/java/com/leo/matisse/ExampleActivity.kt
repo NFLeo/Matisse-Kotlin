@@ -56,6 +56,8 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
     private var isSaveRectangle = false
     private var cropType = CropImageView.Style.RECTANGLE
 
+    private var isColumnNum = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_example)
@@ -76,10 +78,12 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
                 R.id.btnMixed -> {
                     mediaTypeExclusive = false
                     ev_max_2.visibility = View.VISIBLE
+                    tv_max_1.text = "图片最大选择数"
                 }
                 R.id.btnExclusive -> {
                     mediaTypeExclusive = true
                     ev_max_2.visibility = View.GONE
+                    tv_max_1.text = "最大可选择数"
                 }
             }
         }
@@ -88,6 +92,19 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
             when (checkedId) {
                 R.id.btn_normal_theme -> defaultTheme = R.style.Matisse_Default
                 R.id.btn_customize_theme -> defaultTheme = R.style.CustomMatisseStyle
+            }
+        }
+
+        rg_column.setOnCheckedChangeListener { _, checkedId ->
+            when (checkedId) {
+                R.id.btn_num_column -> {
+                    isColumnNum = true
+                    ev_column.setText("3")
+                }
+                R.id.btn_size_column -> {
+                    isColumnNum = false
+                    ev_column.setText("300")
+                }
             }
         }
 
@@ -156,8 +173,6 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
 
         ev_max_1.addTextChangedListener(textChanged(ev_max_1))
         ev_max_2.addTextChangedListener(textChanged(ev_max_2))
-        ev_span_1.addTextChangedListener(textChanged(ev_span_1))
-        ev_span_2.addTextChangedListener(textChanged(ev_span_2))
     }
 
     private fun showToast(context: Context, noticeType: Int, title: String, message: String) {
@@ -222,7 +237,9 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
                     }
                     btn_open_capture -> {
                         createMediaStoreCompat()
-                        mediaStoreCompat?.dispatchCaptureIntent(this, ConstValue.REQUEST_CODE_CAPTURE)
+                        mediaStoreCompat?.dispatchCaptureIntent(
+                            this, ConstValue.REQUEST_CODE_CAPTURE
+                        )
                     }
                 }
             }
@@ -304,14 +321,6 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
                     else maxCount = formatStrTo0(s.toString())
                 }
                 ev_max_2 -> maxVideoCount = formatStrTo0(s.toString())
-                ev_span_1 -> {
-                    spanCount = formatStrTo0(s.toString())
-                    gridSizePx = 0
-                }
-                ev_span_2 -> {
-                    gridSizePx = formatStrTo0(s.toString())
-                    spanCount = 0
-                }
             }
         }
 
@@ -336,9 +345,12 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
 
-        spanCount = formatStrTo0(ev_span_1.text.toString())
-        if (spanCount > 0) {
+        if (isColumnNum) {
+            spanCount = formatStrTo0(ev_column.text.toString())
             gridSizePx = 0
+        } else {
+            gridSizePx = formatStrTo0(ev_column.text.toString())
+            spanCount = 0
         }
 
         cropWidth = formatStrTo0(ev_crop_width.text.toString())
