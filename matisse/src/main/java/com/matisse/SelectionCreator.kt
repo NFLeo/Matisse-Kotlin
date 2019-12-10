@@ -195,12 +195,11 @@ class SelectionCreator(
     /**
      * Set a fixed span count for the media grid. Same for different screen orientations.
      * This will be ignored when [.gridExpectedSize] is set.
-     *
+     * [get gridExpectedSize first]
      * @param spanCount Requested span count.
      * @return [SelectionCreator] for fluent API.
      */
     fun spanCount(spanCount: Int): SelectionCreator {
-        if (spanCount < 1) throw IllegalArgumentException("spanCount cannot be less than 1")
         if (selectionSpec.gridExpectedSize > 0) {
             return this
         }
