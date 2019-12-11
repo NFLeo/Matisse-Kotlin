@@ -134,9 +134,11 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
                 maxCount = 1
                 maxImageCount = 1
                 maxVideoCount = 1
-                ev_max_1.visibility = View.GONE
+                ev_max_2.visibility = View.GONE
+                tv_max_1.text = "最大可选择数"
             } else {
-                ev_max_1.visibility = View.VISIBLE
+                ev_max_2.visibility = View.VISIBLE
+                tv_max_1.text = "图片最大选择数"
             }
         }
 
@@ -359,6 +361,7 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun formatStrTo0(s: String?): Int {
         if (s == null || s.toString() == "") {
+            Toast.makeText(this, "请保证所有输入非0非空，否则崩溃", Toast.LENGTH_SHORT).show()
             return 0
         }
         return s.toString().toInt()

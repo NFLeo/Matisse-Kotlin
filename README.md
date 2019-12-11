@@ -11,6 +11,8 @@ Matisse核心功能：[https://github.com/zhihu/Matisse](https://github.com/zhih
 
 图片压缩提供者：[https://github.com/nanchen2251](https://github.com/nanchen2251)
 
+完整说明文档：[Android 图片选择库 MatisseKotlin 版](https://www.jianshu.com/p/ca1e7460fa69)
+
 # 版本更新记录
 2019-12-10 (2.0.2)
 1. 修复mimeType为空情况
