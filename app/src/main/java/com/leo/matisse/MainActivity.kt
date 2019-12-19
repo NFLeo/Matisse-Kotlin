@@ -61,7 +61,6 @@ class MainActivity : AppCompatActivity() {
                             )
                         )
                         .thumbnailScale(0.8f)
-                        .gridExpectedSize(resources.getDimensionPixelSize(R.dimen.grid_expected_size))
                         .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
                         .imageEngine(Glide4Engine())
                         .theme(R.style.CustomMatisseStyle)
@@ -105,7 +104,6 @@ class MainActivity : AppCompatActivity() {
                         )
                         .maxSelectable(1)
                         .thumbnailScale(0.8f)
-                        .gridExpectedSize(resources.getDimensionPixelSize(R.dimen.grid_expected_size))
                         .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
                         .imageEngine(Glide4Engine())
                         .setOnSelectedListener(object : OnSelectedListener {

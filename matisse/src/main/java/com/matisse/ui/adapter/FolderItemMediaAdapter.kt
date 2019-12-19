@@ -27,7 +27,7 @@ class FolderItemMediaAdapter(var context: Context, var mCurrentPosition: Int) :
     private var placeholder: Drawable?
 
     init {
-        val ta = context.theme.obtainStyledAttributes(intArrayOf(R.attr.item_placeholder))
+        val ta = context.theme.obtainStyledAttributes(intArrayOf(R.attr.Item_placeholder))
         placeholder = ta.getDrawable(0)
         ta.recycle()
 

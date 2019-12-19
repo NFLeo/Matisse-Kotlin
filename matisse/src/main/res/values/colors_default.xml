@@ -10,22 +10,14 @@
     <color name="preview_bg">@color/black</color>
     <color name="bottomTool_bg">@color/white</color>
 
-    <color name="text_back">@color/selector_white_text</color>
-    <color name="text_sure">@color/selector_white_text</color>
     <color name="text_preview">@color/selector_black_text</color>
     <color name="text_original">@color/color_hint_text</color>
     <color name="text_album">@color/selector_base_text</color>
     <color name="text_item_album">@color/selector_black_text</color>
     <color name="text_camera">@color/color_hint_text</color>
     <color name="text_empty">@color/color_hint_text</color>
-
-    <!--选择控件背景色-->
-    <color name="item_checkCircle_backgroundColor">@color/selector_base_text</color>
     <!--选择控件边框颜色-->
     <color name="item_checkCircle_borderColor">@color/selector_white_text</color>
     <!--选择控件文字状态文字颜色-->
-
-    <!--选择控件背景色-->
-    <color name="item_checkRadio">@color/selector_base_text</color>
     <color name="check_original_radio_disable">#808080</color>
 </resources>

@@ -15,11 +15,12 @@
     </style>
 
     <style name="CustomMatisseStyle" parent="Matisse.Default">
-        <item name="Media.Back.text">@string/back</item>
-        <item name="Media.Sure.text">@string/sure</item>
-        <item name="Media.Preview.text">@string/preview</item>
-        <item name="Media.Original.text">@string/original</item>
-        <item name="Media.Album.text">@string/album</item>
-        <item name="Media.Camera.text">@string/camera</item>
+        <item name="Media_Back_text">@string/back</item>
+        <item name="Media_Sure_text">@string/sure</item>
+        <item name="Media_Preview_text">@string/preview</item>
+        <item name="Media_Original_text">@string/original</item>
+        <item name="Media_Album_text">@string/album</item>
+        <item name="Media_Camera_text">@string/camera</item>
+        <item name="Item_placeholder">@drawable/ic_launcher_foreground</item>
     </style>
 </resources>

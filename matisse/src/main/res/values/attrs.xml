@@ -1,51 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <attr name="navigation.height" format="dimension" />
-    <attr name="navigation.background" format="reference|color" />
-    <attr name="navigation.backRes" format="reference" />
+    <attr name="Navigation_height" format="dimension" />
+    <attr name="Navigation_bg" format="reference|color" />
+    <attr name="Navigation_backRes" format="reference" />
 
-    <attr name="preview.background" format="reference|color" />
+    <attr name="Preview_bg" format="reference|color" />
 
-    <attr name="bottomToolbar.bg" format="reference|color" />
-    <attr name="bottomToolbar.height" format="dimension" />
+    <attr name="BottomToolbar_bg" format="reference|color" />
+    <attr name="BottomToolbar_height" format="dimension" />
 
-    <attr name="Media.Back.text" format="reference" />
-    <attr name="Media.Sure.text" format="reference" />
-    <attr name="Media.Preview.text" format="reference" />
-    <attr name="Media.Original.text" format="reference" />
-    <attr name="Media.Album.text" format="reference" />
-    <attr name="Media.Empty.text" format="reference" />
-    <attr name="Media.Camera.text" format="reference" />
-    <attr name="Preview.Back.text" format="reference" />
-    <attr name="Preview.Confirm.text" format="reference" />
+    <attr name="Media_Back_text" format="reference" />
+    <attr name="Media_Sure_text" format="reference" />
+    <attr name="Media_Preview_text" format="reference" />
+    <attr name="Media_Original_text" format="reference" />
+    <attr name="Media_Album_text" format="reference" />
+    <attr name="Media_Empty_text" format="reference" />
+    <attr name="Media_Camera_text" format="reference" />
+    <attr name="Preview_Back_text" format="reference" />
+    <attr name="Preview_Confirm_text" format="reference" />
 
-    <attr name="Media.Back.textColor" format="reference|color" />
-    <attr name="Media.Sure.textColor" format="reference|color" />
-    <attr name="Media.Preview.textColor" format="reference|color" />
-    <attr name="Media.Album.textColor" format="reference|color" />
-    <attr name="Media.Original.textColor" format="reference|color" />
-    <attr name="Media.Camera.textColor" format="reference|color" />
-    <attr name="Media.Album.Item.textColor" format="reference|color" />
+    <attr name="Media_Back_textColor" format="reference|color" />
+    <attr name="Media_Sure_textColor" format="reference|color" />
+    <attr name="Media_Preview_textColor" format="reference|color" />
+    <attr name="Media_Album_textColor" format="reference|color" />
+    <attr name="Media_Original_textColor" format="reference|color" />
+    <attr name="Media_Camera_textColor" format="reference|color" />
+    <attr name="Media_Album_Item_textColor" format="reference|color" />
 
-    <attr name="Media.Back.textSize" format="dimension" />
-    <attr name="Media.Sure.textSize" format="dimension" />
-    <attr name="Media.Preview.textSize" format="dimension" />
-    <attr name="Media.Album.textSize" format="dimension" />
-    <attr name="Media.Original.textSize" format="dimension" />
-    <attr name="Media.Camera.textSize" format="dimension" />
-    <attr name="Media.Album.Item.textSize" format="dimension" />
+    <attr name="Media_Back_textSize" format="dimension" />
+    <attr name="Media_Sure_textSize" format="dimension" />
+    <attr name="Media_Preview_textSize" format="dimension" />
+    <attr name="Media_Album_textSize" format="dimension" />
+    <attr name="Media_Original_textSize" format="dimension" />
+    <attr name="Media_Camera_textSize" format="dimension" />
+    <attr name="Media_Album_Item_textSize" format="dimension" />
 
-    <attr name="item.checkCircle.backgroundColor" format="reference|color" />
-    <attr name="item.checkCircle.borderColor" format="reference|color" />
-    <attr name="item.checkCircle.numColor" format="reference|color" />
-    <attr name="item.checkRadio" format="reference|color" />
+    <attr name="Item_checkCircle_bgColor" format="reference|color" />
+    <attr name="Item_checkCircle_borderColor" format="reference|color" />
+    <attr name="Item_checkCircle_numColor" format="reference|color" />
+    <attr name="Item_checkRadio" format="reference|color" />
 
-    <attr name="Media.Empty.textColor" format="reference|color" />
-    <attr name="Media.Empty.textSize" format="dimension" />
-    <attr name="Media.Empty.resource" format="reference" />
+    <attr name="Media_Empty_textColor" format="reference|color" />
+    <attr name="Media_Empty_textSize" format="dimension" />
+    <attr name="Media_Empty_resource" format="reference" />
 
-    <attr name="item.placeholder" format="reference|color" />
-    <attr name="page.bg" format="reference|color" />
+    <attr name="Item_placeholder" format="reference|color" />
+    <attr name="Page_background" format="reference|color" />
 
     <declare-styleable name="CropImageView">
         <attr name="cropMaskColor" format="color" />

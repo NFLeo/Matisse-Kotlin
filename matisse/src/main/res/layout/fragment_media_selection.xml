@@ -6,6 +6,6 @@
     android:clipChildren="false"
     android:clipToPadding="false"
     android:overScrollMode="never"
-    android:paddingBottom="@dimen/media_grid_spacing"
     android:paddingTop="@dimen/media_grid_spacing"
+    android:paddingBottom="@dimen/media_grid_spacing"
     android:scrollbars="none" />

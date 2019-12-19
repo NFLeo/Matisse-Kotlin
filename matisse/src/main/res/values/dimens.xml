@@ -2,7 +2,6 @@
 <resources>
     <dimen name="media_grid_size">48dp</dimen>
     <dimen name="media_grid_spacing">4dp</dimen>
-    <dimen name="grid_expected_size">120dp</dimen>
 
     <dimen name="navigation_height">48dp</dimen>
     <dimen name="bottom_tool_height">48dp</dimen>

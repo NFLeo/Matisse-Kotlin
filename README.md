@@ -202,13 +202,13 @@ matisse/style.xml
         <item name="colorPrimaryDark">@color/primary_dark</item>
 
         <!--顶部导航条高度-->
-        <item name="navigation.height">@dimen/navigation_height</item>
+        <item name="Navigation_height">@dimen/navigation_height</item>
         <!--顶部导航条背景色-->
-        <item name="navigation.background">@color/navigation_bg</item>
+        <item name="Navigation_bg">@color/navigation_bg</item>
         <!--顶部导航条返回按钮资源图-->
-        <item name="navigation.backRes">@drawable/icon_arrow_right_white</item>
+        <item name="Navigation_backRes">@drawable/icon_arrow_right_white</item>
         <!--图片预览界面背景色-->
-        <item name="preview.background">@color/preview_bg</item>
+        <item name="Preview_bg">@color/preview_bg</item>
 
         <!--底部工具栏背景色-->
         <item name="bottomToolbar.bg">@color/bottomTool_bg</item>

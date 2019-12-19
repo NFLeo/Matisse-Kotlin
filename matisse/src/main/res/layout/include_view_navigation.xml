@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/bottom_toolbar"
     android:layout_width="match_parent"
-    android:layout_height="?attr/navigation.height"
-    android:background="?attr/navigation.background"
+    android:layout_height="?attr/Navigation_height"
+    android:background="?attr/Navigation_bg"
     android:elevation="2dp">
 
     <TextView
@@ -13,14 +13,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
-        android:drawableStart="?attr/navigation.backRes"
+        android:drawableStart="?attr/Navigation_backRes"
         android:drawablePadding="5dp"
         android:foreground="?selectableItemBackground"
         android:gravity="center_vertical"
         android:padding="16dp"
-        android:text="?attr/Media.Back.text"
-        android:textColor="?attr/Media.Back.textColor"
-        android:textSize="?attr/Media.Back.textSize"
+        android:text="?attr/Media_Back_text"
+        android:textColor="?attr/Media_Back_textColor"
+        android:textSize="?attr/Media_Back_textSize"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -33,9 +33,9 @@
         android:layout_gravity="end"
         android:foreground="?selectableItemBackground"
         android:padding="16dp"
-        android:text="?attr/Media.Sure.text"
-        android:textColor="?attr/Media.Sure.textColor"
-        android:textSize="?attr/Media.Sure.textSize"
+        android:text="?attr/Media_Sure_text"
+        android:textColor="?attr/Media_Sure_textColor"
+        android:textSize="?attr/Media_Sure_textSize"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

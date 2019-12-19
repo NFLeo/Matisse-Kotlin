@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:foreground="?selectableItemBackground"
     android:layout_margin="10dp"
+    android:foreground="?selectableItemBackground"
     android:gravity="center">
 
     <ImageView
@@ -29,8 +29,8 @@
         android:ellipsize="middle"
         android:lineSpacingExtra="4dp"
         android:singleLine="true"
-        android:textColor="?attr/Media.Album.Item.textColor"
-        android:textSize="?attr/Media.Album.Item.textSize"
+        android:textColor="?attr/Media_Album_Item_textColor"
+        android:textSize="?attr/Media_Album_Item_textSize"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/rb_selected"
         app:layout_constraintStart_toEndOf="@+id/iv_bucket_cover"

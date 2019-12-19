@@ -13,7 +13,7 @@
         android:drawableTop="@drawable/ic_photo_camera_white_24dp"
         android:gravity="center"
         android:text="@string/photo_grid_capture"
-        android:textColor="?attr/Media.Camera.textColor"
-        android:textSize="?attr/Media.Camera.textSize" />
+        android:textColor="?attr/Media_Camera_textColor"
+        android:textSize="?attr/Media_Camera_textSize" />
 
 </com.matisse.widget.SquareFrameLayout>

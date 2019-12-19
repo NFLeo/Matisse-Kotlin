@@ -36,8 +36,9 @@ class GifSizeFilter(private val mMinWidth: Int, private val mMinHeight: Int, pri
             return null
         val size = PhotoMetadataUtils.getBitmapBound(context.contentResolver, item?.getContentUri())
         return if (size.x < mMinWidth || size.y < mMinHeight || item?.size ?: 0 > mMaxSize) {
-            IncapableCause(IncapableCause.DIALOG, context.getString(R.string.error_gif, mMinWidth,
-                    PhotoMetadataUtils.getSizeInMB(mMaxSize.toLong()).toString()))
+//            IncapableCause(IncapableCause.DIALOG, context.getString(R.string.error_gif, mMinWidth,
+//                    PhotoMetadataUtils.getSizeInMB(mMaxSize.toLong()).toString()))
+            null
         } else null
     }
 }

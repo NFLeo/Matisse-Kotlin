@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true">
@@ -26,8 +25,7 @@
         android:layout_height="0dp"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/bottom_view"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"
-        tools:visibility="visible" />
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
     <FrameLayout
         android:id="@+id/empty_view"
@@ -35,19 +33,18 @@
         android:layout_height="0dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"
-        tools:visibility="visible">
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
         <TextView
             android:id="@+id/empty_view_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:drawableTop="?attr/Media.Empty.resource"
+            android:drawableTop="?attr/Media_Empty_resource"
             android:drawablePadding="8dp"
-            android:text="?attr/Media.Empty.text"
-            android:textColor="?attr/Media.Empty.textColor"
-            android:textSize="?attr/Media.Empty.textSize" />
+            android:text="?attr/Media_Empty_text"
+            android:textColor="?attr/Media_Empty_textColor"
+            android:textSize="?attr/Media_Empty_textSize" />
 
     </FrameLayout>
 
