@@ -11,8 +11,8 @@ import com.matisse.engine.ImageEngine
 import com.matisse.entity.CaptureStrategy
 import com.matisse.filter.Filter
 import com.matisse.internal.entity.SelectionSpec
-import com.matisse.listener.NoticeConsumer
 import com.matisse.listener.MFunction
+import com.matisse.listener.NoticeConsumer
 import com.matisse.listener.OnCheckedListener
 import com.matisse.listener.OnSelectedListener
 import com.matisse.ui.activity.BaseActivity
@@ -172,9 +172,6 @@ class SelectionCreator(
      * @return [SelectionCreator] for fluent API.
      */
     fun captureStrategy(captureStrategy: CaptureStrategy): SelectionCreator {
-        if (!selectionSpec.capture) {
-            return this
-        }
         selectionSpec.captureStrategy = captureStrategy
         return this
     }
@@ -212,11 +209,11 @@ class SelectionCreator(
      * be applied cause the media grid should fill the view container. The measured media grid's
      * size will be as close to this value as possible.
      *
-     * @param size Expected media grid size in pixel.
+     * @param sizePx Expected media grid size in pixel.
      * @return [SelectionCreator] for fluent API.
      */
-    fun gridExpectedSize(size: Int): SelectionCreator {
-        selectionSpec.gridExpectedSize = size
+    fun gridExpectedSize(sizePx: Int): SelectionCreator {
+        selectionSpec.gridExpectedSize = sizePx
         return this
     }
 

@@ -3,11 +3,11 @@ package com.matisse.ui.view
 import android.content.Context
 import android.database.Cursor
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
 import com.matisse.R
 import com.matisse.entity.Album
 import com.matisse.entity.ConstValue
@@ -17,9 +17,12 @@ import com.matisse.model.AlbumCallbacks
 import com.matisse.model.AlbumMediaCollection
 import com.matisse.model.SelectedItemCollection
 import com.matisse.ui.adapter.AlbumMediaAdapter
-import com.matisse.utils.UIUtils
+import com.matisse.utils.MAX_SPAN_COUNT
+import com.matisse.utils.spanCount
 import com.matisse.widget.MediaGridInset
 import kotlinx.android.synthetic.main.fragment_media_selection.*
+import kotlin.math.max
+import kotlin.math.min
 
 class MediaSelectionFragment : Fragment(), AlbumCallbacks, AlbumMediaAdapter.CheckStateListener,
     AlbumMediaAdapter.OnMediaClickListener {
@@ -32,12 +35,9 @@ class MediaSelectionFragment : Fragment(), AlbumCallbacks, AlbumMediaAdapter.Che
     private lateinit var onMediaClickListener: AlbumMediaAdapter.OnMediaClickListener
 
     companion object {
-
         fun newInstance(album: Album): MediaSelectionFragment {
             val fragment = MediaSelectionFragment()
-            val args = Bundle()
-            args.putParcelable(ConstValue.EXTRA_ALBUM, album)
-            fragment.arguments = args
+            fragment.arguments = Bundle().apply { putParcelable(ConstValue.EXTRA_ALBUM, album) }
             return fragment
         }
     }
@@ -71,9 +71,9 @@ class MediaSelectionFragment : Fragment(), AlbumCallbacks, AlbumMediaAdapter.Che
 
         val selectionSpec = SelectionSpec.getInstance()
         val spanCount = if (selectionSpec.gridExpectedSize > 0) {
-            UIUtils.spanCount(context!!, selectionSpec.gridExpectedSize)
+            spanCount(context!!, selectionSpec.gridExpectedSize)
         } else {
-            selectionSpec.spanCount
+            max(min(selectionSpec.spanCount, MAX_SPAN_COUNT), 1)
         }
 
         recyclerview.layoutManager = GridLayoutManager(context!!, spanCount)

@@ -3,18 +3,18 @@ package com.matisse.widget
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.Drawable
-import androidx.core.content.res.ResourcesCompat
-import androidx.appcompat.widget.AppCompatImageView
 import android.util.AttributeSet
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.content.res.ResourcesCompat
 import com.matisse.R
 
 class CheckRadioView : AppCompatImageView {
 
     private var mDrawable: Drawable? = null
-
-    private var mSelectedColor = 0
-    private var mUnSelectUdColor = 0
+    private lateinit var selectedColorFilter: PorterDuffColorFilter
+    private lateinit var unSelectUdColorFilter: PorterDuffColorFilter
 
 
     constructor(context: Context) : this(context, null)
@@ -23,14 +23,20 @@ class CheckRadioView : AppCompatImageView {
     }
 
     private fun init() {
-        val ta: TypedArray =
-            context!!.theme!!.obtainStyledAttributes(intArrayOf(R.attr.Item_checkRadio))
-        mSelectedColor = ResourcesCompat.getColor(resources, R.color.selector_base_text, context.theme)
-        mSelectedColor = ta.getColor(0, mSelectedColor)
+        val ta: TypedArray = context?.theme
+            ?.obtainStyledAttributes(intArrayOf(R.attr.Item_checkRadio)) ?: return
+        val selectedColor = ta.getColor(
+            0, ResourcesCompat.getColor(
+                resources, R.color.selector_base_text, context.theme
+            )
+        )
+        val unSelectUdColor = ResourcesCompat.getColor(
+            resources, R.color.check_original_radio_disable, context.theme
+        )
         ta.recycle()
 
-        mUnSelectUdColor =
-            ResourcesCompat.getColor(resources, R.color.check_original_radio_disable, context.theme)
+        selectedColorFilter = PorterDuffColorFilter(selectedColor, PorterDuff.Mode.SRC_IN)
+        unSelectUdColorFilter = PorterDuffColorFilter(unSelectUdColor, PorterDuff.Mode.SRC_IN)
         setChecked(false)
     }
 
@@ -38,11 +44,11 @@ class CheckRadioView : AppCompatImageView {
         if (enable) {
             setImageResource(R.drawable.ic_preview_radio_on)
             mDrawable = drawable
-            mDrawable!!.setColorFilter(mSelectedColor, PorterDuff.Mode.SRC_IN)
+            mDrawable?.colorFilter = selectedColorFilter
         } else {
             setImageResource(R.drawable.ic_preview_radio_off)
             mDrawable = drawable
-            mDrawable!!.setColorFilter(mUnSelectUdColor, PorterDuff.Mode.SRC_IN)
+            mDrawable?.colorFilter = unSelectUdColorFilter
         }
     }
 
@@ -50,6 +56,6 @@ class CheckRadioView : AppCompatImageView {
         if (mDrawable == null) {
             mDrawable = drawable
         }
-        mDrawable!!.setColorFilter(color, PorterDuff.Mode.SRC_IN)
+        mDrawable?.colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN)
     }
 }

@@ -2,16 +2,16 @@ package com.matisse.widget
 
 import android.content.Context
 import android.graphics.drawable.Drawable
-import androidx.recyclerview.widget.RecyclerView
 import android.text.format.DateUtils
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
+import androidx.recyclerview.widget.RecyclerView
 import com.matisse.R
 import com.matisse.entity.Item
 import com.matisse.internal.entity.SelectionSpec
-import com.matisse.utils.UIUtils
+import com.matisse.utils.setViewVisible
 import kotlinx.android.synthetic.main.view_media_grid_content.view.*
 
 class MediaGrid : SquareFrameLayout, View.OnClickListener {
@@ -32,18 +32,12 @@ class MediaGrid : SquareFrameLayout, View.OnClickListener {
     }
 
     override fun onClick(v: View?) {
-
         when (v) {
             media_thumbnail -> listener.onThumbnailClicked(
                 media_thumbnail, media, preBindInfo.viewHolder
             )
             check_view -> listener.onCheckViewClicked(check_view, media, preBindInfo.viewHolder)
         }
-    }
-
-    interface OnMediaGridClickListener {
-        fun onThumbnailClicked(thumbnail: ImageView, item: Item, holder: RecyclerView.ViewHolder)
-        fun onCheckViewClicked(checkView: CheckView, item: Item, holder: RecyclerView.ViewHolder)
     }
 
     fun preBindMedia(info: PreBindInfo) {
@@ -59,7 +53,7 @@ class MediaGrid : SquareFrameLayout, View.OnClickListener {
     }
 
     private fun setGifTag() {
-        UIUtils.setViewVisible(media.isGif(), gif)
+        setViewVisible(media.isGif(), gif)
     }
 
     private fun initCheckView() {
@@ -90,11 +84,16 @@ class MediaGrid : SquareFrameLayout, View.OnClickListener {
 
     private fun setVideoDuration() {
         if (media.isVideo()) {
-            UIUtils.setViewVisible(true, video_duration)
+            setViewVisible(true, video_duration)
             video_duration.text = DateUtils.formatElapsedTime(media.duration / 1000)
         } else {
-            UIUtils.setViewVisible(false, video_duration)
+            setViewVisible(false, video_duration)
         }
+    }
+
+    interface OnMediaGridClickListener {
+        fun onThumbnailClicked(thumbnail: ImageView, item: Item, holder: RecyclerView.ViewHolder)
+        fun onCheckViewClicked(checkView: CheckView, item: Item, holder: RecyclerView.ViewHolder)
     }
 
     class PreBindInfo(

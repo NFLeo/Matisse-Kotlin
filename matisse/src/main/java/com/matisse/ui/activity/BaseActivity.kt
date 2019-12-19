@@ -1,13 +1,12 @@
 package com.matisse.ui.activity
 
 import android.app.Activity
-import android.content.Context
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.matisse.R
 import com.matisse.internal.entity.SelectionSpec
-import com.matisse.utils.UIUtils
+import com.matisse.utils.obtainAttrString
 
 abstract class BaseActivity : AppCompatActivity() {
 
@@ -64,5 +63,5 @@ abstract class BaseActivity : AppCompatActivity() {
      * @param attr 主题配置属性key
      * @param defaultRes 默认值
      */
-    fun getAttrString(attr: Int, defaultRes: Int) = UIUtils.getAttrString(this, attr, defaultRes)
+    fun getAttrString(attr: Int, defaultRes: Int) = obtainAttrString(this, attr, defaultRes)
 }

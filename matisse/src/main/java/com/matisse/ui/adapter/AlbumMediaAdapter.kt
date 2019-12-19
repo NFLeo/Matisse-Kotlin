@@ -15,7 +15,8 @@ import com.matisse.entity.Album
 import com.matisse.entity.Item
 import com.matisse.internal.entity.SelectionSpec
 import com.matisse.model.SelectedItemCollection
-import com.matisse.utils.UIUtils
+import com.matisse.utils.handleCause
+import com.matisse.utils.setTextDrawable
 import com.matisse.widget.CheckView
 import com.matisse.widget.MediaGrid
 
@@ -66,7 +67,7 @@ class AlbumMediaAdapter(
         holder.apply {
             when (this) {
                 is CaptureViewHolder ->
-                    UIUtils.setTextDrawable(itemView.context, hint, R.attr.Media_Camera_textColor)
+                    setTextDrawable(itemView.context, hint, R.attr.Media_Camera_textColor)
                 is MediaViewHolder -> {
                     val item = Item.valueOf(cursor, position)
                     mediaGrid.preBindMedia(
@@ -236,7 +237,7 @@ class AlbumMediaAdapter(
 
     private fun assertAddSelection(context: Context, item: Item): Boolean {
         val cause = selectedCollection.isAcceptable(item)
-        UIUtils.handleCause(context, cause)
+        handleCause(context, cause)
         return cause == null
     }
 

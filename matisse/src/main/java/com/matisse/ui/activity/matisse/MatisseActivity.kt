@@ -71,7 +71,7 @@ class MatisseActivity : BaseActivity(),
     }
 
     override fun initListener() {
-        UIUtils.setOnClickListener(
+        setOnClickListener(
             this, button_apply, button_preview,
             original_layout, button_complete, button_back
         )
@@ -129,7 +129,7 @@ class MatisseActivity : BaseActivity(),
             button_back -> onBackPressed()
             button_preview -> {
                 if (selectedCollection.count() == 0) {
-                    UIUtils.handleCause(
+                    handleCause(
                         activity, IncapableCause(getString(R.string.please_select_media_resource))
                     )
                     return
@@ -141,7 +141,7 @@ class MatisseActivity : BaseActivity(),
             }
             button_complete -> {
                 if (selectedCollection.count() == 0) {
-                    UIUtils.handleCause(
+                    handleCause(
                         activity, IncapableCause(getString(R.string.please_select_media_resource))
                     )
                     return
@@ -165,7 +165,7 @@ class MatisseActivity : BaseActivity(),
                     return
                 }
 
-                UIUtils.handleCause(
+                handleCause(
                     activity, IncapableCause(
                         IncapableCause.DIALOG, "",
                         getString(R.string.error_over_original_count, count, spec?.originalMaxSize)
@@ -175,7 +175,7 @@ class MatisseActivity : BaseActivity(),
 
             button_apply -> {
                 if (allAlbum?.isAll() == true && allAlbum?.isEmpty() == true) {
-                    UIUtils.handleCause(activity, IncapableCause(getString(R.string.empty_album)))
+                    handleCause(activity, IncapableCause(getString(R.string.empty_album)))
                     return
                 }
 
@@ -266,17 +266,17 @@ class MatisseActivity : BaseActivity(),
         }
 
         if (spec?.originalable == true) {
-            UIUtils.setViewVisible(true, original_layout)
+            setViewVisible(true, original_layout)
             updateOriginalState()
         } else {
-            UIUtils.setViewVisible(false, original_layout)
+            setViewVisible(false, original_layout)
         }
     }
 
     private fun updateOriginalState() {
         original.setChecked(originalEnable)
         if (countOverMaxSize(selectedCollection) > 0 || originalEnable) {
-            UIUtils.handleCause(
+            handleCause(
                 activity, IncapableCause(
                     IncapableCause.DIALOG, "",
                     getString(R.string.error_over_original_size, spec?.originalMaxSize)
@@ -290,11 +290,11 @@ class MatisseActivity : BaseActivity(),
 
     private fun onAlbumSelected(album: Album) {
         if (album.isAll() && album.isEmpty()) {
-            UIUtils.setViewVisible(true, empty_view)
-            UIUtils.setViewVisible(false, container)
+            setViewVisible(true, empty_view)
+            setViewVisible(false, container)
         } else {
-            UIUtils.setViewVisible(false, empty_view)
-            UIUtils.setViewVisible(true, container)
+            setViewVisible(false, empty_view)
+            setViewVisible(true, container)
             val fragment = MediaSelectionFragment.newInstance(album)
             supportFragmentManager.beginTransaction()
                 .replace(container.id, fragment, MediaSelectionFragment::class.java.simpleName)

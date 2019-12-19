@@ -1,10 +1,7 @@
 package com.matisse.ui.adapter
 
 import android.content.Context
-import android.database.Cursor
 import android.graphics.drawable.Drawable
-import android.net.Uri
-import android.text.Layout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,10 +10,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.matisse.R
 import com.matisse.entity.Album
-import com.matisse.entity.Item
 import com.matisse.internal.entity.SelectionSpec
 import com.matisse.widget.CheckRadioView
-import java.io.File
 
 class FolderItemMediaAdapter(var context: Context, var mCurrentPosition: Int) :
     RecyclerView.Adapter<FolderItemMediaAdapter.FolderViewHolder>() {
@@ -85,8 +80,6 @@ class FolderItemMediaAdapter(var context: Context, var mCurrentPosition: Int) :
 
         /**
          * 设置未所有Item为未选中
-         *
-         * @param parentView
          */
         private fun setRadioDisChecked(parentView: ViewGroup?) {
             if (parentView == null || parentView.childCount < 1) return
@@ -100,11 +93,11 @@ class FolderItemMediaAdapter(var context: Context, var mCurrentPosition: Int) :
     }
 
     private fun setRbSelectChecked(rbSelect: CheckRadioView?, checked: Boolean) {
-        if (rbSelect == null) return
-
-        rbSelect.scaleX = if (checked) 1f else 0f
-        rbSelect.scaleY = if (checked) 1f else 0f
-        rbSelect.setChecked(checked)
+        rbSelect?.apply {
+            scaleX = if (checked) 1f else 0f
+            scaleY = if (checked) 1f else 0f
+            setChecked(checked)
+        }
     }
 
     interface OnItemClickListener {

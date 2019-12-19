@@ -64,7 +64,7 @@ open class BasePreviewActivity : BaseActivity(), View.OnClickListener,
     }
 
     override fun initListener() {
-        UIUtils.setOnClickListener(this, button_preview, button_apply, check_view, original_layout)
+        setOnClickListener(this, button_preview, button_apply, check_view, original_layout)
         pager?.addOnPageChangeListener(this)
     }
 
@@ -112,17 +112,17 @@ open class BasePreviewActivity : BaseActivity(), View.OnClickListener,
         }
 
         if (spec?.originalable == true) {
-            UIUtils.setViewVisible(true, original_layout)
+            setViewVisible(true, original_layout)
             updateOriginalState()
         } else {
-            UIUtils.setViewVisible(false, original_layout)
+            setViewVisible(false, original_layout)
         }
     }
 
     private fun updateOriginalState() {
         original?.setChecked(originalEnable)
         if (countOverMaxSize(selectedCollection) > 0 || originalEnable) {
-            UIUtils.handleCause(
+            handleCause(
                 activity, IncapableCause(
                     IncapableCause.DIALOG, "",
                     getString(R.string.error_over_original_size, spec?.originalMaxSize)
@@ -174,20 +174,20 @@ open class BasePreviewActivity : BaseActivity(), View.OnClickListener,
         item?.apply {
             tv_size.apply {
                 if (isGif()) {
-                    UIUtils.setViewVisible(true, this)
+                    setViewVisible(true, this)
                     text = String.format(
                         getString(R.string.picture_size), PhotoMetadataUtils.getSizeInMB(size)
                     )
                 } else {
-                    UIUtils.setViewVisible(false, this)
+                    setViewVisible(false, this)
                 }
             }
 
             original_layout?.apply {
                 if (isVideo()) {
-                    UIUtils.setViewVisible(false, this)
+                    setViewVisible(false, this)
                 } else if (spec?.originalable == true) {
-                    UIUtils.setViewVisible(true, this)
+                    setViewVisible(true, this)
                 }
             }
         }
@@ -222,7 +222,7 @@ open class BasePreviewActivity : BaseActivity(), View.OnClickListener,
                     return
                 }
 
-                UIUtils.handleCause(
+                handleCause(
                     activity, IncapableCause(
                         IncapableCause.DIALOG, "",
                         getString(R.string.error_over_original_count, count, spec?.originalMaxSize)

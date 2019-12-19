@@ -5,15 +5,10 @@ import android.database.Cursor
 import android.net.Uri
 import android.os.Parcelable
 import android.provider.MediaStore
-import com.matisse.MimeType
 import com.matisse.MimeTypeManager
 import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
 
-/**
- * Describe :
- * Created by Leo on 2018/9/4 on 16:18.
- */
 @Parcelize
 class Item(
     var id: Long, private var mimeType: String, var size: Long = 0,
@@ -36,7 +31,6 @@ class Item(
 
     @IgnoredOnParcel
     private var uri: Uri
-
 
     init {
         val contentUri = when {

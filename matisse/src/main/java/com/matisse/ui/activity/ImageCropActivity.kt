@@ -2,15 +2,12 @@ package com.matisse.ui.activity
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.view.View
 import com.matisse.R
 import com.matisse.entity.ConstValue
-import com.matisse.utils.BitmapUtils
-import com.matisse.utils.UIUtils
-import com.matisse.utils.finishIntentFromCropSuccess
+import com.matisse.utils.*
 import com.matisse.widget.CropImageView
 import com.matisse.widget.IncapableDialog
 import kotlinx.android.synthetic.main.activity_crop.*
@@ -45,10 +42,10 @@ class ImageCropActivity : BaseActivity(), View.OnClickListener,
         imagePath = intent.getStringExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH) ?: return
 
         spec?.apply {
-            val cropFocusNormalWidth = UIUtils.getScreenWidth(activity) -
-                    UIUtils.dp2px(activity, 30f).toInt()
-            val cropFocusNormalHeight = UIUtils.getScreenHeight(activity) -
-                    UIUtils.dp2px(activity, 200f).toInt()
+            val cropFocusNormalWidth = getScreenWidth(activity) -
+                    dp2px(activity, 30f).toInt()
+            val cropFocusNormalHeight = getScreenHeight(activity) -
+                    dp2px(activity, 200f).toInt()
 
             val cropWidth = if (cropFocusWidthPx in 1 until cropFocusNormalWidth)
                 cropFocusWidthPx else cropFocusNormalWidth
@@ -90,7 +87,7 @@ class ImageCropActivity : BaseActivity(), View.OnClickListener,
     }
 
     override fun initListener() {
-        UIUtils.setOnClickListener(this, button_complete, button_back)
+        setOnClickListener(this, button_complete, button_back)
         cv_crop_image.setOnBitmapSaveCompleteListener(this)
     }
 

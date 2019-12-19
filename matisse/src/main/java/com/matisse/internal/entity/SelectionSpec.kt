@@ -9,8 +9,8 @@ import com.matisse.engine.ImageEngine
 import com.matisse.entity.CaptureStrategy
 import com.matisse.entity.Item
 import com.matisse.filter.Filter
-import com.matisse.listener.NoticeConsumer
 import com.matisse.listener.MFunction
+import com.matisse.listener.NoticeConsumer
 import com.matisse.listener.OnCheckedListener
 import com.matisse.listener.OnSelectedListener
 import com.matisse.ui.activity.BaseActivity

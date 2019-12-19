@@ -9,11 +9,11 @@ import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
-import androidx.core.view.ViewCompat
-import androidx.appcompat.widget.AppCompatImageView
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.MotionEvent
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.view.ViewCompat
 import com.matisse.R
 import com.matisse.utils.Platform
 import java.io.File
@@ -94,13 +94,16 @@ class CropImageView : AppCompatImageView {
 
         val a = context.obtainStyledAttributes(attrs, R.styleable.CropImageView)
         maskColor = a.getColor(R.styleable.CropImageView_cropMaskColor, maskColor.toInt()).toLong()
-        borderColor =
-            a.getColor(R.styleable.CropImageView_cropBorderColor, borderColor.toInt()).toLong()
-        borderWidth =
-            a.getDimensionPixelSize(R.styleable.CropImageView_cropBorderWidth, borderWidth)
+        borderColor = a.getColor(
+            R.styleable.CropImageView_cropBorderColor, borderColor.toInt()
+        ).toLong()
+        borderWidth = a.getDimensionPixelSize(
+            R.styleable.CropImageView_cropBorderWidth, borderWidth
+        )
+        focusHeight = a.getDimensionPixelSize(
+            R.styleable.CropImageView_cropFocusHeight, focusHeight
+        )
         focusWidth = a.getDimensionPixelSize(R.styleable.CropImageView_cropFocusWidth, focusWidth)
-        focusHeight =
-            a.getDimensionPixelSize(R.styleable.CropImageView_cropFocusHeight, focusHeight)
         defaultStyleIndex = a.getInteger(R.styleable.CropImageView_cropStyle, defaultStyleIndex)
         style = styles[defaultStyleIndex]
         a.recycle()
@@ -163,10 +166,12 @@ class CropImageView : AppCompatImageView {
             focusHeight = focusSize
         }
 
-        focusRect.left = focusMidPoint.x - focusWidth / 2
-        focusRect.right = focusMidPoint.x + focusWidth / 2
-        focusRect.top = focusMidPoint.y - focusHeight / 2
-        focusRect.bottom = focusMidPoint.y + focusHeight / 2
+        focusRect.apply {
+            left = focusMidPoint.x - focusWidth / 2
+            right = focusMidPoint.x + focusWidth / 2
+            top = focusMidPoint.y - focusHeight / 2
+            bottom = focusMidPoint.y + focusHeight / 2
+        }
 
         // the min slide of image must larger than the min slide of focus view
         val fitFocusScale = getScale(imageWidth, imageHeight, focusWidth, focusHeight, true)
@@ -179,13 +184,13 @@ class CropImageView : AppCompatImageView {
         val scale = max(fitViewScale, fitFocusScale)
         // scale with the center of image center Point
         cMatrix.setScale(scale, scale, imageWidth / 2f, imageHeight / 2f)
-        val mImageMatrixValues = FloatArray(9)
+        val imageMatrixValues = FloatArray(9)
         // get mImageMatrixValues after scaled
-        cMatrix.getValues(mImageMatrixValues)
+        cMatrix.getValues(imageMatrixValues)
         val transX =
-            focusMidPoint.x - (mImageMatrixValues[2] + imageWidth * mImageMatrixValues[0] / 2)
+            focusMidPoint.x - (imageMatrixValues[2] + imageWidth * imageMatrixValues[0] / 2)
         val transY =
-            focusMidPoint.y - (mImageMatrixValues[5] + imageHeight * mImageMatrixValues[4] / 2)
+            focusMidPoint.y - (imageMatrixValues[5] + imageHeight * imageMatrixValues[4] / 2)
         cMatrix.postTranslate(transX, transY)
         imageMatrix = cMatrix
         invalidate()
@@ -439,7 +444,6 @@ class CropImageView : AppCompatImageView {
     class InnerHandler : Handler(Looper.getMainLooper()) {
 
         override fun handleMessage(msg: Message?) {
-
             if (kListener == null) return
 
             val saveFile = msg?.obj as File

@@ -74,11 +74,11 @@
         <item name="Preview_Confirm_text">@string/button_sure_default</item>
 
         <!--选中控件背景色-->
-<!--        <item name="Item_checkCircle_bgColor">@color/selector_base_text</item>-->
+        <item name="Item_checkCircle_bgColor">@color/selector_base_text</item>
         <!--选中控件圆环边框颜色-->
-<!--        <item name="Item_checkCircle_borderColor">@color/item_checkCircle_borderColor</item>-->
+        <item name="Item_checkCircle_borderColor">@color/item_checkCircle_borderColor</item>
         <!--原图radio控件颜色-->
-<!--        <item name="Item_checkRadio">@color/selector_base_text</item>-->
+        <item name="Item_checkRadio">@color/selector_base_text</item>
 
         <!--空状态文字颜色-->
         <item name="Media_Empty_textColor">@color/text_empty</item>
@@ -89,7 +89,7 @@
         <item name="Media_Empty_resource">@drawable/ic_empty_zhihu</item>
 
         <!--图片加载占位图-->
-<!--        <item name="Item_placeholder">@drawable/zhihu_item_placeholder</item>-->
+        <!--<item name="Item_placeholder">@drawable/zhihu_item_placeholder</item>-->
     </style>
 
 </resources>

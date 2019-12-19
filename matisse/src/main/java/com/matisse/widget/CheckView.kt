@@ -4,11 +4,11 @@ import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.*
 import android.graphics.drawable.Drawable
-import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import com.matisse.R
 
 /**

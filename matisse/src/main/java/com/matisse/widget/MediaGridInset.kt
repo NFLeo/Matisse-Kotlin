@@ -1,8 +1,8 @@
 package com.matisse.widget
 
 import android.graphics.Rect
-import androidx.recyclerview.widget.RecyclerView
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 
 class MediaGridInset(
     private var spanCount: Int, private var spacing: Int, private var includeEdge: Boolean

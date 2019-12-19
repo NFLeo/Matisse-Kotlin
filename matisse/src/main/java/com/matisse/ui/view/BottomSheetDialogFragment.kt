@@ -1,11 +1,11 @@
 package com.matisse.ui.view
 
 import android.os.Bundle
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import androidx.appcompat.app.AppCompatDialogFragment
 import android.util.DisplayMetrics
 import android.view.*
 import android.widget.FrameLayout
+import androidx.appcompat.app.AppCompatDialogFragment
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.matisse.R
 
 abstract class BottomSheetDialogFragment : AppCompatDialogFragment() {
@@ -86,18 +86,15 @@ abstract class BottomSheetDialogFragment : AppCompatDialogFragment() {
     }
 
     private fun setBottomLayout() {
-        val win = dialog?.window
-        if (win != null) {
-            win.setBackgroundDrawableResource(R.drawable.transparent)
-            win.decorView.setPadding(0, 0, 0, 0)
-            val lp = win.attributes
-            lp.width = WindowManager.LayoutParams.MATCH_PARENT
-            lp.height = WindowManager.LayoutParams.WRAP_CONTENT
-            win.attributes = lp
+        dialog?.window?.apply {
+            setBackgroundDrawableResource(R.drawable.transparent)
+            decorView.setPadding(0, 0, 0, 0)
+            attributes.width = WindowManager.LayoutParams.MATCH_PARENT
+            attributes.height = WindowManager.LayoutParams.WRAP_CONTENT
             // dialog 布局位于底部
-            win.setGravity(Gravity.BOTTOM)
+            setGravity(Gravity.BOTTOM)
             // 设置进出场动画
-            win.setWindowAnimations(R.style.Animation_Bottom)
+            setWindowAnimations(R.style.Animation_Bottom)
         }
     }
 

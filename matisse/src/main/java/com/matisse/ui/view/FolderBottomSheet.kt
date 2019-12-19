@@ -12,7 +12,7 @@ import com.matisse.R
 import com.matisse.entity.Album
 import com.matisse.entity.ConstValue
 import com.matisse.ui.adapter.FolderItemMediaAdapter
-import com.matisse.utils.UIUtils
+import com.matisse.utils.getScreenHeight
 
 class FolderBottomSheet : BottomSheetDialogFragment() {
 
@@ -41,7 +41,7 @@ class FolderBottomSheet : BottomSheetDialogFragment() {
     override fun getContentView(inflater: LayoutInflater, container: ViewGroup): View {
         if (kParentView == null) {
             kParentView = inflater.inflate(R.layout.dialog_bottom_sheet_folder, container, false)
-            setDefaultHeight(UIUtils.getScreenHeight(context!!) / 2)
+            setDefaultHeight(getScreenHeight(context!!) / 2)
             initView()
         } else {
             if (kParentView?.parent != null) {
@@ -71,7 +71,7 @@ class FolderBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun setRecyclerViewHeight() {
-        recyclerView.layoutParams.height = UIUtils.getScreenHeight(context!!) / 2
+        recyclerView.layoutParams.height = getScreenHeight(context!!) / 2
     }
 
     interface BottomSheetCallback {

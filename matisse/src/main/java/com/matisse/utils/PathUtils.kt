@@ -9,7 +9,7 @@ import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import com.matisse.compress.CompressHelper
-import com.matisse.compress.FileUtil
+import com.matisse.compress.getFileByPath
 import com.matisse.internal.entity.SelectionSpec
 
 /**
@@ -126,6 +126,6 @@ object PathUtils {
     fun getCompressedPath(activity: Activity, path: String) =
         if (SelectionSpec.getInstance().isInnerCompress) {
             CompressHelper.getDefault(activity)
-                ?.compressToFile(FileUtil.getFileByPath(path))?.path ?: path
+                ?.compressToFile(getFileByPath(path))?.path ?: path
         } else ""
 }

@@ -1,8 +1,8 @@
 package com.matisse.widget
 
 import android.os.Bundle
-import androidx.fragment.app.DialogFragment
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.DialogFragment
 import com.matisse.R
 
 class IncapableDialog : DialogFragment() {

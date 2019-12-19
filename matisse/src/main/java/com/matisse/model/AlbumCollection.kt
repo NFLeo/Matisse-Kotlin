@@ -10,6 +10,10 @@ import com.matisse.loader.AlbumLoader
 import java.lang.ref.WeakReference
 
 class AlbumCollection : LoaderManager.LoaderCallbacks<Cursor> {
+    companion object {
+        const val LOADER_ID = 1
+        const val STATE_CURRENT_SELECTION = "state_current_selection"
+    }
 
     private var context: WeakReference<Context>? = null
     private var loaderManager: LoaderManager? = null
@@ -17,10 +21,6 @@ class AlbumCollection : LoaderManager.LoaderCallbacks<Cursor> {
     private var currentSelection = 0
     private var loadFinished = false
 
-    companion object {
-        const val LOADER_ID = 1
-        const val STATE_CURRENT_SELECTION = "state_current_selection"
-    }
 
     override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor> {
         val context = context?.get()

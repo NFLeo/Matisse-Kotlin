@@ -14,6 +14,12 @@ Matisse核心功能：[https://github.com/zhihu/Matisse](https://github.com/zhih
 完整说明文档：[Android 图片选择库 MatisseKotlin 版](https://www.jianshu.com/p/ca1e7460fa69)
 
 # 版本更新记录
+2019-12-19
+1. 主题属性命名规范化 见R.style.CustomMatisseStyle
+2. MimeTypeManager类新增ofMotionlessImage()静态图类型
+3. Item列宽(spanSize和gridExceptedSize)添加限制
+4. 去除app_name
+
 2019-12-10 (2.0.2)
 1. 修复mimeType为空情况
 2. 修复spanSize和gridExceptedSize同时设置冲突
@@ -185,12 +191,12 @@ ext {
 ```
 app/style.xml
     <style name="CustomMatisseStyle" parent="Matisse.Default">
-        <item name="Media.Back.text">@string/back</item>
-        <item name="Media.Sure.text">@string/sure</item>
-        <item name="Media.Preview.text">@string/preview</item>
-        <item name="Media.Original.text">@string/original</item>
-        <item name="Media.Album.text">@string/album</item>
-        <item name="Media.Camera.text">@string/camera</item>
+        <item name="Media_Back_text">@string/back</item>
+        <item name="Media_Sure_text">@string/sure</item>
+        <item name="Media_Preview_text">@string/preview</item>
+        <item name="Media_Original_text">@string/original</item>
+        <item name="Media_Album_text">@string/album</item>
+        <item name="Media_Camera_text">@string/camera</item>
     </style>
 ```
 
@@ -211,67 +217,70 @@ matisse/style.xml
         <item name="Preview_bg">@color/preview_bg</item>
 
         <!--底部工具栏背景色-->
-        <item name="bottomToolbar.bg">@color/bottomTool_bg</item>
+        <item name="BottomToolbar_bg">@color/bottomTool_bg</item>
         <!--底部工具栏高度-->
-        <item name="bottomToolbar.height">@dimen/bottom_tool_height</item>
+        <item name="BottomToolbar_height">@dimen/bottom_tool_height</item>
 
         <!--返回按钮文字 当无文字是可设置为空字符串 如下-->
-        <item name="Media.Back.text">@string/button_null</item>
+        <item name="Media_Back_text">@string/button_null</item>
         <!--返回按钮颜色-->
-        <item name="Media.Back.textColor">@color/text_back</item>
+        <item name="Media_Back_textColor">@color/color_base</item>
         <!--返回按钮文字大小-->
-        <item name="Media.Back.textSize">@dimen/text_back</item>
+        <item name="Media_Back_textSize">@dimen/text_back</item>
 
-        <item name="Media.Sure.text">@string/button_sure</item>
+        <item name="Media_Sure_text">@string/button_sure</item>
         <!--确定按钮颜色-->
-        <item name="Media.Sure.textColor">@color/text_sure</item>
+        <item name="Media_Sure_textColor">@color/color_base</item>
         <!--确认按钮文字大小-->
-        <item name="Media.Sure.textSize">@dimen/text_sure</item>
+        <item name="Media_Sure_textSize">@dimen/text_sure</item>
 
-        <item name="Media.Preview.text">@string/button_preview</item>
+        <item name="Media_Preview_text">@string/button_preview</item>
         <!--预览按钮颜色-->
-        <item name="Media.Preview.textColor">@color/text_preview</item>
+        <item name="Media_Preview_textColor">@color/text_preview</item>
         <!--预览按钮文字大小-->
-        <item name="Media.Preview.textSize">@dimen/text_preview</item>
+        <item name="Media_Preview_textSize">@dimen/text_preview</item>
 
-        <item name="Media.Original.text">@string/button_original</item>
+        <item name="Media_Original_text">@string/button_original</item>
         <!--原图选择控件文字颜色-->
-        <item name="Media.Original.textColor">@color/text_original</item>
+        <item name="Media_Original_textColor">@color/text_original</item>
         <!--原图按钮文字大小-->
-        <item name="Media.Original.textSize">@dimen/text_original</item>
+        <item name="Media_Original_textSize">@dimen/text_original</item>
 
-        <item name="Media.Album.text">@string/album_name_all</item>
+        <item name="Media_Album_text">@string/album_name_all</item>
         <!--查看全部相册文件夹按钮颜色-->
-        <item name="Media.Album.textColor">@color/text_album</item>
+        <item name="Media_Album_textColor">@color/text_album</item>
         <!--查看全部相册按钮文字大小-->
-        <item name="Media.Album.textSize">@dimen/text_album</item>
+        <item name="Media_Album_textSize">@dimen/text_album</item>
         <!--相册文件夹内部列表item颜色-->
-        <item name="Media.Album.Item.textColor">@color/text_item_album</item>
+        <item name="Media_Album_Item_textColor">@color/text_item_album</item>
         <!--查看全部相册内item文字大小-->
-        <item name="Media.Album.Item.textSize">@dimen/text_item_album</item>
+        <item name="Media_Album_Item_textSize">@dimen/text_item_album</item>
 
         <!--列表中可拍照状态下相机item文字颜色-->
-        <item name="Media.Camera.textColor">@color/text_camera</item>
+        <item name="Media_Camera_textColor">@color/text_camera</item>
         <!--列表中可拍照状态下相机item文字大小-->
-        <item name="Media.Camera.textSize">@dimen/text_camera</item>
+        <item name="Media_Camera_textSize">@dimen/text_camera</item>
+
+        <item name="Preview_Back_text">@string/button_back</item>
+        <item name="Preview_Confirm_text">@string/button_sure_default</item>
 
         <!--选中控件背景色-->
-        <item name="item.checkCircle.backgroundColor">@color/item_checkCircle_backgroundColor</item>
+        <item name="Item_checkCircle_bgColor">@color/selector_base_text</item>
         <!--选中控件圆环边框颜色-->
-        <item name="item.checkCircle.borderColor">@color/item_checkCircle_borderColor</item>
+        <item name="Item_checkCircle_borderColor">@color/item_checkCircle_borderColor</item>
         <!--原图radio控件颜色-->
-        <item name="item.checkRadio">@color/item_checkRadio</item>
+        <item name="Item_checkRadio">@color/selector_base_text</item>
 
         <!--空状态文字颜色-->
-        <item name="Media.Empty.textColor">@color/text_empty</item>
+        <item name="Media_Empty_textColor">@color/text_empty</item>
         <!--空状态文字大小-->
-        <item name="Media.Empty.textSize">@dimen/text_empty</item>
-        <item name="Media.Empty.text">@string/empty_text</item>
+        <item name="Media_Empty_textSize">@dimen/text_empty</item>
+        <item name="Media_Empty_text">@string/empty_text</item>
         <!--空状态资源图-->
-        <item name="Media.Empty.resource">@drawable/ic_empty_zhihu</item>
+        <item name="Media_Empty_resource">@drawable/ic_empty_zhihu</item>
 
         <!--图片加载占位图-->
-        <item name="item.placeholder">@color/zhihu_item_placeholder</item>
+        <!--<item name="Item_placeholder">@drawable/zhihu_item_placeholder</item>-->
     </style>
 
 如需定制UI样式 按需修改，否则使用上述默认主题

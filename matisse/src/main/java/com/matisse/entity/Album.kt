@@ -39,8 +39,7 @@ class Album() : Parcelable {
     }
 
     constructor(
-        mId: String, mDisplayName: String, mCount: Long,
-        mIsCheck: Boolean = false
+        mId: String, mDisplayName: String, mCount: Long, mIsCheck: Boolean = false
     ) : this() {
         this.id = mId
         this.displayName = mDisplayName
@@ -53,9 +52,7 @@ class Album() : Parcelable {
     fun getCoverPath() = coverUri
 
     fun setCoverPath(path: Uri?) {
-        path?.apply {
-            coverUri = this
-        }
+        path?.apply { coverUri = this }
     }
 
     fun getCount() = count

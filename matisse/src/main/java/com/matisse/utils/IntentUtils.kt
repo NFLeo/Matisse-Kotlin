@@ -6,7 +6,7 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import com.matisse.compress.CompressHelper
-import com.matisse.compress.FileUtil
+import com.matisse.compress.getFileByPath
 import com.matisse.entity.ConstValue
 import com.matisse.entity.Item
 import com.matisse.internal.entity.SelectionSpec
@@ -86,7 +86,7 @@ fun finishIntentFromCrop(activity: Activity, cropPath: String?) {
     var compressPicture = ""
     if (SelectionSpec.getInstance().isInnerCompress) {
         compressPicture = CompressHelper.getDefault(activity)
-            ?.compressToFile(FileUtil.getFileByPath(cropPath))?.path ?: cropPath
+            ?.compressToFile(getFileByPath(cropPath))?.path ?: cropPath
     }
 
     Intent().apply {

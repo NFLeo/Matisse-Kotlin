@@ -51,7 +51,7 @@ class CompressHelper(private val context: Context) {
 
 
     init {
-        destinationDirectoryPath = context.cacheDir.path + File.pathSeparator + FileUtil.FILES_PATH
+        destinationDirectoryPath = context.cacheDir.path + File.pathSeparator + FILES_PATH
     }
 
     /**
@@ -59,26 +59,22 @@ class CompressHelper(private val context: Context) {
      * @param file  原始文件
      * @return      压缩后的文件
      */
-    fun compressToFile(file: File): File {
-        return BitmapUtil.compressImage(
-            context, Uri.fromFile(file), maxWidth, maxHeight,
-            compressFormat, bitmapConfig, quality, destinationDirectoryPath,
-            fileNamePrefix, fileName
-        )
-    }
+    fun compressToFile(file: File) = compressImage(
+        context, Uri.fromFile(file), maxWidth, maxHeight,
+        compressFormat, bitmapConfig, quality, destinationDirectoryPath,
+        fileNamePrefix, fileName
+    )
 
     /**
      * 压缩成文件
      * @param uri  原始文件
      * @return      压缩后的文件
      */
-    fun compressToFile(uri: Uri): File {
-        return BitmapUtil.compressImage(
-            context, uri, maxWidth, maxHeight,
-            compressFormat, bitmapConfig, quality, destinationDirectoryPath,
-            fileNamePrefix, fileName
-        )
-    }
+    fun compressToFile(uri: Uri) = compressImage(
+        context, uri, maxWidth, maxHeight,
+        compressFormat, bitmapConfig, quality, destinationDirectoryPath,
+        fileNamePrefix, fileName
+    )
 
     /**
      * 压缩为Bitmap
@@ -86,9 +82,7 @@ class CompressHelper(private val context: Context) {
      * @return      压缩后的Bitmap
      */
     fun compressToBitmap(file: File): Bitmap? {
-        return BitmapUtil.getScaledBitmap(
-            context, Uri.fromFile(file), maxWidth, maxHeight, bitmapConfig
-        )
+        return getScaledBitmap(context, Uri.fromFile(file), maxWidth, maxHeight, bitmapConfig)
     }
 
     /**

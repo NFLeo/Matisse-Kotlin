@@ -29,7 +29,6 @@ class Matisse(activity: Activity?, fragment: Fragment? = null) {
         /**
          * Start Matisse from a Fragment.
          *
-         *
          * This Fragment's [Fragment.onActivityResult] will be called when user
          * finishes selecting.
          *
@@ -59,9 +58,7 @@ class Matisse(activity: Activity?, fragment: Fragment? = null) {
          * @return User selected compressed media path list.
          */
         fun obtainCompressResult(data: Intent): List<String>? {
-            return data.getStringArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION_COMPRESS)?.run {
-                this
-            }
+            return data.getStringArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION_COMPRESS)
         }
 
         /**
@@ -72,9 +69,7 @@ class Matisse(activity: Activity?, fragment: Fragment? = null) {
          * @return User selected media path list.
          */
         fun obtainPathResult(data: Intent): List<String>? {
-            return data.getStringArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH)?.run {
-                this
-            }
+            return data.getStringArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH)
         }
 
         /**
@@ -85,9 +80,7 @@ class Matisse(activity: Activity?, fragment: Fragment? = null) {
          * @return User selected media path id list.
          */
         fun obtainPathIdResult(data: Intent): List<String>? {
-            return data.getStringArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION_ID)?.run {
-                this
-            }
+            return data.getStringArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION_ID)
         }
 
         /**
@@ -143,7 +136,6 @@ class Matisse(activity: Activity?, fragment: Fragment? = null) {
      *
      * @see SelectionCreator
      */
-    fun choose(mimeTypes: Set<MimeType>, mediaTypeExclusive: Boolean): SelectionCreator {
-        return SelectionCreator(this, mimeTypes, mediaTypeExclusive)
-    }
+    fun choose(mimeTypes: Set<MimeType>, mediaTypeExclusive: Boolean) =
+        SelectionCreator(this, mimeTypes, mediaTypeExclusive)
 }

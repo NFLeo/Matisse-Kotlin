@@ -2,9 +2,9 @@ package com.matisse
 
 import android.content.ContentResolver
 import android.net.Uri
-import androidx.collection.ArraySet
 import android.text.TextUtils
 import android.webkit.MimeTypeMap
+import androidx.collection.ArraySet
 import com.matisse.utils.PhotoMetadataUtils
 import java.util.*
 
@@ -17,10 +17,16 @@ class MimeTypeManager {
     companion object {
         fun ofAll(): EnumSet<MimeType> = EnumSet.allOf(MimeType::class.java)
 
-        fun of(type: MimeType, rest: Array<MimeType>): EnumSet<MimeType> = EnumSet.of(type, *rest)
+        fun of(first: MimeType, others: Array<MimeType>): EnumSet<MimeType> =
+            EnumSet.of(first, *others)
 
         fun ofImage(): EnumSet<MimeType> = EnumSet.of(
             MimeType.JPEG, MimeType.PNG, MimeType.GIF, MimeType.BMP, MimeType.WEBP
+        )
+
+        // 静态图
+        fun ofMotionlessImage(): EnumSet<MimeType> = EnumSet.of(
+            MimeType.JPEG, MimeType.PNG, MimeType.BMP
         )
 
         fun ofVideo(): EnumSet<MimeType> = EnumSet.of(
@@ -28,11 +34,15 @@ class MimeTypeManager {
             MimeType.MKV, MimeType.WEBM, MimeType.TS, MimeType.AVI
         )
 
-        fun isImage(mimeType: String?) = MimeType.JPEG.getKey().contains(lowerCaseMimeType(mimeType))
-                || MimeType.PNG.getKey().contains(lowerCaseMimeType(mimeType))
-                || MimeType.GIF.getKey().contains(lowerCaseMimeType(mimeType))
-                || MimeType.BMP.getKey().contains(lowerCaseMimeType(mimeType))
-                || MimeType.WEBP.getKey().contains(lowerCaseMimeType(mimeType))
+        fun isImage(mimeType: String?) =
+            isMotionlessImage(mimeType)
+                    || MimeType.GIF.getKey().contains(lowerCaseMimeType(mimeType))
+                    || MimeType.WEBP.getKey().contains(lowerCaseMimeType(mimeType))
+
+        fun isMotionlessImage(mimeType: String?) =
+            MimeType.JPEG.getKey().contains(lowerCaseMimeType(mimeType))
+                    || MimeType.PNG.getKey().contains(lowerCaseMimeType(mimeType))
+                    || MimeType.BMP.getKey().contains(lowerCaseMimeType(mimeType))
 
         fun isVideo(mimeType: String) = MimeType.MPEG.getKey().contains(lowerCaseMimeType(mimeType))
                 || MimeType.MP4.getKey().contains(lowerCaseMimeType(mimeType))
@@ -56,20 +66,16 @@ class MimeTypeManager {
             var path: String? = null
             // lazy load the path and prevent resolve for multiple times
             var pathParsed = false
-            for (extension in mExtensions) {
-                if (extension == type) return true
+            mExtensions.forEach {
+                if (it == type) return true
 
                 if (!pathParsed) {
                     // we only resolve the path for one time
                     path = PhotoMetadataUtils.getPath(resolver, uri)
-                    if (!TextUtils.isEmpty(path)) {
-                        path = path?.toLowerCase(Locale.US)
-                    }
+                    if (!TextUtils.isEmpty(path)) path = path?.toLowerCase(Locale.US)
                     pathParsed = true
                 }
-                if (path != null && path.endsWith(extension)) {
-                    return true
-                }
+                if (path != null && path?.endsWith(it) == true) return true
             }
             return false
         }

@@ -12,15 +12,16 @@ import java.lang.ref.WeakReference
 
 class AlbumMediaCollection : LoaderManager.LoaderCallbacks<Cursor> {
 
-    private var context: WeakReference<Context>? = null
-    private var loaderManager: LoaderManager? = null
-    private var callbacks: AlbumCallbacks? = null
-
     companion object {
         const val LOADER_ID = 2
         const val ARGS_ALBUM = "args_album"
         const val ARGS_ENABLE_CAPTURE = "args_enable_capture"
     }
+
+    private var context: WeakReference<Context>? = null
+    private var loaderManager: LoaderManager? = null
+    private var callbacks: AlbumCallbacks? = null
+
 
     fun onCreate(context: FragmentActivity, callbacks: AlbumCallbacks) {
         this.context = WeakReference(context)

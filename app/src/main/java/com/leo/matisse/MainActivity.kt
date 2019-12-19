@@ -15,7 +15,7 @@ import com.bumptech.glide.Glide
 import com.matisse.Matisse
 import com.matisse.MimeTypeManager
 import com.matisse.compress.CompressHelper
-import com.matisse.compress.FileUtil
+import com.matisse.compress.getFileByPath
 import com.matisse.entity.CaptureStrategy
 import com.matisse.entity.ConstValue
 import com.matisse.listener.NoticeConsumer
@@ -23,7 +23,7 @@ import com.matisse.listener.OnCheckedListener
 import com.matisse.listener.OnSelectedListener
 import com.matisse.utils.PhotoMetadataUtils
 import com.matisse.utils.Platform
-import com.matisse.utils.UIUtils
+import com.matisse.utils.dp2px
 import com.matisse.widget.CropImageView
 import com.tbruyelle.rxpermissions2.RxPermissions
 import kotlinx.android.synthetic.main.activity_main.*
@@ -93,8 +93,8 @@ class MainActivity : AppCompatActivity() {
                         .capture(true)
                         .isCrop(true)
                         .cropStyle(CropImageView.Style.RECTANGLE)
-                        .cropFocusWidthPx(UIUtils.dp2px(this, 250f).toInt())
-                        .cropFocusHeightPx(UIUtils.dp2px(this, 500f).toInt())
+                        .cropFocusWidthPx(dp2px(this, 250f).toInt())
+                        .cropFocusHeightPx(dp2px(this, 500f).toInt())
                         .theme(R.style.CustomMatisseStyle)
                         .captureStrategy(
                             CaptureStrategy(
@@ -149,7 +149,7 @@ class MainActivity : AppCompatActivity() {
             val path = Matisse.obtainPathResult(data) ?: return
 
             // 原文件
-            val file = FileUtil.getFileByPath(path[0])
+            val file = getFileByPath(path[0])
 
             Glide.with(this).load(file).into(iv_image)
             // 压缩后的文件         （多个文件压缩可以循环压缩）
