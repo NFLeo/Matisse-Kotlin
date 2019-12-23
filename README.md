@@ -17,8 +17,10 @@ Matisse核心功能：[https://github.com/zhihu/Matisse](https://github.com/zhih
 2019-12-19
 1. 主题属性命名规范化 见R.style.CustomMatisseStyle
 2. MimeTypeManager类新增ofMotionlessImage()静态图类型
-3. Item列宽(spanSize和gridExceptedSize)添加限制
+3. Item列宽(spanSize和gridExceptedSize)添加限制，避免过大/过小
 4. 去除app_name
+5. 消除选中闪烁
+6. 精简压缩库大小 目前release aar 278k
 
 2019-12-10 (2.0.2)
 1. 修复mimeType为空情况

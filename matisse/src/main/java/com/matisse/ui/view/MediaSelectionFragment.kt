@@ -79,6 +79,7 @@ class MediaSelectionFragment : Fragment(), AlbumCallbacks, AlbumMediaAdapter.Che
         recyclerview.layoutManager = GridLayoutManager(context!!, spanCount)
         val spacing = resources.getDimensionPixelSize(R.dimen.media_grid_spacing)
         recyclerview.addItemDecoration(MediaGridInset(spanCount, spacing, false))
+        recyclerview.itemAnimator?.changeDuration = 0
         recyclerview.adapter = adapter
         albumMediaCollection.onCreate(activity!!, this)
         albumMediaCollection.load(album, selectionSpec.capture)
