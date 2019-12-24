@@ -1,6 +1,5 @@
 package com.matisse.ui.activity
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -79,10 +78,20 @@ open class BasePreviewActivity : BaseActivity(), View.OnClickListener,
         super.onBackPressed()
     }
 
-    @SuppressLint("SetTextI18n")
     private fun updateApplyButton() {
         val selectedCount = selectedCollection.count()
 
+        setApplyText(selectedCount)
+
+        if (spec?.originalable == true) {
+            setViewVisible(true, original_layout)
+            updateOriginalState()
+        } else {
+            setViewVisible(false, original_layout)
+        }
+    }
+
+    private fun setApplyText(selectedCount: Int) {
         button_apply.apply {
             when (selectedCount) {
                 0 -> {
@@ -97,36 +106,30 @@ open class BasePreviewActivity : BaseActivity(), View.OnClickListener,
                     text = if (spec?.singleSelectionModeEnabled() == true) {
                         getString(R.string.button_sure_default)
                     } else {
-                        "${getString(
-                            getAttrString(R.attr.Preview_Confirm_text, R.string.button_sure_default)
-                        )}($selectedCount)"
+                        getString(
+                            getAttrString(
+                                R.attr.Preview_Confirm_text, R.string.button_sure_default
+                            )
+                        ).plus("(").plus(selectedCount.toString()).plus(")")
                     }
                 }
                 else -> {
                     isEnabled = true
-                    text = "${getString(
-                        getAttrString(R.attr.Preview_Confirm_text, R.string.button_sure_default)
-                    )}($selectedCount)"
+                    text = getString(
+                        getAttrString(R.attr.Preview_Confirm_text, R.string.button_sure_default),
+                        "($selectedCount)"
+                    )
                 }
             }
-        }
-
-        if (spec?.originalable == true) {
-            setViewVisible(true, original_layout)
-            updateOriginalState()
-        } else {
-            setViewVisible(false, original_layout)
         }
     }
 
     private fun updateOriginalState() {
         original?.setChecked(originalEnable)
         if (countOverMaxSize(selectedCollection) > 0 || originalEnable) {
-            handleCause(
-                activity, IncapableCause(
-                    IncapableCause.DIALOG, "",
-                    getString(R.string.error_over_original_size, spec?.originalMaxSize)
-                )
+            handleCauseTips(
+                getString(R.string.error_over_original_size, spec?.originalMaxSize),
+                IncapableCause.DIALOG
             )
             original?.setChecked(false)
             originalEnable = false
@@ -222,11 +225,9 @@ open class BasePreviewActivity : BaseActivity(), View.OnClickListener,
                     return
                 }
 
-                handleCause(
-                    activity, IncapableCause(
-                        IncapableCause.DIALOG, "",
-                        getString(R.string.error_over_original_count, count, spec?.originalMaxSize)
-                    )
+                handleCauseTips(
+                    getString(R.string.error_over_original_count, count, spec?.originalMaxSize),
+                    IncapableCause.DIALOG
                 )
             }
 

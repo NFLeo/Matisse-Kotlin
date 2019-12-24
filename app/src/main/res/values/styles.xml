@@ -21,6 +21,21 @@
         <item name="Media_Original_text">@string/original</item>
         <item name="Media_Album_text">@string/album</item>
         <item name="Media_Camera_text">@string/camera</item>
+        <item name="Media_Sure_textColor">#00ff00</item>
+        <item name="Media_Album_textColor">#0000ff</item>
+        <item name="Media_Preview_textColor">#ff0000</item>
         <item name="Item_placeholder">@drawable/ic_launcher_foreground</item>
+    </style>
+
+    <style name="JCStyle" parent="Matisse.Default">
+        <item name="colorPrimary">#EB5148</item>
+        <item name="colorPrimaryDark">#EB5148</item>
+        <item name="Navigation_bg">#EB5148</item>
+        <item name="Navigation_backRes">@mipmap/ic_navbar48_chervon_white</item>
+        <item name="Media_Sure_text">@string/sure</item>
+        <item name="Media_Sure_textColor">@color/selector_white_text</item>
+        <item name="Media_Preview_text">@string/preview</item>
+        <item name="Media_Album_text">@string/album</item>
+        <item name="Media_Camera_text">@string/camera</item>
     </style>
 </resources>

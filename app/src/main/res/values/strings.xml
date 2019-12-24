@@ -3,7 +3,7 @@
     <string name="permission_request_denied">请求读写权限失败!</string>
 
     <string name="back">Media.Back</string>
-    <string name="sure">Media.Sure</string>
+    <string name="sure">Sure</string>
     <string name="preview">Media.Preview</string>
     <string name="original">Media.Original</string>
     <string name="camera">Media.Camera</string>

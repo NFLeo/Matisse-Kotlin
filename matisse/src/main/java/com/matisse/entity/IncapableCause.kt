@@ -13,7 +13,8 @@ class IncapableCause {
     companion object {
         const val TOAST = 0x0001
         const val DIALOG = 0x0002
-        const val NONE = 0x0003
+        const val LOADING = 0x0003
+        const val NONE = 0x0004
 
         fun handleCause(context: Context, cause: IncapableCause?) {
             if (cause?.noticeConsumer != null) {
@@ -25,35 +26,42 @@ class IncapableCause {
 
             when (cause?.form) {
                 DIALOG -> {
-                    val incapableDialog = IncapableDialog.newInstance(cause.title, cause.message)
-                    incapableDialog.show(
-                        (context as FragmentActivity).supportFragmentManager,
-                        IncapableDialog::class.java.name
-                    )
+                    IncapableDialog.newInstance(cause.title, cause.message)
+                        .show(
+                            (context as FragmentActivity).supportFragmentManager,
+                            IncapableDialog::class.java.name
+                        )
                 }
 
                 TOAST -> {
                     Toast.makeText(context, cause.message, Toast.LENGTH_SHORT).show()
+                }
+
+                LOADING -> {
+                    // TODO Leo 2019-12-24 complete loading
                 }
             }
         }
     }
 
     @Retention(AnnotationRetention.SOURCE)
-    @IntDef(TOAST, DIALOG, NONE)
+    @IntDef(TOAST, DIALOG, LOADING, NONE)
     annotation class Form
 
     var form = TOAST
     var title: String? = null
     var message: String? = null
+    var dismissLoading: Boolean? = null
     var noticeConsumer: NoticeConsumer? = null
 
     constructor(message: String) : this(TOAST, message)
     constructor(@Form form: Int, message: String) : this(form, "", message)
-    constructor(@Form form: Int, title: String, message: String) {
+    constructor(@Form form: Int, title: String, message: String) : this(form, title, message, true)
+    constructor(@Form form: Int, title: String, message: String, dismissLoading: Boolean) {
         this.form = form
         this.title = title
         this.message = message
+        this.dismissLoading = dismissLoading
 
         this.noticeConsumer = SelectionSpec.getInstance().noticeConsumer
     }

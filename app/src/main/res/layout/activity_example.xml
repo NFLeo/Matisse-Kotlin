@@ -197,8 +197,7 @@
         <!--设置选择类型-->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp">
+            android:layout_height="wrap_content">
 
             <TextView
                 android:id="@+id/tv_media_exclusive"
@@ -239,7 +238,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -286,7 +284,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -333,7 +330,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -368,100 +364,121 @@
                     android:layout_height="wrap_content"
                     android:text="自定义主题" />
 
+                <RadioButton
+                    android:id="@+id/btn_jc_theme"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="JC主题" />
+
             </RadioGroup>
 
         </LinearLayout>
 
-        <!--裁剪-->
         <LinearLayout
+            android:id="@+id/ll_crop"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tv_crop"
-                style="@style/style_title_text"
-                android:layout_width="wrap_content"
+            <!--裁剪-->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="开启裁剪" />
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/switch_crop"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:layout_marginStart="15dp"
-                android:checked="false"
-                android:textOff="关"
-                android:textOn="开"
-                android:textSize="10sp"
-                app:showText="true" />
+                <TextView
+                    android:id="@+id/tv_crop"
+                    style="@style/style_title_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="开启裁剪" />
 
-            <EditText
-                android:id="@+id/ev_crop_width"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_marginStart="30dp"
-                android:layout_weight="1"
-                android:hint="裁剪框宽"
-                android:inputType="number"
-                android:textSize="12sp" />
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switch_crop"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="15dp"
+                    android:checked="false"
+                    android:textOff="关"
+                    android:textOn="开"
+                    android:textSize="10sp"
+                    app:showText="true" />
 
-            <EditText
-                android:id="@+id/ev_crop_height"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="1"
-                android:hint="裁剪框高"
-                android:inputType="number"
-                android:textSize="12sp" />
+            </LinearLayout>
 
-        </LinearLayout>
-
-        <!--裁剪类型、保存类型-->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/tv_crop_type"
-                style="@style/style_title_text"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/ll_crop_size"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="裁剪类型" />
+                android:orientation="horizontal">
 
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/switch_crop_type"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:layout_marginStart="15dp"
-                android:checked="false"
-                android:textOff="方"
-                android:textOn="圆"
-                android:textSize="10sp"
-                app:showText="true" />
+                <EditText
+                    android:id="@+id/ev_crop_width"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:hint="裁剪框宽"
+                    android:inputType="number"
+                    android:textSize="12sp" />
 
-            <TextView
-                android:id="@+id/tv_rectangle_save"
-                style="@style/style_title_text"
-                android:layout_width="wrap_content"
+                <EditText
+                    android:id="@+id/ev_crop_height"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:hint="裁剪框高"
+                    android:inputType="number"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+            <!--裁剪类型、保存类型-->
+            <LinearLayout
+                android:id="@+id/ll_crop_type"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="50dp"
-                android:text="方形保存" />
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/switch_rectangle_save"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:layout_marginStart="10dp"
-                android:checked="false"
-                android:textOff="否"
-                android:textOn="是"
-                android:textSize="10sp"
-                app:showText="true" />
+                <TextView
+                    android:id="@+id/tv_crop_type"
+                    style="@style/style_title_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="裁剪类型" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switch_crop_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="15dp"
+                    android:checked="false"
+                    android:textOff="方"
+                    android:textOn="圆"
+                    android:textSize="10sp"
+                    app:showText="true" />
+
+                <TextView
+                    android:id="@+id/tv_rectangle_save"
+                    style="@style/style_title_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="50dp"
+                    android:text="方形保存" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switch_rectangle_save"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="10dp"
+                    android:checked="false"
+                    android:textOff="否"
+                    android:textOn="是"
+                    android:textSize="10sp"
+                    app:showText="true" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -469,7 +486,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -514,37 +530,40 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp">
-
-            <TextView
-                android:id="@+id/tv_max_1"
-                style="@style/style_title_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="最大可选择数"
-                app:layout_constraintStart_toStartOf="@+id/ev_max_1"
-                app:layout_constraintTop_toTopOf="parent" />
+            android:layout_height="wrap_content">
 
             <EditText
                 android:id="@+id/ev_max_1"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
+                android:layout_marginTop="20dp"
                 android:inputType="number"
                 android:text="3"
                 android:textSize="14sp"
+                android:visibility="gone"
                 app:layout_constraintEnd_toStartOf="@+id/ev_max_2"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_max_1" />
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_max_1"
+                style="@style/style_title_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="最大可选择数"
+                app:layout_constraintBottom_toTopOf="@+id/ev_max_1"
+                app:layout_constraintEnd_toEndOf="@+id/ev_max_1"
+                app:layout_constraintStart_toStartOf="@+id/ev_max_1" />
 
             <TextView
                 android:id="@+id/tv_max_2"
                 style="@style/style_title_text"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="视频最大选择数"
-                app:layout_constraintStart_toStartOf="@+id/ev_max_2"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintBottom_toTopOf="@+id/ev_max_2"
+                app:layout_constraintEnd_toEndOf="@+id/ev_max_2"
+                app:layout_constraintStart_toStartOf="@+id/ev_max_2" />
 
             <EditText
                 android:id="@+id/ev_max_2"
@@ -557,7 +576,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/ev_max_1"
                 app:layout_constraintTop_toTopOf="@+id/ev_max_1"
-                tools:visibility="visible" />
+                tools:visibility="gone" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -39,7 +39,7 @@ class MimeTypeManager {
                     || MimeType.GIF.getKey().contains(lowerCaseMimeType(mimeType))
                     || MimeType.WEBP.getKey().contains(lowerCaseMimeType(mimeType))
 
-        fun isMotionlessImage(mimeType: String?) =
+        private fun isMotionlessImage(mimeType: String?) =
             MimeType.JPEG.getKey().contains(lowerCaseMimeType(mimeType))
                     || MimeType.PNG.getKey().contains(lowerCaseMimeType(mimeType))
                     || MimeType.BMP.getKey().contains(lowerCaseMimeType(mimeType))
@@ -54,7 +54,7 @@ class MimeTypeManager {
                 || MimeType.TS.getKey().contains(lowerCaseMimeType(mimeType))
                 || MimeType.AVI.getKey().contains(lowerCaseMimeType(mimeType))
 
-        fun isGif(mimeType: String) = MimeType.GIF.toString().contains(lowerCaseMimeType(mimeType))
+        fun isGif(mimeType: String) = MimeType.GIF.getKey().contains(lowerCaseMimeType(mimeType))
 
         fun arraySetOf(vararg suffixes: String) = ArraySet(mutableListOf(*suffixes))
 

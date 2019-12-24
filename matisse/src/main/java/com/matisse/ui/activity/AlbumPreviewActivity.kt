@@ -20,7 +20,7 @@ class AlbumPreviewActivity : BasePreviewActivity(), AlbumCallbacks {
     override fun setViewData() {
         super.setViewData()
         collection.onCreate(this, this)
-        val album = intent.getParcelableExtra<Album>(ConstValue.EXTRA_ALBUM)
+        val album = intent.getParcelableExtra<Album>(ConstValue.EXTRA_ALBUM) ?: return
         collection.load(album)
         val item = intent.getParcelableExtra<Item>(ConstValue.EXTRA_ITEM)
         check_view?.apply {
@@ -50,7 +50,7 @@ class AlbumPreviewActivity : BasePreviewActivity(), AlbumCallbacks {
         adapter.notifyDataSetChanged()
         if (!isAlreadySetPosition) {
             isAlreadySetPosition = true
-            val selected = intent.getParcelableExtra<Item>(ConstValue.EXTRA_ITEM)
+            val selected = intent.getParcelableExtra<Item>(ConstValue.EXTRA_ITEM) ?: return
             val selectedIndex = items.indexOf(selected)
             pager?.setCurrentItem(selectedIndex, false)
             previousPos = selectedIndex

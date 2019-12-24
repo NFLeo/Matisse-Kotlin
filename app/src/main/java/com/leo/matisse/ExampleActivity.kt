@@ -24,6 +24,7 @@ import com.matisse.SelectionCreator
 import com.matisse.entity.CaptureStrategy
 import com.matisse.entity.ConstValue
 import com.matisse.entity.IncapableCause
+import com.matisse.filter.Filter
 import com.matisse.listener.MFunction
 import com.matisse.listener.NoticeConsumer
 import com.matisse.ui.activity.BaseActivity
@@ -35,6 +36,7 @@ import com.matisse.widget.CropImageView
 import com.matisse.widget.IncapableDialog
 import com.tbruyelle.rxpermissions2.RxPermissions
 import kotlinx.android.synthetic.main.activity_example.*
+import java.util.*
 
 class ExampleActivity : AppCompatActivity(), View.OnClickListener {
     private var showType = MimeTypeManager.ofAll()
@@ -77,11 +79,13 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
             when (checkedId) {
                 R.id.btnMixed -> {
                     mediaTypeExclusive = false
-                    ev_max_2.visibility = View.VISIBLE
+                    ev_max_1.visibility = View.VISIBLE
+                    ev_max_2.visibility = if (isSingleChoose) View.GONE else View.VISIBLE
                     tv_max_1.text = "图片最大选择数"
                 }
                 R.id.btnExclusive -> {
                     mediaTypeExclusive = true
+                    ev_max_1.visibility = View.VISIBLE
                     ev_max_2.visibility = View.GONE
                     tv_max_1.text = "最大可选择数"
                 }
@@ -92,6 +96,7 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
             when (checkedId) {
                 R.id.btn_normal_theme -> defaultTheme = R.style.Matisse_Default
                 R.id.btn_customize_theme -> defaultTheme = R.style.CustomMatisseStyle
+                R.id.btn_jc_theme -> defaultTheme = R.style.JCStyle
             }
         }
 
@@ -106,6 +111,63 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
                     ev_column.setText("300")
                 }
             }
+        }
+
+        if (showCustomizeType != null && showCustomizeType?.size ?: 0 > 0) {
+            showType =
+                MimeTypeManager.of(showCustomizeType!![0], showCustomizeType?.toTypedArray()!!)
+        }
+
+        switch_choose_type.setOnCheckedChangeListener { _, isChecked ->
+            isSingleChoose = isChecked
+            if (isSingleChoose) {
+                maxCount = 1
+                maxImageCount = 1
+                maxVideoCount = 1
+                ev_max_1.visibility = View.GONE
+                ev_max_2.visibility = View.GONE
+
+                // 单选才支持裁剪
+                ll_crop.visibility = View.VISIBLE
+            } else {
+                if (mediaTypeExclusive) {
+                    tv_max_1.text = "最大可选择数"
+                    ev_max_2.visibility = View.GONE
+                    ev_max_1.visibility = View.VISIBLE
+                } else {
+                    tv_max_1.text = "图片最大选择数"
+                    ev_max_1.visibility = View.VISIBLE
+                    ev_max_2.visibility = View.VISIBLE
+                }
+
+                ll_crop.visibility = View.GONE
+            }
+        }
+
+        switch_check_type.setOnCheckedChangeListener { _, isChecked -> isCountable = !isChecked }
+
+        switch_capture.setOnCheckedChangeListener { _, isChecked -> isOpenCamera = isChecked }
+
+        switch_compress.setOnCheckedChangeListener { _, isChecked -> isInnerCompress = isChecked }
+
+        switch_crop.setOnCheckedChangeListener { _, isChecked ->
+            isCrop = isChecked
+
+            if (isChecked) {
+                ll_crop_size.visibility = View.VISIBLE
+                ll_crop_type.visibility = View.VISIBLE
+            } else {
+                ll_crop_size.visibility = View.GONE
+                ll_crop_type.visibility = View.GONE
+            }
+        }
+
+        switch_rectangle_save.setOnCheckedChangeListener { _, isChecked ->
+            isSaveRectangle = isChecked
+        }
+
+        switch_crop_type.setOnCheckedChangeListener { _, isChecked ->
+            cropType = if (isChecked) CropImageView.Style.CIRCLE else CropImageView.Style.RECTANGLE
         }
 
         chb_jpeg.setOnCheckedChangeListener(checkedOnCheckedListener)
@@ -123,58 +185,37 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
         chb_ts.setOnCheckedChangeListener(checkedOnCheckedListener)
         chb_avi.setOnCheckedChangeListener(checkedOnCheckedListener)
 
-        if (showCustomizeType != null && showCustomizeType?.size ?: 0 > 0) {
-            showType =
-                MimeTypeManager.of(showCustomizeType!![0], showCustomizeType?.toTypedArray()!!)
-        }
-
-        switch_choose_type.setOnCheckedChangeListener { _, isChecked ->
-            isSingleChoose = isChecked
-            if (isSingleChoose) {
-                maxCount = 1
-                maxImageCount = 1
-                maxVideoCount = 1
-                ev_max_2.visibility = View.GONE
-                tv_max_1.text = "最大可选择数"
-            } else {
-                ev_max_2.visibility = View.VISIBLE
-                tv_max_1.text = "图片最大选择数"
-            }
-        }
-
-        switch_check_type.setOnCheckedChangeListener { _, isChecked ->
-            isCountable = !isChecked
-        }
-
-        switch_capture.setOnCheckedChangeListener { _, isChecked ->
-            isOpenCamera = isChecked
-        }
-
-        switch_compress.setOnCheckedChangeListener { _, isChecked ->
-            isInnerCompress = isChecked
-        }
-
-        switch_crop.setOnCheckedChangeListener { _, isChecked ->
-            isCrop = isChecked
-        }
-
-        switch_rectangle_save.setOnCheckedChangeListener { _, isChecked ->
-            isSaveRectangle = isChecked
-        }
-
-        switch_crop_type.setOnCheckedChangeListener { _, isChecked ->
-            cropType = if (isChecked) {
-                CropImageView.Style.CIRCLE
-            } else {
-                CropImageView.Style.RECTANGLE
-            }
-        }
-
         btn_open_matisse.setOnClickListener(this)
         btn_open_capture.setOnClickListener(this)
+    }
 
-        ev_max_1.addTextChangedListener(textChanged(ev_max_1))
-        ev_max_2.addTextChangedListener(textChanged(ev_max_2))
+    @SuppressLint("CheckResult")
+    override fun onClick(v: View?) {
+
+        RxPermissions(this@ExampleActivity)
+            .request(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA)
+            .subscribe {
+                if (!it) {
+                    showToast(
+                        this, IncapableCause.TOAST, "",
+                        getString(R.string.permission_request_denied)
+                    )
+                    return@subscribe
+                }
+
+                when (v) {
+                    btn_open_matisse -> {
+                        createMatisse()
+                        openMatisse()
+                    }
+                    btn_open_capture -> {
+                        createMediaStoreCompat()
+                        mediaStoreCompat?.dispatchCaptureIntent(
+                            this, ConstValue.REQUEST_CODE_CAPTURE
+                        )
+                    }
+                }
+            }
     }
 
     private fun showToast(context: Context, noticeType: Int, title: String, message: String) {
@@ -219,34 +260,6 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
 
-    @SuppressLint("CheckResult")
-    override fun onClick(v: View?) {
-
-        RxPermissions(this@ExampleActivity)
-            .request(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA)
-            .subscribe {
-                if (!it) {
-                    Toast.makeText(
-                        this@ExampleActivity, R.string.permission_request_denied, Toast.LENGTH_LONG
-                    ).show()
-                    return@subscribe
-                }
-
-                when (v) {
-                    btn_open_matisse -> {
-                        createMatisse()
-                        openMatisse()
-                    }
-                    btn_open_capture -> {
-                        createMediaStoreCompat()
-                        mediaStoreCompat?.dispatchCaptureIntent(
-                            this, ConstValue.REQUEST_CODE_CAPTURE
-                        )
-                    }
-                }
-            }
-    }
-
     private var mediaStoreCompat: MediaStoreCompat? = null
     private var selectionCreator: SelectionCreator? = null
     private var selectedPathIds: List<String>? = null
@@ -254,53 +267,54 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
     private fun createMatisse() {
 
         setEditText()
-        selectionCreator = Matisse.from(this@ExampleActivity)
-            .choose(showType, mediaTypeExclusive)
-            .theme(defaultTheme)
-            .countable(isCountable)
-            .capture(isOpenCamera)
-            .isCrop(isCrop)
-            .cropStyle(cropType)
-            .cropFocusWidthPx(cropWidth)
-            .cropFocusHeightPx(cropHeight)
-            .isCropSaveRectangle(isSaveRectangle)
-            .maxSelectable(maxCount)
-            .maxSelectablePerMediaType(maxImageCount, maxVideoCount)
-            .captureStrategy(
-                CaptureStrategy(
-                    true,
-                    "${Platform.getPackageName(this@ExampleActivity)}.fileprovider"
+        selectionCreator =
+            Matisse.from(this@ExampleActivity)                              // 绑定Activity/Fragment
+                .choose(showType, mediaTypeExclusive)                               // 设置显示类型，单一/混合选择模式
+                .theme(defaultTheme)                                                // 外部设置主题样式
+                .countable(isCountable)                                             // 设置选中计数方式
+                .isCrop(isCrop)                                                     // 设置开启裁剪
+                .cropStyle(cropType)                                                // 裁剪类型，圆形/方形
+                .cropFocusWidthPx(cropWidth)                                        // 裁剪框宽度
+                .cropFocusHeightPx(cropHeight)                                      // 裁剪框高度
+                .isCropSaveRectangle(isSaveRectangle)                               // 圆形裁剪下是否方形保存
+                .maxSelectable(maxCount)                                            // 单一选择下 最大选择数量
+                .maxSelectablePerMediaType(maxImageCount, maxVideoCount)            // 混合选择下 视频/图片最大选择数量
+                .capture(isOpenCamera)                                              // 是否开启内部拍摄
+                .captureStrategy(                                                   // 拍照设置Strategy
+                    CaptureStrategy(
+                        true,
+                        "${Platform.getPackageName(this@ExampleActivity)}.fileprovider"
+                    )
                 )
-            )
-            .thumbnailScale(0.6f)
-            .spanCount(spanCount)
-            .gridExpectedSize(gridSizePx)
-            .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
-            .imageEngine(Glide4Engine())
-            .theme(R.style.CustomMatisseStyle)
-            .setLastChoosePicturesIdOrUri(selectedPathIds as ArrayList<String>?)
-            .setNoticeConsumer(object : NoticeConsumer {
-                override fun accept(
-                    context: Context, noticeType: Int, title: String, message: String
-                ) {
-                    // 外部提示，可外部定义样式
-                    showToast(context, noticeType, title, message)
-                }
-            })
-            .setStatusBarFuture(object : MFunction<BaseActivity> {
-                override fun accept(params: BaseActivity, view: View?) {
-                    // 外部设置状态栏
-                    ImmersionBar.with(params)?.run {
-                        statusBarDarkFont(true)
-                        view?.apply { titleBar(this) }
-                        init()
+                .thumbnailScale(0.6f)                                         // 图片显示压缩比
+                .spanCount(spanCount)                                               // 资源显示列数
+                .addFilter(SizeFilter(1 * Filter.K * Filter.K))         // 过滤器设置
+                .gridExpectedSize(gridSizePx)                                       // 资源显示网格列宽度
+                .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)      // 强制屏幕方向
+                .imageEngine(Glide4Engine())                                        // 图片加载实现方式
+                .setLastChoosePicturesIdOrUri(selectedPathIds as ArrayList<String>?)// 预选中
+                .setNoticeConsumer(object : NoticeConsumer {                        // 外部实现弹窗、吐司
+                    override fun accept(
+                        context: Context, noticeType: Int, title: String, message: String
+                    ) {
+                        // 外部提示，可外部定义样式
+                        showToast(context, noticeType, title, message)
                     }
+                })
+                .setStatusBarFuture(object : MFunction<BaseActivity> {              // 外部处理状态栏
+                    override fun accept(params: BaseActivity, view: View?) {
+                        // 外部设置状态栏
+                        ImmersionBar.with(params)?.run {
+                            statusBarDarkFont(true)
+                            view?.apply { titleBar(this) }
+                            init()
+                        }
 
-                    // 外部可隐藏Matisse界面中的View
-//                    view?.visibility = if (isDarkStatus) View.VISIBLE else View.GONE
-                }
-            })
-            .setIsInnerCompress(isInnerCompress)
+                        // 外部可隐藏Matisse界面中的标题栏
+                        // view?.visibility = if (isDarkStatus) View.VISIBLE else View.GONE
+                    }
+                })
+                .setIsInnerCompress(isInnerCompress)                                // 是否是用内部提供压缩
     }
 
     private fun createMediaStoreCompat() {
@@ -313,24 +327,6 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
             )
         mediaStoreCompat = MediaStoreCompat(this, null)
         mediaStoreCompat?.setCaptureStrategy(captureStrategy)
-    }
-
-    private fun textChanged(ev: EditText) = object : TextWatcher {
-        override fun afterTextChanged(s: Editable?) {
-            when (ev) {
-                ev_max_1 -> {
-                    if (mediaTypeExclusive) maxImageCount = formatStrTo0(s.toString())
-                    else maxCount = formatStrTo0(s.toString())
-                }
-                ev_max_2 -> maxVideoCount = formatStrTo0(s.toString())
-            }
-        }
-
-        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-        }
-
-        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-        }
     }
 
     private fun openMatisse() {

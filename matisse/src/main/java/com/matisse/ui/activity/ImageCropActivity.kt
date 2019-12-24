@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory
 import android.view.View
 import com.matisse.R
 import com.matisse.entity.ConstValue
+import com.matisse.entity.IncapableCause
 import com.matisse.utils.*
 import com.matisse.widget.CropImageView
 import com.matisse.widget.IncapableDialog
@@ -41,6 +42,28 @@ class ImageCropActivity : BaseActivity(), View.OnClickListener,
     override fun setViewData() {
         imagePath = intent.getStringExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH) ?: return
 
+        setCropImageView()
+
+        //缩放图片
+        val options = BitmapFactory.Options().apply {
+            inJustDecodeBounds = true
+            BitmapFactory.decodeFile(imagePath, this)
+            resources.displayMetrics.let {
+                inSampleSize = calculateInSampleSize(this, it.widthPixels, it.heightPixels)
+            }
+
+            inJustDecodeBounds = false
+        }
+        bitmap = BitmapFactory.decodeFile(imagePath, options)
+        bitmap?.let {
+            val rotateBitmap =
+                cv_crop_image.rotate(it, BitmapUtils.getBitmapDegree(imagePath).toFloat())
+            // 设置默认旋转角度
+            cv_crop_image.setImageBitmap(rotateBitmap)
+        }
+    }
+
+    private fun setCropImageView() {
         spec?.apply {
             val cropFocusNormalWidth = getScreenWidth(activity) -
                     dp2px(activity, 30f).toInt()
@@ -64,25 +87,11 @@ class ImageCropActivity : BaseActivity(), View.OnClickListener,
             }
             isSaveRectangle = isCropSaveRectangle
 
-            cv_crop_image.setFocusStyle(cropStyle)
-            cv_crop_image.setFocusWidth(cropWidth)
-            cv_crop_image.setFocusHeight(cropHeight)
-        }
-
-        //缩放图片
-        val options = BitmapFactory.Options()
-        options.inJustDecodeBounds = true
-        BitmapFactory.decodeFile(imagePath, options)
-        val displayMetrics = resources.displayMetrics
-        options.inSampleSize =
-            calculateInSampleSize(options, displayMetrics.widthPixels, displayMetrics.heightPixels)
-        options.inJustDecodeBounds = false
-        bitmap = BitmapFactory.decodeFile(imagePath, options)
-        bitmap?.let {
-            val rotateBitmap =
-                cv_crop_image.rotate(it, BitmapUtils.getBitmapDegree(imagePath).toFloat())
-            // 设置默认旋转角度
-            cv_crop_image.setImageBitmap(rotateBitmap)
+            cv_crop_image.run {
+                setFocusStyle(cropStyle)
+                setFocusWidth(cropWidth)
+                setFocusHeight(cropHeight)
+            }
         }
     }
 
@@ -108,19 +117,24 @@ class ImageCropActivity : BaseActivity(), View.OnClickListener,
     }
 
     override fun onBitmapSaveSuccess(file: File) {
+        handleCauseTips(form = IncapableCause.LOADING, dismissLoading = true)
         finishIntentFromCropSuccess(this, file.absolutePath)
     }
 
     override fun onBitmapSaveError(file: File) {
+        handleCauseTips(form = IncapableCause.LOADING, dismissLoading = true)
         val incapableDialog = IncapableDialog.newInstance("", getString(R.string.error_crop))
         incapableDialog.show(supportFragmentManager, IncapableDialog::class.java.name)
     }
 
     override fun onClick(v: View?) {
         when (v) {
-            button_complete -> cv_crop_image.saveBitmapToFile(
-                getCropCacheFolder(this), outputX, outputY, isSaveRectangle
-            )
+            button_complete -> {
+                handleCauseTips(form = IncapableCause.LOADING, dismissLoading = false)
+                cv_crop_image.saveBitmapToFile(
+                    getCropCacheFolder(this), outputX, outputY, isSaveRectangle
+                )
+            }
             button_back -> {
                 setResult(Activity.RESULT_CANCELED)
                 finish()

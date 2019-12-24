@@ -14,6 +14,10 @@ Matisse核心功能：[https://github.com/zhihu/Matisse](https://github.com/zhih
 完整说明文档：[Android 图片选择库 MatisseKotlin 版](https://www.jianshu.com/p/ca1e7460fa69)
 
 # 版本更新记录
+2019-12-23 (2.0.3)
+1. 修复Gif图片类型无法正确判断问题
+2. 修复部分设备第一次拍照后，拍照结果不显示问题
+
 2019-12-19
 1. 主题属性命名规范化 见R.style.CustomMatisseStyle
 2. MimeTypeManager类新增ofMotionlessImage()静态图类型
@@ -131,7 +135,7 @@ SelectionCreator.setNoticeConsumer(object : NoticeConsumer {
 关于打包报错问题：
 
 使用：
-1. gradle中添加 implementation 'com.nfleo:MatisseKotlin:2.0.2'
+1. gradle中添加 implementation 'com.nfleo:MatisseKotlin:2.0.3'
 2. AndroidManifest.xml中添加以下代码
 * 注：注意provider androidx的差别
         <provider

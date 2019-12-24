@@ -20,7 +20,7 @@ class SelectedPreviewActivity : BasePreviewActivity() {
         fun instance(context: Context, bundle: Bundle, mOriginalEnable: Boolean) {
             val intent = Intent(context, SelectedPreviewActivity::class.java)
             intent.putExtra(ConstValue.EXTRA_DEFAULT_BUNDLE, bundle)
-            intent.putExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, mOriginalEnable)
+                .putExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, mOriginalEnable)
             (context as Activity).startActivityForResult(intent, ConstValue.REQUEST_CODE_PREVIEW)
         }
     }

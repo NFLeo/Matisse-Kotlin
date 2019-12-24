@@ -46,7 +46,7 @@ class Matisse(activity: Activity?, fragment: Fragment? = null) {
          * [Fragment.onActivityResult].
          * @return User selected media' [Uri] list.
          */
-        fun obtainResult(data: Intent): List<Uri> {
+        fun obtainResult(data: Intent): List<Uri>? {
             return data.getParcelableArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION)
         }
 

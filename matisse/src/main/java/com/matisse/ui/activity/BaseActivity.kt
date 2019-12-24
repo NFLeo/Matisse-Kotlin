@@ -5,7 +5,9 @@ import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.matisse.R
+import com.matisse.entity.IncapableCause
 import com.matisse.internal.entity.SelectionSpec
+import com.matisse.utils.handleCause
 import com.matisse.utils.obtainAttrString
 
 abstract class BaseActivity : AppCompatActivity() {
@@ -64,4 +66,14 @@ abstract class BaseActivity : AppCompatActivity() {
      * @param defaultRes 默认值
      */
     fun getAttrString(attr: Int, defaultRes: Int) = obtainAttrString(this, attr, defaultRes)
+
+    /**
+     * 抽离提示方法
+     */
+    fun handleCauseTips(
+        message: String = "", @IncapableCause.Form form: Int = IncapableCause.TOAST,
+        title: String = "", dismissLoading: Boolean = true
+    ) {
+        handleCause(activity, IncapableCause(form, title, message, dismissLoading))
+    }
 }

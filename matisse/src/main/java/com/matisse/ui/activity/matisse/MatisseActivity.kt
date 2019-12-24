@@ -1,6 +1,5 @@
 package com.matisse.ui.activity.matisse
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.database.Cursor
@@ -129,9 +128,7 @@ class MatisseActivity : BaseActivity(),
             button_back -> onBackPressed()
             button_preview -> {
                 if (selectedCollection.count() == 0) {
-                    handleCause(
-                        activity, IncapableCause(getString(R.string.please_select_media_resource))
-                    )
+                    handleCauseTips(getString(R.string.please_select_media_resource))
                     return
                 }
 
@@ -141,9 +138,7 @@ class MatisseActivity : BaseActivity(),
             }
             button_complete -> {
                 if (selectedCollection.count() == 0) {
-                    handleCause(
-                        activity, IncapableCause(getString(R.string.please_select_media_resource))
-                    )
+                    handleCauseTips(getString(R.string.please_select_media_resource))
                     return
                 }
 
@@ -165,17 +160,15 @@ class MatisseActivity : BaseActivity(),
                     return
                 }
 
-                handleCause(
-                    activity, IncapableCause(
-                        IncapableCause.DIALOG, "",
-                        getString(R.string.error_over_original_count, count, spec?.originalMaxSize)
-                    )
+                handleCauseTips(
+                    getString(R.string.error_over_original_count, count, spec?.originalMaxSize),
+                    IncapableCause.DIALOG
                 )
             }
 
             button_apply -> {
                 if (allAlbum?.isAll() == true && allAlbum?.isEmpty() == true) {
-                    handleCause(activity, IncapableCause(getString(R.string.empty_album)))
+                    handleCauseTips(getString(R.string.empty_album))
                     return
                 }
 
@@ -231,12 +224,8 @@ class MatisseActivity : BaseActivity(),
         albumLoadHelper.loadAlbumData()
         // 手动插入到相册列表
         albumFolderSheetHelper.insetAlbumToFolder(capturePathUri)
-
-        albumFolderSheetHelper.getAlbumFolderList()?.apply {
-            button_apply.post {
-                onAlbumSelected(this[0])
-            }
-        }
+        // 重新load所有资源
+        albumFolderSheetHelper.getAlbumFolderList()?.apply { onAlbumSelected(this[0]) }
 
         // Check is Crop first
         if (spec?.openCrop() == true) {
@@ -251,19 +240,9 @@ class MatisseActivity : BaseActivity(),
         finishIntentFromCrop(activity, cropPath)
     }
 
-    @SuppressLint("SetTextI18n")
     private fun updateBottomToolbar() {
         val selectedCount = selectedCollection.count()
-        if (selectedCount == 0) {
-            button_complete.setText(getAttrString(R.attr.Media_Sure_text, R.string.button_sure))
-        } else if (selectedCount == 1 && spec?.singleSelectionModeEnabled() == true) {
-            button_complete.setText(getAttrString(R.attr.Media_Sure_text, R.string.button_sure))
-        } else {
-            button_complete.text =
-                "${getString(
-                    getAttrString(R.attr.Media_Sure_text, R.string.button_sure)
-                )}($selectedCount)"
-        }
+        setCompleteText(selectedCount)
 
         if (spec?.originalable == true) {
             setViewVisible(true, original_layout)
@@ -273,14 +252,26 @@ class MatisseActivity : BaseActivity(),
         }
     }
 
+    private fun setCompleteText(selectedCount: Int) {
+        if (selectedCount == 0) {
+            button_complete.setText(getAttrString(R.attr.Media_Sure_text, R.string.button_sure))
+
+        } else if (selectedCount == 1 && spec?.singleSelectionModeEnabled() == true) {
+            button_complete.setText(getAttrString(R.attr.Media_Sure_text, R.string.button_sure))
+
+        } else {
+            button_complete.text =
+                getString(getAttrString(R.attr.Media_Sure_text, R.string.button_sure))
+                    .plus("(").plus(selectedCount.toString()).plus(")")
+        }
+    }
+
     private fun updateOriginalState() {
         original.setChecked(originalEnable)
         if (countOverMaxSize(selectedCollection) > 0 || originalEnable) {
-            handleCause(
-                activity, IncapableCause(
-                    IncapableCause.DIALOG, "",
-                    getString(R.string.error_over_original_size, spec?.originalMaxSize)
-                )
+            handleCauseTips(
+                getString(R.string.error_over_original_size, spec?.originalMaxSize),
+                IncapableCause.DIALOG
             )
 
             original.setChecked(false)

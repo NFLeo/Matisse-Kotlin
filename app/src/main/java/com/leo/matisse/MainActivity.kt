@@ -5,9 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
-import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
@@ -19,11 +17,8 @@ import com.matisse.compress.getFileByPath
 import com.matisse.entity.CaptureStrategy
 import com.matisse.entity.ConstValue
 import com.matisse.listener.NoticeConsumer
-import com.matisse.listener.OnCheckedListener
-import com.matisse.listener.OnSelectedListener
 import com.matisse.utils.PhotoMetadataUtils
 import com.matisse.utils.Platform
-import com.matisse.utils.dp2px
 import com.matisse.widget.CropImageView
 import com.tbruyelle.rxpermissions2.RxPermissions
 import kotlinx.android.synthetic.main.activity_main.*
@@ -44,83 +39,39 @@ class MainActivity : AppCompatActivity() {
                         ).show()
                         return@subscribe
                     }
-                    Matisse.from(this@MainActivity)
-                        .choose(MimeTypeManager.ofAll())
-                        .countable(false)
-                        .capture(true)
-                        .isCrop(true)
-                        .cropStyle(CropImageView.Style.CIRCLE)
-                        .isCropSaveRectangle(true)
-                        .maxSelectable(1)
-                        .theme(R.style.CustomMatisseStyle)
-                        .captureStrategy(
-                            CaptureStrategy(
-                                true,
-                                "${Platform.getPackageName(this@MainActivity)}.fileprovider",
-                                "Leo"
-                            )
-                        )
-                        .thumbnailScale(0.8f)
-                        .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
-                        .imageEngine(Glide4Engine())
-                        .theme(R.style.CustomMatisseStyle)
-                        .setNoticeConsumer(object : NoticeConsumer {
-                            override fun accept(
-                                context: Context, noticeType: Int, title: String, message: String
-                            ) {
-                                showToast(message)
-                            }
-                        })
-                        .forResult(ConstValue.REQUEST_CODE_CHOOSE)
+                    openMatisse()
                 }
         }
+    }
 
-        findViewById<AppCompatButton>(R.id.btn_media_multi).setOnClickListener {
-            RxPermissions(this@MainActivity)
-                .request(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA)
-                .subscribe {
-                    if (!it) {
-                        Toast.makeText(
-                            this@MainActivity,
-                            R.string.permission_request_denied,
-                            Toast.LENGTH_LONG
-                        ).show()
-                        return@subscribe
-                    }
-                    Matisse.from(this@MainActivity)
-                        .choose(MimeTypeManager.ofAll(), true)
-                        .countable(false)
-                        .capture(true)
-                        .isCrop(true)
-                        .cropStyle(CropImageView.Style.RECTANGLE)
-                        .cropFocusWidthPx(dp2px(this, 250f).toInt())
-                        .cropFocusHeightPx(dp2px(this, 500f).toInt())
-                        .theme(R.style.CustomMatisseStyle)
-                        .captureStrategy(
-                            CaptureStrategy(
-                                true,
-                                "${Platform.getPackageName(this@MainActivity)}.fileprovider"
-                            )
-                        )
-                        .maxSelectable(1)
-                        .thumbnailScale(0.8f)
-                        .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-                        .imageEngine(Glide4Engine())
-                        .setOnSelectedListener(object : OnSelectedListener {
-                            override fun onSelected(uriList: List<Uri>, pathList: List<String>) {
-                                // DO SOMETHING IMMEDIATELY HERE
-                                Log.e("onSelected", "onSelected: pathList=$pathList")
-                            }
-                        })
-                        .setOnCheckedListener(object : OnCheckedListener {
-                            override fun onCheck(isChecked: Boolean) {
-                                // DO SOMETHING IMMEDIATELY HERE
-                                Log.e("isChecked", "onCheck: isChecked=$isChecked")
-                            }
-                        })
-                        .forResult(ConstValue.REQUEST_CODE_CHOOSE)
+    private fun openMatisse() {
+        Matisse.from(this@MainActivity)
+            .choose(MimeTypeManager.ofAll())
+            .countable(false)
+            .capture(true)
+            .isCrop(true)
+            .cropStyle(CropImageView.Style.CIRCLE)
+            .isCropSaveRectangle(true)
+            .maxSelectable(1)
+            .theme(R.style.JCStyle)
+            .captureStrategy(
+                CaptureStrategy(
+                    true,
+                    "${Platform.getPackageName(this@MainActivity)}.fileprovider",
+                    "Leo"
+                )
+            )
+            .thumbnailScale(0.8f)
+            .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+            .imageEngine(Glide4Engine())
+            .setNoticeConsumer(object : NoticeConsumer {
+                override fun accept(
+                    context: Context, noticeType: Int, title: String, message: String
+                ) {
+                    showToast(message)
                 }
-        }
+            })
+            .forResult(ConstValue.REQUEST_CODE_CHOOSE)
     }
 
     private fun showToast(value: String) {
@@ -136,7 +87,7 @@ class MainActivity : AppCompatActivity() {
             val uriList = Matisse.obtainResult(data)
             val strList = Matisse.obtainPathResult(data)
 
-            uriList.forEach {
+            uriList?.forEach {
                 string += it.toString() + "\n"
             }
 
