@@ -1,4 +1,4 @@
-[ ![Download](https://api.bintray.com/packages/nfleo/MatisseKotlin/MatisseKotlin/images/download.svg?version=2.0.2) ](https://bintray.com/nfleo/MatisseKotlin/MatisseKotlin/2.0.2/link)
+[ ![Download](https://api.bintray.com/packages/nfleo/MatisseKotlin/MatisseKotlin/images/download.svg?version=2.0.3) ](https://bintray.com/nfleo/MatisseKotlin/MatisseKotlin/2.0.3/link)
 
 ![Image](/image/banner.png)
 
