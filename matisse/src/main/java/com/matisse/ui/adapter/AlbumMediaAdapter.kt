@@ -76,16 +76,18 @@ class AlbumMediaAdapter(
                             selectionSpec.isCountable(), holder
                         )
                     )
-                    mediaGrid.bindMedia(item)
-                    mediaGrid.listener = this@AlbumMediaAdapter
-                    setCheckStatus(item, mediaGrid)
+                    item?.let {
+                        mediaGrid.bindMedia(it)
+                        mediaGrid.listener = this@AlbumMediaAdapter
+                        setCheckStatus(it, mediaGrid)
+                    }
                 }
             }
         }
     }
 
     override fun getItemViewType(position: Int, cursor: Cursor) =
-        if (Item.valueOf(cursor).isCapture()) VIEW_TYPE_CAPTURE else VIEW_TYPE_MEDIA
+        if (Item.valueOf(cursor)?.isCapture() == true) VIEW_TYPE_CAPTURE else VIEW_TYPE_MEDIA
 
     private fun getImageResize(context: Context): Int {
         if (imageResize != 0) return imageResize

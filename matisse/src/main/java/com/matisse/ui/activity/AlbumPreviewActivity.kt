@@ -41,7 +41,7 @@ class AlbumPreviewActivity : BasePreviewActivity(), AlbumCallbacks {
     override fun onAlbumLoad(cursor: Cursor) {
         val items = ArrayList<Item>()
         while (cursor.moveToNext()) {
-            items.add(Item.valueOf(cursor))
+            Item.valueOf(cursor)?.run { items.add(this) }
         }
 
         if (items.isEmpty()) return

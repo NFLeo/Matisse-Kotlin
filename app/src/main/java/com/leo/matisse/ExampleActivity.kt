@@ -148,7 +148,7 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
 
         switch_capture.setOnCheckedChangeListener { _, isChecked -> isOpenCamera = isChecked }
 
-        switch_compress.setOnCheckedChangeListener { _, isChecked -> isInnerCompress = isChecked }
+        switch_compress.setOnCheckedChangeListener { _, isChecked -> isInnerCompress = !isChecked }
 
         switch_crop.setOnCheckedChangeListener { _, isChecked ->
             isCrop = isChecked

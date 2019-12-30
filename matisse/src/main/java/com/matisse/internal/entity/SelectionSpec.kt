@@ -55,7 +55,7 @@ class SelectionSpec {
     var noticeConsumer: NoticeConsumer? = null              // 库内提示具体回调
     var statusBarFuture: MFunction<BaseActivity>? = null    // 状态栏处理回调
 
-    var isInnerCompress = true                              // 是否开启内部压缩
+    var isInnerCompress = false                             // 是否开启内部压缩
 
     var lastChoosePictureIdsOrUris: ArrayList<String>? = null   // 上次选中的图片Id
 
@@ -109,7 +109,7 @@ class SelectionSpec {
         noticeConsumer = null
         statusBarFuture = null
 
-        isInnerCompress = true
+        isInnerCompress = false
 
         lastChoosePictureIdsOrUris = null
     }

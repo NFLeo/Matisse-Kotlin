@@ -42,9 +42,9 @@ class MatisseActivity : BaseActivity(),
     private var mediaStoreCompat: MediaStoreCompat? = null
     private var originalEnable = false
     private var allAlbum: Album? = null
+    private var albumLoadHelper: AlbumLoadHelper? = null
     private lateinit var selectedCollection: SelectedItemCollection
     private lateinit var albumFolderSheetHelper: AlbumFolderSheetHelper
-    private lateinit var albumLoadHelper: AlbumLoadHelper
 
 
     override fun configActivity() {
@@ -79,13 +79,13 @@ class MatisseActivity : BaseActivity(),
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         selectedCollection.onSaveInstanceState(outState)
-        albumLoadHelper.onSaveInstanceState(outState)
+        albumLoadHelper?.onSaveInstanceState(outState)
         outState.putBoolean(ConstValue.CHECK_STATE, originalEnable)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        albumLoadHelper.onDestroy()
+        albumLoadHelper?.onDestroy()
         spec?.onCheckedListener = null
         spec?.onSelectedListener = null
     }
@@ -221,7 +221,7 @@ class MatisseActivity : BaseActivity(),
         // 刷新系统相册
         MediaScannerConnection.scanFile(this, arrayOf(capturePath), null, null)
         // 重新获取相册数据
-        albumLoadHelper.loadAlbumData()
+        albumLoadHelper?.loadAlbumData()
         // 手动插入到相册列表
         albumFolderSheetHelper.insetAlbumToFolder(capturePathUri)
         // 重新load所有资源
@@ -320,7 +320,7 @@ class MatisseActivity : BaseActivity(),
 
         override fun onItemClick(album: Album, position: Int) {
             if (!albumFolderSheetHelper.setLastFolderCheckedPosition(position)) return
-            albumLoadHelper.setStateCurrentSelection(position)
+            albumLoadHelper?.setStateCurrentSelection(position)
 
             button_apply.text = album.getDisplayName(activity)
             onAlbumSelected(album)

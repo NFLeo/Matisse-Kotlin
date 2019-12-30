@@ -57,8 +57,7 @@ class MainActivity : AppCompatActivity() {
             .captureStrategy(
                 CaptureStrategy(
                     true,
-                    "${Platform.getPackageName(this@MainActivity)}.fileprovider",
-                    "Leo"
+                    "${Platform.getPackageName(this@MainActivity)}.fileprovider"
                 )
             )
             .thumbnailScale(0.8f)

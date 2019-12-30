@@ -20,13 +20,14 @@ class Item(
         const val ITEM_DISPLAY_NAME_CAPTURE = "Capture"
 
         // * 注：资源文件size单位为字节byte
-        fun valueOf(cursor: Cursor, positionInList: Int = -1) = Item(
-            cursor.getLong(cursor.getColumnIndex(MediaStore.Files.FileColumns._ID)),
-            cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE)),
-            cursor.getLong(cursor.getColumnIndex(MediaStore.MediaColumns.SIZE)),
-            cursor.getLong(cursor.getColumnIndex("duration")),
-            positionInList
-        )
+        fun valueOf(cursor: Cursor?, positionInList: Int = -1) = cursor?.let {
+            Item(
+                it.getLong(it.getColumnIndex(MediaStore.Files.FileColumns._ID)),
+                it.getString(it.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE)),
+                it.getLong(it.getColumnIndex(MediaStore.MediaColumns.SIZE)),
+                it.getLong(it.getColumnIndex("duration")), positionInList
+            )
+        }
     }
 
     @IgnoredOnParcel
