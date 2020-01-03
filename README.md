@@ -14,7 +14,10 @@ Matisse核心功能：[https://github.com/zhihu/Matisse](https://github.com/zhih
 完整说明文档：[Android 图片选择库 MatisseKotlin 版](https://www.jianshu.com/p/ca1e7460fa69)
 
 # 版本更新记录
-2019-12-30 (2.0.4)
+2020-1-3 (2.0.5)
+1. 修复PreviewPageAdapter获取资源数组越界
+
+2019-12-30
 1. 默认关闭内部压缩
 2. 修复MatisseActivity中albumLoad空指针异常
 3. 修复Item创建时，部分cursor为空问题

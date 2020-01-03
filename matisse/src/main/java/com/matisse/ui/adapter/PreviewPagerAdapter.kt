@@ -28,7 +28,13 @@ class PreviewPagerAdapter(manager: FragmentManager, listener: OnPrimaryItemSetLi
         kListener?.onPrimaryItemSet(position)
     }
 
-    fun getMediaItem(position: Int) = items[position]
+    fun getMediaItem(position: Int): Item? {
+        if (count > position) {
+            return items[position]
+        }
+
+        return null
+    }
 
     fun addAll(items: List<Item>) {
         this.items.addAll(items)

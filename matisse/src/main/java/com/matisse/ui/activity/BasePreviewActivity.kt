@@ -160,11 +160,10 @@ open class BasePreviewActivity : BaseActivity(), View.OnClickListener,
                 } else {
                     val checked = selectedCollection.isSelected(item)
                     setChecked(checked)
-                    if (checked) setEnable(true) else setEnable(
-                        !selectedCollection.maxSelectableReached(
-                            item
-                        )
-                    )
+                    if (checked)
+                        setEnable(true)
+                    else
+                        setEnable(!selectedCollection.maxSelectableReached(item))
                 }
                 updateSize(item)
             }
