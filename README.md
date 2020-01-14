@@ -14,7 +14,7 @@ Matisse核心功能：[https://github.com/zhihu/Matisse](https://github.com/zhih
 完整说明文档：[Android 图片选择库 MatisseKotlin 版](https://www.jianshu.com/p/ca1e7460fa69)
 
 # 版本更新记录
-2020-1-3 (2.0.5)
+2020-1-3 (2.0.3)
 1. 修复PreviewPageAdapter获取资源数组越界
 
 2019-12-30
@@ -23,7 +23,7 @@ Matisse核心功能：[https://github.com/zhihu/Matisse](https://github.com/zhih
 3. 修复Item创建时，部分cursor为空问题
 4. 修复demo压缩开关出错问题
 
-2019-12-23 (2.0.3)
+2019-12-23
 1. 修复Gif图片类型无法正确判断问题
 2. 修复部分设备第一次拍照后，拍照结果不显示问题
 

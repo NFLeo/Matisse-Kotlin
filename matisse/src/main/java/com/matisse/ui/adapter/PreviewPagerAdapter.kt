@@ -10,7 +10,7 @@ import com.matisse.ui.view.PreviewItemFragment
  * Created by liubo on 2018/9/6.
  */
 class PreviewPagerAdapter(manager: FragmentManager, listener: OnPrimaryItemSetListener?) :
-    FragmentPagerAdapter(manager, 0) {
+    FragmentPagerAdapter(manager) {
 
     var items: ArrayList<Item> = ArrayList()
     var kListener: OnPrimaryItemSetListener? = null
