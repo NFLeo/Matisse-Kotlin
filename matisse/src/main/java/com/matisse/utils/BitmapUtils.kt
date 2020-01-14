@@ -1,6 +1,10 @@
 package com.matisse.utils
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.media.ExifInterface
+import android.net.Uri
 import java.io.IOException
 
 object BitmapUtils {
@@ -11,7 +15,7 @@ object BitmapUtils {
      * @param path 图片绝对路径
      * @return 图片的旋转角度
      */
-    fun getBitmapDegree(path: String): Int {
+    fun getBitmapDegree(path: String?): Int {
         var degree = 0
         try {
             // 从指定路径下读取图片，并获取其EXIF信息
@@ -30,5 +34,19 @@ object BitmapUtils {
         }
 
         return degree
+    }
+
+    // 通过uri加载图片
+    fun getBitmapFromUri(context: Context, uri: Uri): Bitmap? {
+        return try {
+            // mode："r" 表示只读 "w"表示只写
+            val parcelFileDescriptor = context.contentResolver.openFileDescriptor(uri, "r")
+            val fileDescriptor = parcelFileDescriptor?.fileDescriptor
+            val image = BitmapFactory.decodeFileDescriptor(fileDescriptor)
+            parcelFileDescriptor?.close()
+            image
+        } catch (e: Exception) {
+            null
+        }
     }
 }

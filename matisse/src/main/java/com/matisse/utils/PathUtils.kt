@@ -18,8 +18,8 @@ import com.matisse.internal.entity.SelectionSpec
  */
 object PathUtils {
 
-    fun getPath(context: Context, uri: Uri?): String? {
-        if (uri == null) return ""
+    fun getPath(context: Context?, uri: Uri?): String? {
+        if (uri == null || context == null) return ""
 
         // DocumentProvider
         if (Platform.hasKitKat19() && DocumentsContract.isDocumentUri(context, uri)) {

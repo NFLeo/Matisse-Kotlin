@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
-    <external-path name="my_images" path="Pictures" />
-    <root-path name="name" path="" />
+    <external-path
+        name="my_images"
+        path="Pictures" />
+
+    <root-path
+        name="name"
+        path="" />
 </paths>
