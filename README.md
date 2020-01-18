@@ -14,8 +14,35 @@ Matisse核心功能：[https://github.com/zhihu/Matisse](https://github.com/zhih
 完整说明文档：[Android 图片选择库 MatisseKotlin 版](https://www.jianshu.com/p/ca1e7460fa69)
 
 # 版本更新记录
+2020-1-18 (v_2.1)
+1. 裁剪适配Android Q
+2. 去除内部压缩-后期将使用接入Luban压缩
+3. 修改提示方式
+    setNoticeConsumer { context, noticeType, title, message ->
+                             showToast(context, noticeType, title, message)
+                         }
+4. 修改状态栏处理方法
+    setStatusBarFuture { params, view ->
+                    // 外部设置状态栏
+                    ImmersionBar.with(params)?.run {
+                        statusBarDarkFont(true)
+                        view?.apply { titleBar(this) }
+                        init()
+                    }
+
+                    // 外部可隐藏Matisse界面中的标题栏
+                    // view?.visibility = if (isDarkStatus) View.VISIBLE else View.GONE
+                }
+5. 注意: 单独调用拍照走裁剪时,也需要创建SelectionCreator
+
 2020-1-3 (2.0.3)
 1. 修复PreviewPageAdapter获取资源数组越界
+
+2020-1-17 (v_2.0.5)
+1. 修复Gif图预览崩溃问题
+
+2020-1-14 (v_2.0.5)
+1. 拍照、展示图片适配Android Q
 
 2019-12-30
 1. 默认关闭内部压缩
@@ -110,10 +137,8 @@ mediaTypeExclusive false
 	* 多选不支持重新选定，选满外部给出提示方式，支持计数与选中方式
 4. 提示方式外部实现
 ```
-SelectionCreator.setNoticeConsumer(object : NoticeConsumer {
-                                 override fun accept(
-                                     context: Context, noticeType: Int, title: String, message: String
-                                 ) {
+SelectionCreator.setNoticeEvent( { context: Context, noticeType: Int, title: String, message: String
+                                 ->
                                      // 外部提示，可外部定义样式
                                      showToast(context, noticeType, title, message)
                                  }
@@ -166,22 +191,6 @@ The library requires two permissions:
     文件名称为file_paths_public（名字随意取，但需与AndroidManifest.xml中引用保持一致）
     <external-path  name="my_images" path="Pictures"/>
 
-5. 项目gradle中添加
-
-// 具体版本需自行配置(最外层build.gradle)
-ext {
-    compileSdkVersion = 28
-
-    minSdkVersion = 19
-    targetSdkVersion = 28
-
-    appcompat = '1.1.0'
-    material = '1.0.0'
-    recyclerview = '1.0.0'
-    glide = '4.7.1'
-    constraintlayout = '1.1.3'
-}
-```
 
 | Default Style                  | Other Style Preview                  | Preview                          |
 |:------------------------------:|:---------------------------------:|:--------------------------------:|

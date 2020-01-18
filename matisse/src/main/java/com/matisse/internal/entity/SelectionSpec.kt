@@ -1,6 +1,8 @@
 package com.matisse.internal.entity
 
+import android.content.Context
 import android.content.pm.ActivityInfo
+import android.view.View
 import androidx.annotation.StyleRes
 import com.matisse.MimeType
 import com.matisse.MimeTypeManager
@@ -9,8 +11,6 @@ import com.matisse.engine.ImageEngine
 import com.matisse.entity.CaptureStrategy
 import com.matisse.entity.Item
 import com.matisse.filter.Filter
-import com.matisse.listener.MFunction
-import com.matisse.listener.NoticeConsumer
 import com.matisse.listener.OnCheckedListener
 import com.matisse.listener.OnSelectedListener
 import com.matisse.ui.activity.BaseActivity
@@ -52,10 +52,13 @@ class SelectionSpec {
 
     var hasInited = false                                   // 是否初始化完成
 
-    var noticeConsumer: NoticeConsumer? = null              // 库内提示具体回调
-    var statusBarFuture: MFunction<BaseActivity>? = null    // 状态栏处理回调
+    // 库内提示具体回调
+    var noticeEvent: ((
+        context: Context, noticeType: Int, title: String, msg: String
+    ) -> Unit)? = null
 
-    var isInnerCompress = false                             // 是否开启内部压缩
+    // 状态栏处理回调
+    var statusBarFuture: ((params: BaseActivity, view: View?) -> Unit)? = null
 
     var lastChoosePictureIdsOrUris: ArrayList<String>? = null   // 上次选中的图片Id
 
@@ -106,10 +109,8 @@ class SelectionSpec {
         originalable = false
         originalMaxSize = Integer.MAX_VALUE
 
-        noticeConsumer = null
+        noticeEvent = null
         statusBarFuture = null
-
-        isInnerCompress = false
 
         lastChoosePictureIdsOrUris = null
     }

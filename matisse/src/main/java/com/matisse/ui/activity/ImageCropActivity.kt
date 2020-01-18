@@ -4,9 +4,10 @@ import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.view.View
+import com.matisse.Matisse
 import com.matisse.R
-import com.matisse.entity.ConstValue
 import com.matisse.entity.IncapableCause
 import com.matisse.utils.*
 import com.matisse.widget.CropImageView
@@ -29,35 +30,38 @@ class ImageCropActivity : BaseActivity(), View.OnClickListener,
     private var isSaveRectangle = false
     private var outputX = 0
     private var outputY = 0
-    private lateinit var imagePath: String
+    //    private lateinit var imagePath: String
+    private lateinit var imageUri: Uri
 
 
     override fun getResourceLayoutId() = R.layout.activity_crop
 
     override fun configActivity() {
         super.configActivity()
-        spec?.statusBarFuture?.accept(this, toolbar)
+        spec?.statusBarFuture?.invoke(this, toolbar)
     }
 
     override fun setViewData() {
-        imagePath = intent.getStringExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH) ?: return
+        Matisse.obtainResult(intent)?.run {
+            if (size > 0) imageUri = this[0] else return
+        }
 
         setCropImageView()
 
         //缩放图片
         val options = BitmapFactory.Options().apply {
             inJustDecodeBounds = true
-            BitmapFactory.decodeFile(imagePath, this)
+            getBitmapFromUri(this@ImageCropActivity, imageUri, this)
             resources.displayMetrics.let {
                 inSampleSize = calculateInSampleSize(this, it.widthPixels, it.heightPixels)
             }
 
             inJustDecodeBounds = false
         }
-        bitmap = BitmapFactory.decodeFile(imagePath, options)
+        bitmap = getBitmapFromUri(this@ImageCropActivity, imageUri, options)
         bitmap?.let {
-            val rotateBitmap =
-                cv_crop_image.rotate(it, BitmapUtils.getBitmapDegree(imagePath).toFloat())
+            // TODO Leo 2020-01-18 无法获取旋转信息
+            val rotateBitmap = cv_crop_image.rotate(it, getBitmapDegree(imageUri.path).toFloat())
             // 设置默认旋转角度
             cv_crop_image.setImageBitmap(rotateBitmap)
         }
@@ -116,12 +120,12 @@ class ImageCropActivity : BaseActivity(), View.OnClickListener,
         return inSampleSize
     }
 
-    override fun onBitmapSaveSuccess(file: File) {
+    override fun onBitmapSaveSuccess(fileUri: Uri) {
         handleCauseTips(form = IncapableCause.LOADING, dismissLoading = true)
-        finishIntentFromCropSuccess(this, file.absolutePath)
+        finishIntentFromCropSuccess(this, fileUri)
     }
 
-    override fun onBitmapSaveError(file: File) {
+    override fun onBitmapSaveError(fileUri: Uri) {
         handleCauseTips(form = IncapableCause.LOADING, dismissLoading = true)
         val incapableDialog = IncapableDialog.newInstance("", getString(R.string.error_crop))
         incapableDialog.show(supportFragmentManager, IncapableDialog::class.java.name)

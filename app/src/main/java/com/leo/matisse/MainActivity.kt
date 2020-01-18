@@ -12,12 +12,8 @@ import androidx.appcompat.widget.AppCompatButton
 import com.bumptech.glide.Glide
 import com.matisse.Matisse
 import com.matisse.MimeTypeManager
-import com.matisse.compress.CompressHelper
-import com.matisse.compress.getFileByPath
 import com.matisse.entity.CaptureStrategy
 import com.matisse.entity.ConstValue
-import com.matisse.listener.NoticeConsumer
-import com.matisse.utils.PhotoMetadataUtils
 import com.matisse.utils.Platform
 import com.matisse.widget.CropImageView
 import com.tbruyelle.rxpermissions2.RxPermissions
@@ -63,13 +59,6 @@ class MainActivity : AppCompatActivity() {
             .thumbnailScale(0.8f)
             .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
             .imageEngine(Glide4Engine())
-            .setNoticeConsumer(object : NoticeConsumer {
-                override fun accept(
-                    context: Context, noticeType: Int, title: String, message: String
-                ) {
-                    showToast(message)
-                }
-            })
             .forResult(ConstValue.REQUEST_CODE_CHOOSE)
     }
 
@@ -83,29 +72,13 @@ class MainActivity : AppCompatActivity() {
 
         if (requestCode == ConstValue.REQUEST_CODE_CHOOSE && resultCode == Activity.RESULT_OK) {
             var string = ""
-            val uriList = Matisse.obtainResult(data)
-            val strList = Matisse.obtainPathResult(data)
+            val uriList = Matisse.obtainResult(data) ?: return
 
-            uriList?.forEach {
+            uriList.forEach {
                 string += it.toString() + "\n"
             }
 
-            string += "\n"
-
-            strList?.forEach {
-                string += it + "\n"
-            }
-
-            val path = Matisse.obtainPathResult(data) ?: return
-
-            // 原文件
-            val file = getFileByPath(path[0])
-
-            Glide.with(this).load(file).into(iv_image)
-            // 压缩后的文件         （多个文件压缩可以循环压缩）
-            val file1 = CompressHelper.getDefault(applicationContext)?.compressToFile(file)
-            string += PhotoMetadataUtils.getSizeInMB(file.length()).toString() + " PK " +
-                    PhotoMetadataUtils.getSizeInMB(file1?.length() ?: 0)
+            Glide.with(this).load(uriList[0]).into(iv_image)
             string = "\n\n$string"
 
             text.text = "\n\n$string"

@@ -5,7 +5,6 @@ import android.widget.Toast
 import androidx.annotation.IntDef
 import androidx.fragment.app.FragmentActivity
 import com.matisse.internal.entity.SelectionSpec
-import com.matisse.listener.NoticeConsumer
 import com.matisse.widget.IncapableDialog
 
 class IncapableCause {
@@ -17,8 +16,8 @@ class IncapableCause {
         const val NONE = 0x0004
 
         fun handleCause(context: Context, cause: IncapableCause?) {
-            if (cause?.noticeConsumer != null) {
-                cause.noticeConsumer?.accept(
+            if (cause?.noticeEvent != null) {
+                cause.noticeEvent?.invoke(
                     context, cause.form, cause.title ?: "", cause.message ?: ""
                 )
                 return
@@ -52,7 +51,9 @@ class IncapableCause {
     var title: String? = null
     var message: String? = null
     var dismissLoading: Boolean? = null
-    var noticeConsumer: NoticeConsumer? = null
+    var noticeEvent: ((
+        context: Context, noticeType: Int, title: String, msg: String
+    ) -> Unit)? = null
 
     constructor(message: String) : this(TOAST, message)
     constructor(@Form form: Int, message: String) : this(form, "", message)
@@ -63,6 +64,6 @@ class IncapableCause {
         this.message = message
         this.dismissLoading = dismissLoading
 
-        this.noticeConsumer = SelectionSpec.getInstance().noticeConsumer
+        this.noticeEvent = SelectionSpec.getInstance().noticeEvent
     }
 }

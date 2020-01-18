@@ -305,25 +305,6 @@
                 android:textSize="10sp"
                 app:showText="true" />
 
-            <TextView
-                android:id="@+id/tv_compress"
-                style="@style/style_title_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="50dp"
-                android:text="内部实现压缩" />
-
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/switch_compress"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:layout_marginStart="10dp"
-                android:checked="false"
-                android:textOff="是"
-                android:textOn="否"
-                android:textSize="10sp"
-                app:showText="true" />
-
         </LinearLayout>
 
         <!--设置主题-->

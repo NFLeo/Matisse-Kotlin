@@ -4,11 +4,13 @@ import android.app.Activity
 import android.content.Intent
 import android.database.Cursor
 import android.media.MediaScannerConnection
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.Parcelable
 import android.view.View
+import com.matisse.Matisse
 import com.matisse.R
 import com.matisse.entity.Album
 import com.matisse.entity.ConstValue
@@ -49,7 +51,7 @@ class MatisseActivity : BaseActivity(),
 
     override fun configActivity() {
         super.configActivity()
-        spec?.statusBarFuture?.accept(this, toolbar)
+        spec?.statusBarFuture?.invoke(this, toolbar)
 
         if (spec?.capture == true) {
             mediaStoreCompat = MediaStoreCompat(this)
@@ -110,16 +112,16 @@ class MatisseActivity : BaseActivity(),
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode != Activity.RESULT_OK) return
 
-        val cropPath = data?.getStringExtra(ConstValue.EXTRA_RESULT_BUNDLE) ?: ""
+        val cropPath = Matisse.obtainCropResult(data)
 
         when (requestCode) {
             ConstValue.REQUEST_CODE_PREVIEW -> {
                 // 裁剪带回数据，则认为图片经过裁剪流程
-                if (cropPath.isNotEmpty()) doActivityResultFromCrop(cropPath)
+                if (cropPath != null) finishIntentFromCrop(activity, cropPath)
                 else doActivityResultFromPreview(data)
             }
             ConstValue.REQUEST_CODE_CAPTURE -> doActivityResultFromCapture()
-            ConstValue.REQUEST_CODE_CROP -> doActivityResultFromCrop(cropPath)
+            ConstValue.REQUEST_CODE_CROP -> finishIntentFromCrop(activity, cropPath)
         }
     }
 
@@ -144,7 +146,7 @@ class MatisseActivity : BaseActivity(),
 
                 val item = selectedCollection.asList()[0]
                 if (spec?.openCrop() == true && spec?.isSupportCrop(item) == true) {
-                    gotoImageCrop(this, selectedCollection.asListOfString() as ArrayList<String>)
+                    gotoImageCrop(this, selectedCollection.asListOfUri() as ArrayList<Uri>)
                     return
                 }
 
@@ -217,7 +219,6 @@ class MatisseActivity : BaseActivity(),
     private fun doActivityResultFromCapture() {
         val capturePathUri = mediaStoreCompat?.getCurrentPhotoUri() ?: return
         val capturePath = mediaStoreCompat?.getCurrentPhotoPath() ?: return
-        val selectedPath = arrayListOf(capturePath)
         // 刷新系统相册
         MediaScannerConnection.scanFile(this, arrayOf(capturePath), null, null)
         // 重新获取相册数据
@@ -229,15 +230,8 @@ class MatisseActivity : BaseActivity(),
 
         // Check is Crop first
         if (spec?.openCrop() == true) {
-            gotoImageCrop(this, selectedPath)
+            gotoImageCrop(this, arrayListOf(capturePathUri))
         }
-    }
-
-    /**
-     * 处理裁剪的[onActivityResult]
-     */
-    private fun doActivityResultFromCrop(cropPath: String?) {
-        finishIntentFromCrop(activity, cropPath)
     }
 
     private fun updateBottomToolbar() {

@@ -15,12 +15,14 @@ import android.view.MotionEvent
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.view.ViewCompat
 import com.matisse.R
+import com.matisse.internal.entity.SelectionSpec
 import com.matisse.utils.Platform
+import com.matisse.utils.createFile
+import com.matisse.utils.createUriFromFileAboveQ
+import com.matisse.utils.createUriFromFileBelowQ
 import java.io.File
 import java.io.IOException
 import java.io.OutputStream
-import java.text.SimpleDateFormat
-import java.util.*
 import kotlin.math.*
 
 class CropImageView : AppCompatImageView {
@@ -446,7 +448,7 @@ class CropImageView : AppCompatImageView {
         override fun handleMessage(msg: Message?) {
             if (kListener == null) return
 
-            val saveFile = msg?.obj as File
+            val saveFile = msg?.obj as Uri
             when (msg.what) {
                 SAVE_SUCCESS -> kListener?.onBitmapSaveSuccess(saveFile)
                 SAVE_ERROR -> kListener?.onBitmapSaveError(saveFile)
@@ -455,8 +457,8 @@ class CropImageView : AppCompatImageView {
     }
 
     interface OnBitmapSaveCompleteListener {
-        fun onBitmapSaveSuccess(file: File)
-        fun onBitmapSaveError(file: File)
+        fun onBitmapSaveSuccess(fileUri: Uri)
+        fun onBitmapSaveError(fileUri: Uri)
     }
 
     /**
@@ -598,41 +600,41 @@ class CropImageView : AppCompatImageView {
             outputFormat = Bitmap.CompressFormat.PNG
             saveFile = createFile(folder, "IMG_", ".png")
         }
-        val finalOutputFormat = outputFormat
-        val finalSaveFile = saveFile
+
         object : Thread() {
             override fun run() {
-                saveOutput(croppedImage, finalOutputFormat, finalSaveFile)
+                val targetFileUri = getTargetFileUri(saveFile)
+                if (targetFileUri != null) {
+                    saveOutput(croppedImage, outputFormat, targetFileUri)
+                } else {
+                    Message.obtain(kHandler, SAVE_ERROR, targetFileUri).sendToTarget()
+                }
             }
         }.start()
     }
 
-    private fun createFile(folder: File, prefix: String, suffix: String): File {
-        if (!folder.exists() || !folder.isDirectory) folder.mkdirs()
-        try {
-            val noMedia = File(folder, ".nomedia")  //在当前文件夹底下创建一个 .nomedia 文件
-            if (!noMedia.exists()) noMedia.createNewFile()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-
-        val dateFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CHINA)
-        val filename = prefix + dateFormat.format(Date(System.currentTimeMillis())) + suffix
-        return File(folder, filename)
-    }
+    /**
+     * 创建裁剪图存储路径
+     */
+    private fun getTargetFileUri(saveFile: File) = if (Platform.beforeAndroidTen())
+        createUriFromFileBelowQ(
+            context, SelectionSpec.getInstance().captureStrategy?.authority ?: "", saveFile
+        )
+    else
+        createUriFromFileAboveQ(context, saveFile)
 
     @SuppressLint("WrongThread")
     private fun saveOutput(
-        croppedImage: Bitmap, outputFormat: Bitmap.CompressFormat, saveFile: File
+        croppedImage: Bitmap, outputFormat: Bitmap.CompressFormat, saveFileUri: Uri
     ) {
         var outputStream: OutputStream? = null
         try {
-            outputStream = context.contentResolver.openOutputStream(Uri.fromFile(saveFile))
+            outputStream = context.contentResolver.openOutputStream(saveFileUri)
             if (outputStream != null) croppedImage.compress(outputFormat, 90, outputStream)
-            Message.obtain(kHandler, SAVE_SUCCESS, saveFile).sendToTarget()
+            Message.obtain(kHandler, SAVE_SUCCESS, saveFileUri).sendToTarget()
         } catch (ex: IOException) {
             ex.printStackTrace()
-            Message.obtain(kHandler, SAVE_ERROR, saveFile).sendToTarget()
+            Message.obtain(kHandler, SAVE_ERROR, saveFileUri).sendToTarget()
         } finally {
             if (outputStream != null) {
                 try {
@@ -651,35 +653,25 @@ class CropImageView : AppCompatImageView {
         kListener = listener
     }
 
-    fun getFocusWidth() = focusWidth
-
     fun setFocusWidth(width: Int) {
         focusWidth = width
         initImageAndFocusView()
     }
-
-    fun getFocusHeight() = focusHeight
 
     fun setFocusHeight(height: Int) {
         focusHeight = height
         initImageAndFocusView()
     }
 
-    fun getMaskColor() = maskColor
-
     fun setMaskColor(color: Int) {
         maskColor = color.toLong()
         invalidate()
     }
 
-    fun getFocusColor() = borderColor
-
     fun setBorderColor(color: Int) {
         borderColor = color.toLong()
         invalidate()
     }
-
-    fun getBorderWidth() = borderWidth.toFloat()
 
     fun setBorderWidth(width: Int) {
         borderWidth = width
@@ -690,6 +682,4 @@ class CropImageView : AppCompatImageView {
         this.style = style
         invalidate()
     }
-
-    fun getFocusStyle() = style
 }

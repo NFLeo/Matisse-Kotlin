@@ -2,6 +2,7 @@ package com.matisse.ui.activity
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
@@ -35,7 +36,7 @@ open class BasePreviewActivity : BaseActivity(), View.OnClickListener,
 
     override fun configActivity() {
         super.configActivity()
-        spec?.statusBarFuture?.accept(this, null)
+        spec?.statusBarFuture?.invoke(this, null)
 
         if (Platform.hasKitKat19()) {
             window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
@@ -200,11 +201,12 @@ open class BasePreviewActivity : BaseActivity(), View.OnClickListener,
             button_preview -> onBackPressed()
             button_apply -> {
                 if (spec?.openCrop() == true) {
-                    val item = adapter?.getMediaItem(pager.currentItem)
+                    val item = selectedCollection.items()[0]
 
                     if (spec?.isSupportCrop(item) == true) {
-                        val itemPath = PathUtils.getPath(this, item?.getContentUri()) ?: ""
-                        gotoImageCrop(this, arrayListOf(itemPath))
+                        item.getContentUri().apply {
+                            gotoImageCrop(this@BasePreviewActivity, arrayListOf(this))
+                        }
                     } else {
                         finishIntentFromPreviewApply(
                             activity, true, selectedCollection, originalEnable
@@ -264,7 +266,7 @@ open class BasePreviewActivity : BaseActivity(), View.OnClickListener,
         if (resultCode != Activity.RESULT_OK) return
 
         if (requestCode == ConstValue.REQUEST_CODE_CROP) {
-            val resultPath = data?.getStringExtra(ConstValue.EXTRA_RESULT_BUNDLE) ?: return
+            val resultPath = data?.getParcelableExtra<Uri>(ConstValue.EXTRA_RESULT_CROP_BACK_BUNDLE) ?: return
             finishIntentFromCropSuccess(activity, resultPath)
         }
     }

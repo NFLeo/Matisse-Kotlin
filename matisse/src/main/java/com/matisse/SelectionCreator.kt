@@ -1,9 +1,11 @@
 package com.matisse
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo.*
 import android.os.Build
+import android.view.View
 import androidx.annotation.IntDef
 import androidx.annotation.RequiresApi
 import androidx.annotation.StyleRes
@@ -11,8 +13,6 @@ import com.matisse.engine.ImageEngine
 import com.matisse.entity.CaptureStrategy
 import com.matisse.filter.Filter
 import com.matisse.internal.entity.SelectionSpec
-import com.matisse.listener.MFunction
-import com.matisse.listener.NoticeConsumer
 import com.matisse.listener.OnCheckedListener
 import com.matisse.listener.OnSelectedListener
 import com.matisse.ui.activity.BaseActivity
@@ -291,24 +291,19 @@ class SelectionCreator(
     /**
      * set notice type for matisse
      */
-    fun setNoticeConsumer(noticeConsumer: NoticeConsumer?) = this.apply {
-        selectionSpec.noticeConsumer = noticeConsumer
+    fun setNoticeConsumer(
+        noticeConsumer: ((context: Context, noticeType: Int, title: String, message: String) -> Unit)?
+    ) = this.apply {
+        selectionSpec.noticeEvent = noticeConsumer
     }
 
     /**
      * set Status Bar
      */
-    fun setStatusBarFuture(statusBarFunction: MFunction<BaseActivity>?) = this.apply {
-        selectionSpec.statusBarFuture = statusBarFunction
-    }
-
-    /**
-     * is open inner image compress
-     * 是否开启内部压缩
-     */
-    fun setIsInnerCompress(isInnerCompress: Boolean) = this.apply {
-        selectionSpec.isInnerCompress = isInnerCompress
-    }
+    fun setStatusBarFuture(statusBarFunction: ((params: BaseActivity, view: View?) -> Unit)?) =
+        this.apply {
+            selectionSpec.statusBarFuture = statusBarFunction
+        }
 
     /**
      * set last choose pictures ids

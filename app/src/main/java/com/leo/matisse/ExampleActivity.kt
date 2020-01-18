@@ -22,11 +22,8 @@ import com.matisse.entity.CaptureStrategy
 import com.matisse.entity.ConstValue
 import com.matisse.entity.IncapableCause
 import com.matisse.filter.Filter
-import com.matisse.listener.MFunction
-import com.matisse.listener.NoticeConsumer
 import com.matisse.ui.activity.BaseActivity
 import com.matisse.utils.MediaStoreCompat
-import com.matisse.utils.PathUtils
 import com.matisse.utils.Platform
 import com.matisse.utils.gotoImageCrop
 import com.matisse.widget.CropImageView
@@ -48,7 +45,6 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
     private var isOpenCamera = false
     private var spanCount = 3
     private var gridSizePx = 0
-    private var isInnerCompress = true
     private var isCrop = false
     private var cropWidth = -1
     private var cropHeight = -1
@@ -145,8 +141,6 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
 
         switch_capture.setOnCheckedChangeListener { _, isChecked -> isOpenCamera = isChecked }
 
-        switch_compress.setOnCheckedChangeListener { _, isChecked -> isInnerCompress = !isChecked }
-
         switch_crop.setOnCheckedChangeListener { _, isChecked ->
             isCrop = isChecked
 
@@ -190,7 +184,11 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View?) {
 
         RxPermissions(this@ExampleActivity)
-            .request(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE)
+            .request(
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.CAMERA,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            )
             .subscribe {
                 if (!it) {
                     showToast(
@@ -200,9 +198,10 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
                     return@subscribe
                 }
 
+                createMatisse()
+
                 when (v) {
                     btn_open_matisse -> {
-                        createMatisse()
                         openMatisse()
                     }
                     btn_open_capture -> {
@@ -266,7 +265,10 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
         setEditText()
         selectionCreator =
             Matisse.from(this@ExampleActivity)                              // 绑定Activity/Fragment
-                .choose(showType, mediaTypeExclusive)                               // 设置显示类型，单一/混合选择模式
+                .choose(
+                    showType,
+                    mediaTypeExclusive
+                )                               // 设置显示类型，单一/混合选择模式
                 .theme(defaultTheme)                                                // 外部设置主题样式
                 .countable(isCountable)                                             // 设置选中计数方式
                 .isCrop(isCrop)                                                     // 设置开启裁剪
@@ -275,7 +277,10 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
                 .cropFocusHeightPx(cropHeight)                                      // 裁剪框高度
                 .isCropSaveRectangle(isSaveRectangle)                               // 圆形裁剪下是否方形保存
                 .maxSelectable(maxCount)                                            // 单一选择下 最大选择数量
-                .maxSelectablePerMediaType(maxImageCount, maxVideoCount)            // 混合选择下 视频/图片最大选择数量
+                .maxSelectablePerMediaType(
+                    maxImageCount,
+                    maxVideoCount
+                )            // 混合选择下 视频/图片最大选择数量
                 .capture(isOpenCamera)                                              // 是否开启内部拍摄
                 .captureStrategy(                                                   // 拍照设置Strategy
                     CaptureStrategy(
@@ -290,28 +295,19 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
                 .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)      // 强制屏幕方向
                 .imageEngine(Glide4Engine())                                        // 图片加载实现方式
                 .setLastChoosePicturesIdOrUri(selectedPathIds as ArrayList<String>?)// 预选中
-                .setNoticeConsumer(object : NoticeConsumer {                        // 外部实现弹窗、吐司
-                    override fun accept(
-                        context: Context, noticeType: Int, title: String, message: String
-                    ) {
-                        // 外部提示，可外部定义样式
-                        showToast(context, noticeType, title, message)
+                .setNoticeConsumer { context, noticeType, title, message ->
+                    showToast(context, noticeType, title, message)
+                }.setStatusBarFuture { params, view ->
+                    // 外部设置状态栏
+                    ImmersionBar.with(params)?.run {
+                        statusBarDarkFont(true)
+                        view?.apply { titleBar(this) }
+                        init()
                     }
-                })
-                .setStatusBarFuture(object : MFunction<BaseActivity> {              // 外部处理状态栏
-                    override fun accept(params: BaseActivity, view: View?) {
-                        // 外部设置状态栏
-                        ImmersionBar.with(params)?.run {
-                            statusBarDarkFont(true)
-                            view?.apply { titleBar(this) }
-                            init()
-                        }
 
-                        // 外部可隐藏Matisse界面中的标题栏
-                        // view?.visibility = if (isDarkStatus) View.VISIBLE else View.GONE
-                    }
-                })
-                .setIsInnerCompress(isInnerCompress)                                // 是否是用内部提供压缩
+                    // 外部可隐藏Matisse界面中的标题栏
+                    // view?.visibility = if (isDarkStatus) View.VISIBLE else View.GONE
+                }
     }
 
     private fun createMediaStoreCompat() {
@@ -376,40 +372,40 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
         // 获取uri返回值  裁剪结果不返回uri
         val uriList = Matisse.obtainResult(data)
         // 获取文件路径返回值
-        val strList = Matisse.obtainPathResult(data)
-        val compressedList = Matisse.obtainCompressResult(data)
         selectedPathIds = Matisse.obtainPathIdResult(data)
 
-        strList?.apply {
+        uriList?.apply {
             Glide.with(this@ExampleActivity).load(this[0]).into(iv_image)
         }
 
-        showPictureResult(uriList, strList, compressedList)
+        showPictureResult(uriList, uriList, uriList)
     }
 
     private fun doActivityResultForCapture() {
-        val photoPath = mediaStoreCompat?.getCurrentPhotoPath() ?: ""
-        if (isCrop) {
-            gotoImageCrop(this, arrayListOf(photoPath))
-        } else {
-            showCompressedPath(photoPath)
+        mediaStoreCompat?.getCurrentPhotoUri()?.apply {
+            if (isCrop) {
+                gotoImageCrop(this@ExampleActivity, arrayListOf(this))
+            } else {
+                showCompressedPath(this)
+            }
         }
     }
 
     private fun doActivityResultForCrop(data: Intent?) {
-        if (data == null) return
-        val cropPath = data.getStringExtra(ConstValue.EXTRA_RESULT_BUNDLE) ?: ""
-        showCompressedPath(cropPath)
+        data?.run {
+            Matisse.obtainCropResult(data)?.let {
+                showCompressedPath(it)
+            }
+        }
     }
 
-    private fun showCompressedPath(path: String) {
-        val compressedPath = PathUtils.getCompressedPath(this, path)
-        showPictureResult(null, arrayListOf(path), arrayListOf(compressedPath))
-        Glide.with(this).load(compressedPath).into(iv_image)
+    private fun showCompressedPath(path: Uri) {
+        showPictureResult(null, arrayListOf(path), null)
+        Glide.with(this).load(path).into(iv_image)
     }
 
     private fun showPictureResult(
-        uriList: List<Uri>?, strList: List<String>?, compressedList: List<String>?
+        uriList: List<Uri>?, strList: List<Uri>?, compressedList: List<Uri>?
     ) {
         var string = "uri 路径集合：\n"
 
@@ -420,13 +416,13 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
         string += "\npath 路径集合：\n"
 
         strList?.forEach {
-            string += it + "\n"
+            string += it.toString() + "\n"
         }
 
         string += "\n压缩后路径集合：\n"
 
         compressedList?.forEach {
-            string += it + "\n"
+            string += it.toString() + "\n"
         }
 
         text.text = "\n\n$string"

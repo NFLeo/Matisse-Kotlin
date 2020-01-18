@@ -5,22 +5,19 @@ package com.matisse.utils
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
-import com.matisse.compress.CompressHelper
-import com.matisse.compress.getFileByPath
 import com.matisse.entity.ConstValue
 import com.matisse.entity.Item
-import com.matisse.internal.entity.SelectionSpec
 import com.matisse.model.SelectedItemCollection
 import com.matisse.ui.activity.ImageCropActivity
 
 /**
  * 打开裁剪界面
  */
-fun gotoImageCrop(activity: Activity, selectedPath: ArrayList<String>?) {
+fun gotoImageCrop(activity: Activity, selectedPath: ArrayList<Uri>?) {
     if (selectedPath == null || selectedPath.isEmpty()) return
 
     val intentCrop = Intent(activity, ImageCropActivity::class.java)
-    intentCrop.putExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH, selectedPath[0])
+    intentCrop.putParcelableArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION, selectedPath)
     activity.startActivityForResult(intentCrop, ConstValue.REQUEST_CODE_CROP)
 }
 
@@ -35,40 +32,28 @@ fun handleIntentFromPreview(
     if (selectedItems == null) return
 
     val selectedUris = arrayListOf<Uri>()
-    val selectedPaths = arrayListOf<String>()
     val selectedId = arrayListOf<String>()
     selectedItems.forEach {
         selectedUris.add(it.getContentUri())
         selectedId.add(it.id.toString())
-        selectedPaths.add(PathUtils.getPath(activity, it.getContentUri()) ?: "")
-    }
-
-    var compressPicture: ArrayList<String>? = null
-    if (SelectionSpec.getInstance().isInnerCompress) {
-        compressPicture = compressPicture(activity, selectedUris, selectedPaths)
     }
 
     finishIntentToMain(
-        activity, selectedUris, selectedPaths, selectedId,
-        originalEnable, compressPicture
+        activity, selectedUris, selectedId, originalEnable
     )
 }
 
 /**
  * 处理预览界面提交返回选中结果
- * @param originalEnable 是否原图
  * @param selectedUris 选中的资源uri
- * @param selectedPaths 选中的资源path
  * @param selectedId 选中的资源id
  */
 private fun finishIntentToMain(
-    activity: Activity, selectedUris: ArrayList<Uri>, selectedPaths: ArrayList<String>,
-    selectedId: ArrayList<String>, originalEnable: Boolean, compressPicture: ArrayList<String>?
+    activity: Activity, selectedUris: ArrayList<Uri>,
+    selectedId: ArrayList<String>, originalEnable: Boolean
 ) {
     Intent().apply {
         putParcelableArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION, selectedUris)
-        putStringArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH, selectedPaths)
-        putStringArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION_COMPRESS, compressPicture)
         putStringArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION_ID, selectedId)
         putExtra(ConstValue.EXTRA_RESULT_ORIGINAL_ENABLE, originalEnable)
         activity.setResult(Activity.RESULT_OK, this)
@@ -78,25 +63,15 @@ private fun finishIntentToMain(
 
 /**
  * 裁剪完成返回裁剪结果
- * @param cropPath 需裁剪的图片路径
+ * @param cropUri 需裁剪的图片路径
  */
-fun finishIntentFromCrop(activity: Activity, cropPath: String?) {
-    if (cropPath == null || cropPath == "") return
-
-    var compressPicture = ""
-    if (SelectionSpec.getInstance().isInnerCompress) {
-        compressPicture = CompressHelper.getDefault(activity)
-            ?.compressToFile(getFileByPath(cropPath))?.path ?: cropPath
-    }
-
-    Intent().apply {
-        putParcelableArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION, arrayListOf<Uri>())
-        putStringArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH, arrayListOf(cropPath))
-        putStringArrayListExtra(
-            ConstValue.EXTRA_RESULT_SELECTION_COMPRESS, arrayListOf(compressPicture)
-        )
-        activity.setResult(Activity.RESULT_OK, this)
-        activity.finish()
+fun finishIntentFromCrop(activity: Activity, cropUri: Uri?) {
+    cropUri?.run {
+        Intent().apply {
+            putParcelableArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION, arrayListOf(cropUri))
+            activity.setResult(Activity.RESULT_OK, this)
+            activity.finish()
+        }
     }
 }
 
@@ -119,9 +94,9 @@ fun finishIntentFromPreviewApply(
 /**
  * 裁剪成功带回裁剪结果
  */
-fun finishIntentFromCropSuccess(activity: Activity, filePath: String) {
+fun finishIntentFromCropSuccess(activity: Activity, cropResultUri: Uri) {
     Intent().apply {
-        putExtra(ConstValue.EXTRA_RESULT_BUNDLE, filePath)
+        putExtra(ConstValue.EXTRA_RESULT_CROP_BACK_BUNDLE, cropResultUri)
         activity.setResult(Activity.RESULT_OK, this)
     }
     activity.finish()
@@ -151,25 +126,4 @@ fun handlePreviewIntent(
             }
         }
     }
-}
-
-/**
- * 内部压缩图片
- * @param selectedPaths 文件压缩不成功时，用该集合填充对应位置
- * @return 压缩后的文件地址
- */
-fun compressPicture(
-    activity: Activity, selectedUri: ArrayList<Uri>, selectedPaths: ArrayList<String>
-): ArrayList<String>? {
-    if (selectedUri.isEmpty()) return null
-
-    var filePathList: ArrayList<String>? = null
-    selectedUri.forEachIndexed { index, uri ->
-        if (filePathList == null) filePathList = arrayListOf()
-        val file1 = CompressHelper.getDefault(activity)
-            ?.compressToFile(uri)?.path ?: selectedPaths[index]
-        filePathList?.add(file1)
-    }
-
-    return filePathList
 }

@@ -10,8 +10,8 @@ import com.matisse.entity.ConstValue.STATE_SELECTION
 import com.matisse.entity.IncapableCause
 import com.matisse.entity.Item
 import com.matisse.internal.entity.SelectionSpec
-import com.matisse.utils.PathUtils
 import com.matisse.utils.PhotoMetadataUtils
+import com.matisse.utils.getPath
 import com.matisse.widget.CheckView
 import java.util.*
 import kotlin.collections.ArrayList
@@ -108,7 +108,7 @@ class SelectedItemCollection(private var context: Context) {
     fun asListOfString(): List<String> {
         val paths = ArrayList<String>()
         items.forEach {
-            val path = PathUtils.getPath(context, it.getContentUri())
+            val path = getPath(context, it.getContentUri())
             if (path != null) paths.add(path)
         }
 

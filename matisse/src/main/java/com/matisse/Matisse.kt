@@ -51,28 +51,6 @@ class Matisse(activity: Activity?, fragment: Fragment? = null) {
         }
 
         /**
-         * Obtain user selected compressed file path.
-         *
-         * @param data Intent passed by [Activity.onActivityResult] or
-         * [Fragment.onActivityResult].
-         * @return User selected compressed media path list.
-         */
-        fun obtainCompressResult(data: Intent): List<String>? {
-            return data.getStringArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION_COMPRESS)
-        }
-
-        /**
-         * Obtain user selected media path list in the starting Activity or Fragment.
-         *
-         * @param data Intent passed by [Activity.onActivityResult] or
-         * [Fragment.onActivityResult].
-         * @return User selected media path list.
-         */
-        fun obtainPathResult(data: Intent): List<String>? {
-            return data.getStringArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION_PATH)
-        }
-
-        /**
          * Obtain user selected media path id list in the starting Activity or Fragment.
          *
          * @param data Intent passed by [Activity.onActivityResult] or
@@ -81,6 +59,13 @@ class Matisse(activity: Activity?, fragment: Fragment? = null) {
          */
         fun obtainPathIdResult(data: Intent): List<String>? {
             return data.getStringArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION_ID)
+        }
+
+        /**
+         * 直接获取裁剪结果
+         */
+        fun obtainCropResult(data: Intent?): Uri? {
+            return data?.getParcelableExtra(ConstValue.EXTRA_RESULT_CROP_BACK_BUNDLE)
         }
 
         /**
