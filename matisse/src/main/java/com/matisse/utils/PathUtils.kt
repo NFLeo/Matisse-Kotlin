@@ -154,42 +154,6 @@ fun createImageFileForQ(
     return uri
 }
 
-
-fun createUriFromFileBelowQ(
-    context: Context, authority: String, file: File
-): Uri {
-    val storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-    if (!storageDir.exists()) storageDir.mkdirs()
-    val tempFile = File(storageDir, file.name)
-    return FileProvider.getUriForFile(context, authority, tempFile)
-}
-
-
-fun createUriFromFileAboveQ(context: Context, file: File): Uri? {
-    val resolver = context.contentResolver
-    val contentValues = ContentValues().apply {
-        put(MediaStore.MediaColumns.DISPLAY_NAME, file.name)
-        put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-        put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
-    }
-    return resolver?.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
-}
-
-fun createFile(folder: File, prefix: String, suffix: String): File {
-    if (!folder.exists() || !folder.isDirectory) folder.mkdirs()
-    try {
-        val noMedia = File(folder, ".nomedia")  //在当前文件夹底下创建一个 .nomedia 文件
-        if (!noMedia.exists()) noMedia.createNewFile()
-    } catch (e: IOException) {
-        e.printStackTrace()
-    }
-
-    val dateFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CHINA)
-    val filename = prefix + dateFormat.format(Date(System.currentTimeMillis())) + suffix
-    return File(folder, filename)
-}
-
-
 /**
  * 根据时间戳创建文件名
  *

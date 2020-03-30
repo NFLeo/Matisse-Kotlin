@@ -12,13 +12,15 @@ Matisse核心功能：[https://github.com/zhihu/Matisse](https://github.com/zhih
 完整说明文档：[Android 图片选择库 MatisseKotlin 版](https://www.jianshu.com/p/ca1e7460fa69)
 
 # 版本更新记录
-2020-3-30 (v_2.1)  注：升级后，旧裁剪无法使用
+
+2020-3-30  注：升级后，旧裁剪无法使用
 1. 裁剪适配Android Q，实现为UCrop
     裁剪功能 主要暴露两个开关 isCrop(boolean)、isCircleCrop(boolean)
 2. 修复部分华为设备图片无法裁剪问题
+3. 修复预览大概率ANR问题
 
 
-2020-1-18 (v_2.1)
+2020-1-18
 1. 裁剪适配Android Q
 2. 去除内部压缩-后期将使用接入Luban压缩
 3. 修改提示方式
@@ -39,14 +41,14 @@ Matisse核心功能：[https://github.com/zhihu/Matisse](https://github.com/zhih
                 }
 5. 注意: 单独调用拍照走裁剪时,也需要创建SelectionCreator
 
-2020-1-3 (2.0.3)
-1. 修复PreviewPageAdapter获取资源数组越界
-
 2020-1-17 (v_2.0.5)
 1. 修复Gif图预览崩溃问题
 
 2020-1-14 (v_2.0.5)
 1. 拍照、展示图片适配Android Q
+
+2020-1-3 (2.0.3)
+1. 修复PreviewPageAdapter获取资源数组越界
 
 2019-12-30
 1. 默认关闭内部压缩

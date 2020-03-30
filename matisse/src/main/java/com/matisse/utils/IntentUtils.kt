@@ -11,6 +11,7 @@ import com.matisse.internal.entity.SelectionSpec
 import com.matisse.model.SelectedItemCollection
 import com.matisse.utils.Platform.beforeAndroidTen
 import com.matisse.ucrop.UCrop
+import com.matisse.utils.Platform.aboveAndroidTen
 import java.io.File
 
 /**
@@ -33,7 +34,7 @@ fun gotoImageCrop(activity: Activity, selectedPath: ArrayList<Uri>?) {
  */
 fun startCrop(activity: Activity, originalPath: Uri) {
 
-    val path = PhotoMetadataUtils.getPath(activity.contentResolver, originalPath) ?: ""
+    val path = getPath(activity, originalPath) ?: ""
 
     val spec = SelectionSpec.getInstance()
 
@@ -45,8 +46,8 @@ fun startCrop(activity: Activity, originalPath: Uri) {
         .setShowCropFrame(true)
         .setShowCropGrid(!spec.isCircleCrop)
 
-    val isAndroidQ = beforeAndroidTen()
-    val imgType = if (!isAndroidQ)
+    val isAndroidQ = aboveAndroidTen()
+    val imgType = if (isAndroidQ)
         getLastImgSuffix(getMimeType(activity, originalPath))
     else {
         getLastImgType(path)

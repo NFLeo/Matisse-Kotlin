@@ -4,7 +4,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import com.matisse.entity.Item
-import com.matisse.ui.view.PreviewItemFragment
+import com.matisse.ui.view.PicturePreviewItemFragment
 
 /**
  * Created by liubo on 2018/9/6.
@@ -21,7 +21,7 @@ class PreviewPagerAdapter(manager: FragmentManager, listener: OnPrimaryItemSetLi
 
     override fun getCount() = items.size
 
-    override fun getItem(position: Int) = PreviewItemFragment.newInstance(items[position])
+    override fun getItem(position: Int) = PicturePreviewItemFragment.newInstance(items[position])
 
     override fun setPrimaryItem(container: ViewGroup, position: Int, `object`: Any) {
         super.setPrimaryItem(container, position, `object`)

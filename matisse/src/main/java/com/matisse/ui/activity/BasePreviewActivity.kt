@@ -14,7 +14,7 @@ import com.matisse.entity.Item
 import com.matisse.model.SelectedItemCollection
 import com.matisse.ucrop.UCrop
 import com.matisse.ui.adapter.PreviewPagerAdapter
-import com.matisse.ui.view.PreviewItemFragment
+import com.matisse.ui.view.PicturePreviewItemFragment
 import com.matisse.utils.*
 import com.matisse.widget.CheckView
 import kotlinx.android.synthetic.main.activity_media_preview.*
@@ -149,7 +149,10 @@ open class BasePreviewActivity : BaseActivity(), View.OnClickListener,
 
         check_view.apply {
             if (previousPos != -1 && previousPos != position) {
-                (adapter.instantiateItem(pager, previousPos) as PreviewItemFragment).resetView()
+                (adapter.instantiateItem(
+                    pager,
+                    previousPos
+                ) as PicturePreviewItemFragment).resetView()
                 val item = adapter.getMediaItem(position)
                 if (spec?.isCountable() == true) {
                     val checkedNum = selectedCollection.checkedNumOf(item)

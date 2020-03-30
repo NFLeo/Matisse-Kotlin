@@ -15,6 +15,8 @@ object Platform {
 
     fun beforeAndroidTen() = Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
 
+    fun aboveAndroidTen() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+
     fun getPackageName(context: Context?): String? {
         if (context == null) return ""
 

@@ -361,7 +361,7 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
             Glide.with(this@ExampleActivity).load(this[0]).into(iv_image)
         }
 
-        showPictureResult(uriList, uriList, uriList)
+        showPictureResult(uriList, uriList)
     }
 
     private fun doActivityResultForCapture() {
@@ -383,12 +383,12 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun showCompressedPath(path: Uri) {
-        showPictureResult(null, arrayListOf(path), null)
+        showPictureResult(null, arrayListOf(path))
         Glide.with(this).load(path).into(iv_image)
     }
 
     private fun showPictureResult(
-        uriList: List<Uri>?, strList: List<Uri>?, compressedList: List<Uri>?
+        uriList: List<Uri>?, strList: List<Uri>?
     ) {
         var string = "uri 路径集合：\n"
 
@@ -399,12 +399,6 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
         string += "\npath 路径集合：\n"
 
         strList?.forEach {
-            string += it.toString() + "\n"
-        }
-
-        string += "\n压缩后路径集合：\n"
-
-        compressedList?.forEach {
             string += it.toString() + "\n"
         }
 

@@ -82,34 +82,6 @@ object PhotoMetadataUtils {
         return false
     }
 
-    /**
-     * 获取资源的宽高尺寸
-     */
-    fun getBitmapBound(resolver: ContentResolver, uri: Uri?): Point {
-        if (uri == null) return Point(0, 0)
-
-        var inputStream: InputStream? = null
-        try {
-            val options = BitmapFactory.Options()
-            options.inJustDecodeBounds = true
-            inputStream = resolver.openInputStream(uri)
-            BitmapFactory.decodeStream(inputStream, null, options)
-            val width = options.outWidth
-            val height = options.outHeight
-            return Point(width, height)
-        } catch (e: FileNotFoundException) {
-            return Point(0, 0)
-        } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close()
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                }
-            }
-        }
-    }
-
     fun getSizeInMB(sizeInBytes: Long): Float {
         val df = NumberFormat.getNumberInstance(Locale.US) as DecimalFormat
         df.applyPattern("0.0")
@@ -132,7 +104,7 @@ object PhotoMetadataUtils {
         val imageSize = getBitmapBounds(resolver, uri!!)
         var w = imageSize.x
         var h = imageSize.y
-        if (shouldRotate(resolver, uri)) {
+        if (shouldRotate(activity, uri)) {
             w = imageSize.y
             h = imageSize.x
         }
@@ -148,10 +120,10 @@ object PhotoMetadataUtils {
         return Point((w * widthScale), (h * heightScale))
     }
 
-    private fun shouldRotate(resolver: ContentResolver, uri: Uri): Boolean {
+    private fun shouldRotate(context: Context, uri: Uri): Boolean {
         val exif: ExifInterface?
         try {
-            exif = ExifInterfaceCompat.newInstance(getPath(resolver, uri))
+            exif = ExifInterfaceCompat.newInstance(getPath(context, uri))
         } catch (e: IOException) {
             return false
         }
@@ -181,5 +153,21 @@ object PhotoMetadataUtils {
                 }
             }
         }
+    }
+
+    /**
+     * 是否是长图
+     *
+     * @param size
+     * @return true 是 or false 不是
+     */
+    fun isLongImg(size: Point?): Boolean {
+        if (null != size) {
+            val width = size.x
+            val height = size.y
+            val h = width * 3
+            return height > h
+        }
+        return false
     }
 }
