@@ -14,7 +14,6 @@ import com.matisse.filter.Filter
 import com.matisse.listener.OnCheckedListener
 import com.matisse.listener.OnSelectedListener
 import com.matisse.ui.activity.BaseActivity
-import com.matisse.widget.CropImageView
 import java.io.File
 
 /**
@@ -44,13 +43,10 @@ class SelectionSpec {
     var onCheckedListener: OnCheckedListener? = null
 
     var isCrop = false                              // 裁剪
-    var isCropSaveRectangle = false                 // 裁剪后的图片是否是矩形，否则跟随裁剪框的形状，只适用于圆形裁剪
-    var cropFocusWidthPx = 0                        // 焦点框的宽度
-    var cropFocusHeightPx = 0                       // 焦点框的高度
-    var cropStyle = CropImageView.Style.RECTANGLE   // 裁剪框的形状
+    var isCircleCrop = false                        // 裁剪框的形状
     var cropCacheFolder: File? = null               // 裁剪后文件保存路径
 
-    var hasInited = false                                   // 是否初始化完成
+    var hasInited = false                           // 是否初始化完成
 
     // 库内提示具体回调
     var noticeEvent: ((
@@ -100,10 +96,7 @@ class SelectionSpec {
 
         // crop
         isCrop = false
-        isCropSaveRectangle = false
-        cropFocusWidthPx = 0
-        cropFocusHeightPx = 0
-        cropStyle = CropImageView.Style.RECTANGLE
+        isCircleCrop = false
 
         // return original setting
         originalable = false

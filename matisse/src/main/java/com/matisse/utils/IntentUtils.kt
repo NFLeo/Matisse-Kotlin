@@ -7,8 +7,11 @@ import android.content.Intent
 import android.net.Uri
 import com.matisse.entity.ConstValue
 import com.matisse.entity.Item
+import com.matisse.internal.entity.SelectionSpec
 import com.matisse.model.SelectedItemCollection
-import com.matisse.ui.activity.ImageCropActivity
+import com.matisse.utils.Platform.beforeAndroidTen
+import com.matisse.ucrop.UCrop
+import java.io.File
 
 /**
  * 打开裁剪界面
@@ -16,9 +19,47 @@ import com.matisse.ui.activity.ImageCropActivity
 fun gotoImageCrop(activity: Activity, selectedPath: ArrayList<Uri>?) {
     if (selectedPath == null || selectedPath.isEmpty()) return
 
-    val intentCrop = Intent(activity, ImageCropActivity::class.java)
-    intentCrop.putParcelableArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION, selectedPath)
-    activity.startActivityForResult(intentCrop, ConstValue.REQUEST_CODE_CROP)
+    startCrop(activity, selectedPath[0])
+
+//    val intentCrop = Intent(activity, ImageCropActivity::class.java)
+//    intentCrop.putParcelableArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION, selectedPath)
+//    activity.startActivityForResult(intentCrop, ConstValue.REQUEST_CODE_CROP)
+}
+
+/**
+ * 去裁剪
+ *
+ * @param originalPath
+ */
+fun startCrop(activity: Activity, originalPath: Uri) {
+
+    val path = PhotoMetadataUtils.getPath(activity.contentResolver, originalPath) ?: ""
+
+    val spec = SelectionSpec.getInstance()
+
+    val options = UCrop.Options()
+        .setCircleDimmedLayer(spec.isCircleCrop)
+        .setDragFrameEnabled(true)
+        .setCompressionQuality(50)
+        .setFreeStyleCropEnabled(true)
+        .setShowCropFrame(true)
+        .setShowCropGrid(!spec.isCircleCrop)
+
+    val isAndroidQ = beforeAndroidTen()
+    val imgType = if (!isAndroidQ)
+        getLastImgSuffix(getMimeType(activity, originalPath))
+    else {
+        getLastImgType(path)
+    }
+
+    val file = File(
+        getDiskCacheDir(activity), getCreateFileName("IMG_") + imgType
+    )
+
+    UCrop.of(originalPath, Uri.fromFile(file))
+        .withAspectRatio(1f, 1f)
+        .withOptions(options)
+        .start(activity)
 }
 
 /**

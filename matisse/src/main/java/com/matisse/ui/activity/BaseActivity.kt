@@ -76,4 +76,6 @@ abstract class BaseActivity : AppCompatActivity() {
     ) {
         handleCause(activity, IncapableCause(form, title, message, dismissLoading))
     }
+
+
 }

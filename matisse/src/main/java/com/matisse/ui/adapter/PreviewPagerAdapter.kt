@@ -2,7 +2,7 @@ package com.matisse.ui.adapter
 
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentPagerAdapter
+import androidx.fragment.app.FragmentStatePagerAdapter
 import com.matisse.entity.Item
 import com.matisse.ui.view.PreviewItemFragment
 
@@ -10,7 +10,7 @@ import com.matisse.ui.view.PreviewItemFragment
  * Created by liubo on 2018/9/6.
  */
 class PreviewPagerAdapter(manager: FragmentManager, listener: OnPrimaryItemSetListener?) :
-    FragmentPagerAdapter(manager) {
+    FragmentStatePagerAdapter(manager) {
 
     var items: ArrayList<Item> = ArrayList()
     var kListener: OnPrimaryItemSetListener? = null

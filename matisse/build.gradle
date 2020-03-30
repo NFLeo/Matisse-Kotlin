@@ -18,7 +18,7 @@ publish {
     userOrg = 'nfleo'//bintray.com用户名
     groupId = 'com.nfleo'//jcenter上的路径
     artifactId = 'MatisseKotlin'//项目名称
-    publishVersion = '2.0.4'//版本号
+    publishVersion = '2.1'//版本号
     desc = 'this is for MatisseKotlin'
     website = 'https://github.com/NFLeo/Matisse-Kotlin'
 }
@@ -31,6 +31,8 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        vectorDrawables.useSupportLibrary = true
     }
 
     buildTypes {

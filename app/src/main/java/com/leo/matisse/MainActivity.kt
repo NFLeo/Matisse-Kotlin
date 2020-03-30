@@ -2,7 +2,6 @@ package com.leo.matisse
 
 import android.Manifest
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
@@ -15,7 +14,6 @@ import com.matisse.MimeTypeManager
 import com.matisse.entity.CaptureStrategy
 import com.matisse.entity.ConstValue
 import com.matisse.utils.Platform
-import com.matisse.widget.CropImageView
 import com.tbruyelle.rxpermissions2.RxPermissions
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -46,8 +44,7 @@ class MainActivity : AppCompatActivity() {
             .countable(false)
             .capture(true)
             .isCrop(true)
-            .cropStyle(CropImageView.Style.CIRCLE)
-            .isCropSaveRectangle(true)
+            .isCircleCrop(true)
             .maxSelectable(1)
             .theme(R.style.JCStyle)
             .captureStrategy(

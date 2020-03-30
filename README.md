@@ -7,13 +7,17 @@
 首先感谢：
 Matisse核心功能：[https://github.com/zhihu/Matisse](https://github.com/zhihu/Matisse)
 
-裁剪提供者：廖子尧  github地址：[https://github.com/jeasonlzy](https://github.com/jeasonlzy) 
-
-图片压缩提供者：[https://github.com/nanchen2251](https://github.com/nanchen2251)
+裁剪提供者：Yalantis github地址：[https://github.com/Yalantis/uCrop](https://github.com/Yalantis/uCrop) 
 
 完整说明文档：[Android 图片选择库 MatisseKotlin 版](https://www.jianshu.com/p/ca1e7460fa69)
 
 # 版本更新记录
+2020-3-30 (v_2.1)  注：升级后，旧裁剪无法使用
+1. 裁剪适配Android Q，实现为UCrop
+    裁剪功能 主要暴露两个开关 isCrop(boolean)、isCircleCrop(boolean)
+2. 修复部分华为设备图片无法裁剪问题
+
+
 2020-1-18 (v_2.1)
 1. 裁剪适配Android Q
 2. 去除内部压缩-后期将使用接入Luban压缩
@@ -358,10 +362,7 @@ Matisse.from(SampleActivity.this)
         .captureStrategy(new CaptureStrategy(true, "cache path"))
         .maxSelectable(1)                     // 最多选择一张
         .isCrop(true)                         // 开启裁剪
-        .cropOutPutX(400)                     // 设置裁剪后保存图片的宽高
-        .cropOutPutY(400)                     // 设置裁剪后保存图片的宽高
-        .cropStyle(CropImageView.Style.RECTANGLE)   // 方形裁剪CIRCLE为圆形裁剪
-        .isCropSaveRectangle(true)                  // 裁剪后保存方形（只对圆形裁剪有效）
+        .isCircleCrop(true)                   // 设置裁剪类型
         .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))  // 筛选数据源可选大小限制
         .gridExpectedSize(getResources().getDimensionPixelSize(R.dimen.grid_expected_size))
         .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)

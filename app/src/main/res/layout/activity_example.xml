@@ -359,12 +359,13 @@
             android:id="@+id/ll_crop"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="horizontal">
 
             <!--裁剪-->
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -388,37 +389,12 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/ll_crop_size"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <EditText
-                    android:id="@+id/ev_crop_width"
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:layout_weight="1"
-                    android:hint="裁剪框宽"
-                    android:inputType="number"
-                    android:textSize="12sp" />
-
-                <EditText
-                    android:id="@+id/ev_crop_height"
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:layout_weight="1"
-                    android:hint="裁剪框高"
-                    android:inputType="number"
-                    android:textSize="12sp" />
-
-            </LinearLayout>
-
             <!--裁剪类型、保存类型-->
             <LinearLayout
                 android:id="@+id/ll_crop_type"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -437,25 +413,6 @@
                     android:checked="false"
                     android:textOff="方"
                     android:textOn="圆"
-                    android:textSize="10sp"
-                    app:showText="true" />
-
-                <TextView
-                    android:id="@+id/tv_rectangle_save"
-                    style="@style/style_title_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="50dp"
-                    android:text="方形保存" />
-
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/switch_rectangle_save"
-                    android:layout_width="wrap_content"
-                    android:layout_height="30dp"
-                    android:layout_marginStart="10dp"
-                    android:checked="false"
-                    android:textOff="否"
-                    android:textOn="是"
                     android:textSize="10sp"
                     app:showText="true" />
 

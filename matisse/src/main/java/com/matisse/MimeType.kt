@@ -8,6 +8,12 @@ package com.matisse
 enum class MimeType {
 
     // ============== images ==============
+
+    JPG {
+        override fun getValue() = MimeTypeManager.arraySetOf("jpg", "jpeg")
+        override fun getKey() = "image/jpg"
+    },
+
     JPEG {
         override fun getValue() = MimeTypeManager.arraySetOf("jpg", "jpeg")
         override fun getKey() = "image/jpeg"

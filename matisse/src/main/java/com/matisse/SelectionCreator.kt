@@ -17,7 +17,6 @@ import com.matisse.listener.OnCheckedListener
 import com.matisse.listener.OnSelectedListener
 import com.matisse.ui.activity.BaseActivity
 import com.matisse.ui.activity.matisse.MatisseActivity
-import com.matisse.widget.CropImageView
 import java.io.File
 
 /**
@@ -223,39 +222,11 @@ class SelectionCreator(
     fun isCrop(crop: Boolean) = this.apply { selectionSpec.isCrop = crop }
 
     /**
-     * Whether to stay circle or rectangle when Circle style
-     * 圆形裁剪模式下，保存圆形图片或方形， 默认圆形
-     * If this value is set true, it will stay rectangle to save image.
-     * @param cropSaveRectangle Whether to stay rectangle or not. Default value is false;
-     * @return [SelectionCreator] for fluent API.
+     * isCircleCrop
+     * default is RECTANGLE CROP
      */
-    fun isCropSaveRectangle(cropSaveRectangle: Boolean) = this.apply {
-        if (!selectionSpec.isCrop || selectionSpec.cropStyle == CropImageView.Style.RECTANGLE)
-            return this
-
-        selectionSpec.isCropSaveRectangle = cropSaveRectangle
-    }
-
-    /**
-     * width of cropFrame  px is required
-     */
-    fun cropFocusWidthPx(cropFocusWidth: Int) = this.apply {
-        selectionSpec.cropFocusWidthPx = cropFocusWidth
-    }
-
-    /**
-     * height of cropFrame  px is required
-     */
-    fun cropFocusHeightPx(cropFocusHeight: Int) = this.apply {
-        selectionSpec.cropFocusHeightPx = cropFocusHeight
-    }
-
-    /**
-     * cropStyle [CropImageView.Style]
-     * default is CropImageView.Style.RECTANGLE
-     */
-    fun cropStyle(cropStyle: CropImageView.Style) = this.apply {
-        selectionSpec.cropStyle = cropStyle
+    fun isCircleCrop(isCircle: Boolean) = this.apply {
+        selectionSpec.isCircleCrop = isCircle
     }
 
     /**

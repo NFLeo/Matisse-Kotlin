@@ -2,6 +2,7 @@
 
 package com.matisse.utils
 
+import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
@@ -186,5 +187,97 @@ fun createFile(folder: File, prefix: String, suffix: String): File {
     val dateFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CHINA)
     val filename = prefix + dateFormat.format(Date(System.currentTimeMillis())) + suffix
     return File(folder, filename)
+}
+
+
+/**
+ * 根据时间戳创建文件名
+ *
+ * @param prefix 前缀名
+ * @return
+ */
+fun getCreateFileName(prefix: String): String {
+    val millis = System.currentTimeMillis()
+    return prefix + SimpleDateFormat("yyyyMMdd_HHmmssSS").format(millis)
+}
+
+/**
+ * @param ctx
+ * @return
+ */
+fun getDiskCacheDir(ctx: Context): String {
+    return ctx.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!.path
+}
+
+/**
+ * 获取图片后缀
+ *
+ * @param path
+ * @return
+ */
+fun getLastImgType(path: String): String {
+    try {
+        val index = path.lastIndexOf(".")
+        if (index > 0) {
+            val imageType = path.substring(index)
+            when (imageType) {
+                ".png", ".PNG", ".jpg", ".jpeg", ".JPEG", ".WEBP", ".bmp", ".BMP", ".webp", ".gif", ".GIF" -> return imageType
+                else -> return ".png"
+            }
+        } else {
+            return ".png"
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        return ".png"
+    }
+
+}
+
+/**
+ * 获取图片后缀
+ *
+ * @param mineType
+ * @return
+ */
+fun getLastImgSuffix(mineType: String): String {
+    val defaultSuffix = ".png"
+    try {
+        val index = mineType.lastIndexOf("/") + 1
+        if (index > 0) {
+            return "." + mineType.substring(index)
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        return defaultSuffix
+    }
+
+    return defaultSuffix
+}
+
+/**
+ * 根据uri获取MIME_TYPE
+ *
+ * @param uri
+ * @return
+ */
+fun getMimeType(context: Context, uri: Uri): String {
+    if (ContentResolver.SCHEME_CONTENT == uri.scheme) {
+        val cursor = context.applicationContext.contentResolver.query(
+            uri,
+            arrayOf(MediaStore.Files.FileColumns.MIME_TYPE), null, null, null
+        )
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                val columnIndex =
+                    cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MIME_TYPE)
+                if (columnIndex > -1) {
+                    return cursor.getString(columnIndex)
+                }
+            }
+            cursor.close()
+        }
+    }
+    return "image/jpeg"
 }
 

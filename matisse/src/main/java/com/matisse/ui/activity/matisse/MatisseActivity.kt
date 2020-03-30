@@ -18,6 +18,8 @@ import com.matisse.entity.IncapableCause
 import com.matisse.entity.Item
 import com.matisse.model.AlbumCallbacks
 import com.matisse.model.SelectedItemCollection
+import com.matisse.ucrop.UCrop
+import com.matisse.ucrop.UCropMulti
 import com.matisse.ui.activity.AlbumPreviewActivity
 import com.matisse.ui.activity.BaseActivity
 import com.matisse.ui.activity.SelectedPreviewActivity
@@ -110,18 +112,36 @@ class MatisseActivity : BaseActivity(),
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode != Activity.RESULT_OK) return
-
-        val cropPath = Matisse.obtainCropResult(data)
 
         when (requestCode) {
             ConstValue.REQUEST_CODE_PREVIEW -> {
+                if (resultCode != Activity.RESULT_OK) return
+                val cropPath = Matisse.obtainCropResult(data)
+
                 // 裁剪带回数据，则认为图片经过裁剪流程
                 if (cropPath != null) finishIntentFromCrop(activity, cropPath)
                 else doActivityResultFromPreview(data)
             }
             ConstValue.REQUEST_CODE_CAPTURE -> doActivityResultFromCapture()
-            ConstValue.REQUEST_CODE_CROP -> finishIntentFromCrop(activity, cropPath)
+            ConstValue.REQUEST_CODE_CROP -> {
+                if (resultCode != Activity.RESULT_OK) return
+                val cropPath = Matisse.obtainCropResult(data)
+
+                // 裁剪带回数据，则认为图片经过裁剪流程
+                finishIntentFromCrop(activity, cropPath)
+            }
+            UCrop.REQUEST_CROP -> {
+                data?.run {
+                    val resultUri = UCrop.getOutput(data)
+                    finishIntentFromCrop(activity, resultUri)
+                }
+            }
+            UCrop.RESULT_ERROR -> {
+                data?.run {
+                    val cropError = UCrop.getError(data)?.message ?: ""
+                    IncapableCause.handleCause(activity, IncapableCause(cropError))
+                }
+            }
         }
     }
 

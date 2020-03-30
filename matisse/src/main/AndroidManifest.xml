@@ -6,9 +6,10 @@
     <uses-permission android:name="android.permission.CAMERA" />
 
     <application>
-        <activity android:name=".ui.activity.ImageCropActivity" />
         <activity android:name=".ui.activity.SelectedPreviewActivity" />
         <activity android:name=".ui.activity.AlbumPreviewActivity" />
         <activity android:name=".ui.activity.matisse.MatisseActivity" />
+        <activity android:name=".ucrop.UCropActivity" />
+        <activity android:name=".ucrop.PictureMultiCuttingActivity" />
     </application>
 </manifest>

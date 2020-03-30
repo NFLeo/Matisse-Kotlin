@@ -21,12 +21,12 @@ class MimeTypeManager {
             EnumSet.of(first, *others)
 
         fun ofImage(): EnumSet<MimeType> = EnumSet.of(
-            MimeType.JPEG, MimeType.PNG, MimeType.GIF, MimeType.BMP, MimeType.WEBP
+            MimeType.JPEG, MimeType.JPG, MimeType.PNG, MimeType.GIF, MimeType.BMP, MimeType.WEBP
         )
 
         // 静态图
         fun ofMotionlessImage(): EnumSet<MimeType> = EnumSet.of(
-            MimeType.JPEG, MimeType.PNG, MimeType.BMP
+            MimeType.JPEG, MimeType.JPG, MimeType.PNG, MimeType.BMP
         )
 
         fun ofVideo(): EnumSet<MimeType> = EnumSet.of(
@@ -41,6 +41,7 @@ class MimeTypeManager {
 
         private fun isMotionlessImage(mimeType: String?) =
             MimeType.JPEG.getKey().contains(lowerCaseMimeType(mimeType))
+                    || MimeType.JPG.getKey().contains(lowerCaseMimeType(mimeType))
                     || MimeType.PNG.getKey().contains(lowerCaseMimeType(mimeType))
                     || MimeType.BMP.getKey().contains(lowerCaseMimeType(mimeType))
 

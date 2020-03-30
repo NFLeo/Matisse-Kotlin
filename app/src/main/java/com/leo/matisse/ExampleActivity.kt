@@ -21,12 +21,10 @@ import com.matisse.SelectionCreator
 import com.matisse.entity.CaptureStrategy
 import com.matisse.entity.ConstValue
 import com.matisse.entity.IncapableCause
-import com.matisse.filter.Filter
 import com.matisse.ui.activity.BaseActivity
 import com.matisse.utils.MediaStoreCompat
 import com.matisse.utils.Platform
 import com.matisse.utils.gotoImageCrop
-import com.matisse.widget.CropImageView
 import com.matisse.widget.IncapableDialog
 import com.tbruyelle.rxpermissions2.RxPermissions
 import kotlinx.android.synthetic.main.activity_example.*
@@ -46,10 +44,7 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
     private var spanCount = 3
     private var gridSizePx = 0
     private var isCrop = false
-    private var cropWidth = -1
-    private var cropHeight = -1
-    private var isSaveRectangle = false
-    private var cropType = CropImageView.Style.RECTANGLE
+    private var isCircleCrop = false
 
     private var isColumnNum = true
 
@@ -145,21 +140,13 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
             isCrop = isChecked
 
             if (isChecked) {
-                ll_crop_size.visibility = View.VISIBLE
                 ll_crop_type.visibility = View.VISIBLE
             } else {
-                ll_crop_size.visibility = View.GONE
                 ll_crop_type.visibility = View.GONE
             }
         }
 
-        switch_rectangle_save.setOnCheckedChangeListener { _, isChecked ->
-            isSaveRectangle = isChecked
-        }
-
-        switch_crop_type.setOnCheckedChangeListener { _, isChecked ->
-            cropType = if (isChecked) CropImageView.Style.CIRCLE else CropImageView.Style.RECTANGLE
-        }
+        switch_crop_type.setOnCheckedChangeListener { _, isChecked -> isCircleCrop = isChecked }
 
         chb_jpeg.setOnCheckedChangeListener(checkedOnCheckedListener)
         chb_png.setOnCheckedChangeListener(checkedOnCheckedListener)
@@ -223,7 +210,10 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
             incapableDialog.show(
                 (context as BaseActivity).supportFragmentManager, IncapableDialog::class.java.name
             )
+        } else if(noticeType == IncapableCause.LOADING) {
+
         }
+
     }
 
     private var checkedOnCheckedListener =
@@ -272,10 +262,7 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
                 .theme(defaultTheme)                                                // 外部设置主题样式
                 .countable(isCountable)                                             // 设置选中计数方式
                 .isCrop(isCrop)                                                     // 设置开启裁剪
-                .cropStyle(cropType)                                                // 裁剪类型，圆形/方形
-                .cropFocusWidthPx(cropWidth)                                        // 裁剪框宽度
-                .cropFocusHeightPx(cropHeight)                                      // 裁剪框高度
-                .isCropSaveRectangle(isSaveRectangle)                               // 圆形裁剪下是否方形保存
+                .isCircleCrop(isCircleCrop)                                                // 裁剪类型，圆形/方形
                 .maxSelectable(maxCount)                                            // 单一选择下 最大选择数量
                 .maxSelectablePerMediaType(
                     maxImageCount,
@@ -290,7 +277,6 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
                 )
                 .thumbnailScale(0.6f)                                         // 图片显示压缩比
                 .spanCount(spanCount)                                               // 资源显示列数
-                .addFilter(SizeFilter(1 * Filter.K * Filter.K))         // 过滤器设置
                 .gridExpectedSize(gridSizePx)                                       // 资源显示网格列宽度
                 .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)      // 强制屏幕方向
                 .imageEngine(Glide4Engine())                                        // 图片加载实现方式
@@ -343,9 +329,6 @@ class ExampleActivity : AppCompatActivity(), View.OnClickListener {
             gridSizePx = formatStrTo0(ev_column.text.toString())
             spanCount = 0
         }
-
-        cropWidth = formatStrTo0(ev_crop_width.text.toString())
-        cropHeight = formatStrTo0(ev_crop_height.text.toString())
     }
 
     private fun formatStrTo0(s: String?): Int {

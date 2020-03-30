@@ -12,6 +12,7 @@ import com.matisse.entity.ConstValue
 import com.matisse.entity.IncapableCause
 import com.matisse.entity.Item
 import com.matisse.model.SelectedItemCollection
+import com.matisse.ucrop.UCrop
 import com.matisse.ui.adapter.PreviewPagerAdapter
 import com.matisse.ui.view.PreviewItemFragment
 import com.matisse.utils.*
@@ -265,9 +266,19 @@ open class BasePreviewActivity : BaseActivity(), View.OnClickListener,
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode != Activity.RESULT_OK) return
 
-        if (requestCode == ConstValue.REQUEST_CODE_CROP) {
-            val resultPath = data?.getParcelableExtra<Uri>(ConstValue.EXTRA_RESULT_CROP_BACK_BUNDLE) ?: return
-            finishIntentFromCropSuccess(activity, resultPath)
+        when (requestCode) {
+            ConstValue.REQUEST_CODE_CROP -> {
+                val resultPath =
+                    data?.getParcelableExtra<Uri>(ConstValue.EXTRA_RESULT_CROP_BACK_BUNDLE)
+                        ?: return
+                finishIntentFromCropSuccess(activity, resultPath)
+            }
+            UCrop.REQUEST_CROP -> {
+                data?.run {
+                    val resultUri = UCrop.getOutput(data) ?: return@run
+                    finishIntentFromCropSuccess(activity, resultUri)
+                }
+            }
         }
     }
 
