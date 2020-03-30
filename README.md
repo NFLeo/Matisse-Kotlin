@@ -28,6 +28,7 @@ Matisse核心功能：[https://github.com/zhihu/Matisse](https://github.com/zhih
                              showToast(context, noticeType, title, message)
                          }
 4. 修改状态栏处理方法
+
     setStatusBarFuture { params, view ->
                     // 外部设置状态栏
                     ImmersionBar.with(params)?.run {
