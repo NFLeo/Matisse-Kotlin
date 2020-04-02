@@ -1,4 +1,4 @@
-[ ![Download](https://api.bintray.com/packages/nfleo/MatisseKotlin/MatisseKotlin/images/download.svg?version=2.0.4) ](https://bintray.com/nfleo/MatisseKotlin/MatisseKotlin/2.0.4/link)
+[ ![Download](https://api.bintray.com/packages/nfleo/MatisseKotlin/MatisseKotlin/images/download.svg?version=2.1) ](https://bintray.com/nfleo/MatisseKotlin/MatisseKotlin/2.1/link)
 
 ![Image](/image/banner.png)
 
@@ -12,6 +12,8 @@ Matisse核心功能：[https://github.com/zhihu/Matisse](https://github.com/zhih
 完整说明文档：[Android 图片选择库 MatisseKotlin 版](https://www.jianshu.com/p/ca1e7460fa69)
 
 # 版本更新记录
+2020-4-2 (v_2.1)
+1. 修复部分设备 column '_data' does not exist
 
 2020-3-30  注：升级后，旧裁剪无法使用
 1. 裁剪适配Android Q，实现为UCrop
