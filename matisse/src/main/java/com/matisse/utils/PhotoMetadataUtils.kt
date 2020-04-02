@@ -30,28 +30,6 @@ import kotlin.math.pow
 object PhotoMetadataUtils {
 
     private const val MAX_WIDTH = 1600
-    private const val SCHEME_CONTENT = "content"
-
-
-    fun getPath(resolver: ContentResolver, uri: Uri): String? {
-        if (SCHEME_CONTENT == uri.scheme) {
-            var cursor: Cursor? = null
-
-            try {
-                cursor = resolver.query(
-                    uri, arrayOf(MediaStore.Images.ImageColumns.DATA),
-                    null, null, null
-                )
-                if (cursor == null || !cursor.moveToFirst()) return null
-
-                return cursor.getString(cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA))
-            } finally {
-                cursor?.close()
-            }
-        }
-
-        return uri.path
-    }
 
     /**
      * 遍历外部自定义过滤器
@@ -73,9 +51,8 @@ object PhotoMetadataUtils {
 
         if (context == null || mimeTypeSet == null) return false
 
-        val resolver = context.contentResolver
         for (type in mimeTypeSet) {
-            if (MimeTypeManager.checkType(resolver, item?.getContentUri(), type.getValue())) {
+            if (MimeTypeManager.checkType(context, item?.getContentUri(), type.getValue())) {
                 return true
             }
         }

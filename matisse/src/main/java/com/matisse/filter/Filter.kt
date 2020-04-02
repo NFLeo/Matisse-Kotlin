@@ -37,9 +37,7 @@ abstract class Filter {
     // Whether an {@link Item} need filtering
     open fun needFiltering(context: Context, item: Item?): Boolean {
         constraintTypes().forEach {
-            if (MimeTypeManager.checkType(
-                    context.contentResolver, item?.getContentUri(), it.getValue()
-                )
+            if (MimeTypeManager.checkType(context, item?.getContentUri(), it.getValue())
             ) return true
         }
 

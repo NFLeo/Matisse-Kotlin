@@ -6,14 +6,13 @@ import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
-import android.database.Cursor
 import android.net.Uri
 import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
+import android.text.TextUtils
 import androidx.core.content.FileProvider
 import java.io.File
-import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -22,7 +21,7 @@ import java.util.*
  * Created by Leo on 2018/9/5 on 14:07.
  */
 
-fun getSimpleDateFormat() = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+fun getSimpleDateFormat(): String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
 
 fun getPath(context: Context?, uri: Uri?): String? {
     if (uri == null || context == null) return ""
@@ -44,7 +43,7 @@ fun getPath(context: Context?, uri: Uri?): String? {
                 Uri.parse("content://downloads/public_downloads"), java.lang.Long.valueOf(id)
             )
 
-            return getDataColumn(context, contentUri, null, null)
+            return getRealFilePath(context, contentUri, null, null)
         } else if (isMediaDocument(uri)) {
             val docId = DocumentsContract.getDocumentId(uri)
             val split = docId.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
@@ -60,10 +59,10 @@ fun getPath(context: Context?, uri: Uri?): String? {
             val selection = "_id=?"
             val selectionArgs = arrayOf(split[1])
 
-            return getDataColumn(context, contentUri, selection, selectionArgs)
+            return getRealFilePath(context, contentUri, selection, selectionArgs)
         }
     } else if ("content".equals(uri.scheme, true)) {
-        return getDataColumn(context, uri, null, null)
+        return getRealFilePath(context, uri, null, null)
     } else if ("file".equals(uri.scheme, true)) { // File
         return uri.path
     }
@@ -81,25 +80,46 @@ fun getPath(context: Context?, uri: Uri?): String? {
  * @param selectionArgs (Optional) Selection arguments used in the query.
  * @return The value of the _data column, which is typically a file path.
  */
-private fun getDataColumn(
-    context: Context, uri: Uri?, selection: String?, selectionArgs: Array<String>?
+fun getRealFilePath(
+    context: Context, uri: Uri?,
+    selection: String? = null, selectionArgs: Array<String>? = null
 ): String? {
+    if (null == uri) return null
 
-    var cursor: Cursor? = null
-    val column = "_data"
-    val projection = arrayOf(column)
+    val scheme = uri.scheme
+    var realPath: String? = ""
 
-    try {
-        cursor =
-            context.contentResolver.query(uri!!, projection, selection, selectionArgs, null)
-        if (cursor != null && cursor.moveToFirst()) {
-            val columnIndex = cursor.getColumnIndexOrThrow(column)
-            return cursor.getString(columnIndex)
+    when (scheme) {
+        null, ContentResolver.SCHEME_FILE -> realPath = uri.path
+        ContentResolver.SCHEME_CONTENT -> {
+            context.contentResolver.query(
+                uri, arrayOf(MediaStore.Images.ImageColumns.DATA), selection, selectionArgs, null
+            )?.run {
+                if (moveToFirst()) {
+                    val index = getColumnIndex(MediaStore.Images.ImageColumns.DATA)
+                    if (index > -1) realPath = getString(index)
+                }
+                close()
+            }
         }
-    } finally {
-        cursor?.close()
     }
-    return null
+
+    if (TextUtils.isEmpty(realPath)) {
+        val uriString = uri.toString()
+        val index = uriString.lastIndexOf("/")
+        val imageName = uriString.substring(index)
+        var storageDir = Environment.getExternalStoragePublicDirectory(
+            Environment.DIRECTORY_PICTURES
+        )
+        val file = File(storageDir, imageName)
+        if (file.exists()) {
+            realPath = file.absolutePath
+        } else {
+            storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+            realPath = File(storageDir, imageName).absolutePath
+        }
+    }
+    return realPath
 }
 
 /**

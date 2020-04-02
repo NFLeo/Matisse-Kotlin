@@ -1,11 +1,12 @@
 package com.matisse
 
-import android.content.ContentResolver
+import android.content.Context
 import android.net.Uri
 import android.text.TextUtils
 import android.webkit.MimeTypeMap
 import androidx.collection.ArraySet
 import com.matisse.utils.PhotoMetadataUtils
+import com.matisse.utils.getRealFilePath
 import java.util.*
 
 /**
@@ -59,11 +60,11 @@ class MimeTypeManager {
 
         fun arraySetOf(vararg suffixes: String) = ArraySet(mutableListOf(*suffixes))
 
-        fun checkType(resolver: ContentResolver, uri: Uri?, mExtensions: Set<String>): Boolean {
+        fun checkType(context: Context, uri: Uri?, mExtensions: Set<String>): Boolean {
             val map = MimeTypeMap.getSingleton()
             if (uri == null) return false
 
-            val type = map.getExtensionFromMimeType(resolver.getType(uri))
+            val type = map.getExtensionFromMimeType(context.contentResolver.getType(uri))
             var path: String? = null
             // lazy load the path and prevent resolve for multiple times
             var pathParsed = false
@@ -72,7 +73,7 @@ class MimeTypeManager {
 
                 if (!pathParsed) {
                     // we only resolve the path for one time
-                    path = PhotoMetadataUtils.getPath(resolver, uri)
+                    path = getRealFilePath(context, uri)
                     if (!TextUtils.isEmpty(path)) path = path?.toLowerCase(Locale.US)
                     pathParsed = true
                 }
