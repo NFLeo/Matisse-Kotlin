@@ -9,7 +9,6 @@ import com.matisse.entity.ConstValue
 import com.matisse.entity.Item
 import com.matisse.internal.entity.SelectionSpec
 import com.matisse.model.SelectedItemCollection
-import com.matisse.utils.Platform.beforeAndroidTen
 import com.matisse.ucrop.UCrop
 import com.matisse.utils.Platform.aboveAndroidTen
 import java.io.File
@@ -21,10 +20,6 @@ fun gotoImageCrop(activity: Activity, selectedPath: ArrayList<Uri>?) {
     if (selectedPath == null || selectedPath.isEmpty()) return
 
     startCrop(activity, selectedPath[0])
-
-//    val intentCrop = Intent(activity, ImageCropActivity::class.java)
-//    intentCrop.putParcelableArrayListExtra(ConstValue.EXTRA_RESULT_SELECTION, selectedPath)
-//    activity.startActivityForResult(intentCrop, ConstValue.REQUEST_CODE_CROP)
 }
 
 /**

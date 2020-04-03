@@ -57,5 +57,5 @@ dependencies {
     implementation 'com.gyf.barlibrary:barlibrary:2.3.0'
 
 //    implementation project(':matisse')
-    implementation 'com.nfleo:MatisseKotlin:2.1'
+    implementation 'com.nfleo:MatisseKotlin:2.1.1'
 }

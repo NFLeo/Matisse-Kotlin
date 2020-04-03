@@ -1,5 +1,7 @@
 package com.matisse.entity
 
+import com.matisse.ucrop.UCrop
+
 object ConstValue {
     const val EXTRA_RESULT_SELECTION = "extra_result_selection"
     const val EXTRA_RESULT_SELECTION_ID = "extra_result_selection_id"
@@ -13,7 +15,7 @@ object ConstValue {
 
     const val EXTRA_DEFAULT_BUNDLE = "extra_default_bundle"
     const val EXTRA_RESULT_BUNDLE = "extra_result_bundle"
-    const val EXTRA_RESULT_CROP_BACK_BUNDLE = "extra_result_crop_back_bundle"
+    const val EXTRA_RESULT_CROP_BACK_BUNDLE = UCrop.EXTRA_OUTPUT_URI
     const val EXTRA_RESULT_APPLY = "extra_result_apply"
 
     const val STATE_SELECTION = "state_selection"
@@ -21,6 +23,7 @@ object ConstValue {
 
     const val REQUEST_CODE_PREVIEW = 23
     const val REQUEST_CODE_CAPTURE = 24
-    const val REQUEST_CODE_CROP = 25
+    const val REQUEST_CODE_CROP = 69            // 对应UCrop中的key
+    const val REQUEST_CODE_CROP_ERROR = 96      // 对应UCrop中的key
     const val REQUEST_CODE_CHOOSE = 26
 }

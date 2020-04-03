@@ -271,12 +271,6 @@ open class BasePreviewActivity : BaseActivity(), View.OnClickListener,
 
         when (requestCode) {
             ConstValue.REQUEST_CODE_CROP -> {
-                val resultPath =
-                    data?.getParcelableExtra<Uri>(ConstValue.EXTRA_RESULT_CROP_BACK_BUNDLE)
-                        ?: return
-                finishIntentFromCropSuccess(activity, resultPath)
-            }
-            UCrop.REQUEST_CROP -> {
                 data?.run {
                     val resultUri = UCrop.getOutput(data) ?: return@run
                     finishIntentFromCropSuccess(activity, resultUri)

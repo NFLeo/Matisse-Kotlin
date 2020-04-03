@@ -124,19 +124,12 @@ class MatisseActivity : BaseActivity(),
             }
             ConstValue.REQUEST_CODE_CAPTURE -> doActivityResultFromCapture()
             ConstValue.REQUEST_CODE_CROP -> {
-                if (resultCode != Activity.RESULT_OK) return
-                val cropPath = Matisse.obtainCropResult(data)
-
-                // 裁剪带回数据，则认为图片经过裁剪流程
-                finishIntentFromCrop(activity, cropPath)
-            }
-            UCrop.REQUEST_CROP -> {
                 data?.run {
                     val resultUri = UCrop.getOutput(data)
                     finishIntentFromCrop(activity, resultUri)
                 }
             }
-            UCrop.RESULT_ERROR -> {
+            ConstValue.REQUEST_CODE_CROP_ERROR -> {
                 data?.run {
                     val cropError = UCrop.getError(data)?.message ?: ""
                     IncapableCause.handleCause(activity, IncapableCause(cropError))
